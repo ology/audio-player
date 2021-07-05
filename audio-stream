@@ -1,0 +1,298 @@
+#!/usr/bin/env perl
+
+# Lightweight, ultra-simple audio server
+# Write-up: https://ology.github.io/2021/06/04/mojolicious-music-player/
+
+# To run, symlink your audio source in a public subdirectory:
+# audio-stream/public $ ln -s /media/you/external_drive/Audio/
+# Then:
+# audio-stream $ morbo audio-stream
+
+use File::Find::Rule;
+use Encoding::FixLatin qw(fix_latin);
+use Mojolicious::Lite -signatures;
+use Number::Format;
+use Storable qw(retrieve store);
+
+use constant PATH => 'public/Audio/'; # Where the audio files live
+use constant DAT  => "$0.dat";        # The tracks file
+
+get '/' => sub ($c) {
+  my $autoadvance = $c->param('autoadvance') || 0;
+  my $autoplay    = $c->param('autoplay') || 0;
+  my $current     = $c->param('current') || 0;
+  my $shuffle     = $c->param('shuffle') || 0;
+  my $query       = $c->param('query') || '';
+  my $submit      = $c->param('submit') || '';
+
+  my $audio = []; # Bucket for all tracks
+  my $match = []; # Bucket for all query matches
+
+  $audio = retrieve(DAT) if -e DAT;
+
+  my $nf = Number::Format->new;
+  my $total = $nf->format_number(scalar @$audio);
+
+  if ($query) {
+    # Brute force through every track, looking for matches
+    for my $n (0 .. $#$audio) {
+      push @$match, $n if lc($audio->[$n]) =~ /$query/i;
+    }
+
+    # If shuffling, get a random member of the matches, otherwise increment
+    $current = $shuffle ? $match->[int rand @$match] : $current + 1;
+  }
+  else {
+    # If shuffling, get a random audio track index, otherwise increment
+    $current = $shuffle ? int(rand @$audio) : $current + 1;
+  }
+
+  # Do not allow auto* if at end of audio
+  if ($current > @$audio) {
+    $autoadvance = 0;
+    $autoplay    = 0;
+  }
+
+  # Do not have a track when a search has been freshly submitted
+  my $track = $submit ? '' : fix_latin($audio->[$current]);
+
+  $c->render(
+    template    => 'index',
+    total       => $total,
+    audio       => $audio,
+    track       => $track,
+    autoplay    => $autoplay,
+    autoadvance => $autoadvance,
+    current     => $current,
+    shuffle     => $shuffle,
+    query       => $query,
+    match       => $match,
+    submit      => $submit ? 1 : 0,
+  );
+} => 'index';
+
+get '/refresh' => sub ($c) {
+  my @files = File::Find::Rule->file()
+                              ->name('*.mp3', '*.m4a')
+                              ->in(PATH);
+
+  # Remove "public" from the filename
+  for my $file (@files) {
+    $file =~ s/^public//;
+  }
+
+  # Save the files to disk
+  store \@files, DAT;
+
+  $c->redirect_to($c->url_for('index'));
+} => 'refresh';
+
+app->helper(fix_latin => sub {
+  my ($c, $string) = @_;
+  return fix_latin($string);
+});
+
+app->start;
+__DATA__
+
+@@ index.html.ep
+% layout 'default';
+% title 'Music!';
+<p>
+  <label for="autoadvance"><b>Autoadvance:</b></label>
+  <input type="checkbox" id="autoadvance" name="autoadvance" title="Automatically advance to the next track" <%= $autoadvance ? 'checked' : '' %> />
+  &nbsp;
+  <label for="autoplay"><b>Autoplay:</b></label>
+  <input type="checkbox" id="autoplay" name="autoplay" title="Automatically start playing the current track" <%= $autoplay ? 'checked' : '' %> />
+  &nbsp;
+  <label for="shuffle"><b>Shuffle:</b></label>
+  <input type="checkbox" id="shuffle" name="shuffle" title="Select a random track" <%= $shuffle ? 'checked' : '' %> />
+</p>
+<p><b>Total:</b> <%= $total %> tracks</p>
+<p><b>Track:</b> <%= $track %></p>
+<p>
+<div>
+  <audio controls id='myAudio' <%= $autoplay ? "autoplay='autoplay'" : '' %> preload="auto" type="audio/mpeg" crossorigin="anonymous" style="vertical-align: middle;" src="">
+    Your browser does not support the <code>audio</code> element.
+  </audio>
+  <div id="warning" style="border: 1px solid red; color: red; display: inline-block;"><b>Could not load audio!</b></div>
+</div>
+</p>
+<p>
+  <a href="" class="btn btn-light" onclick="linkout(<%= $current %>); return false;"><b>Next track</b></a>
+  <!-- <a href="<%= url_for('refresh') %>" class="btn btn-light">Reread audio</a> -->
+</p>
+<p>
+  <label for="playlist"><b>History:</b></label>
+  <select id="playlist" name="playlist" class="form-control">
+    <option value=""></option>
+  </select>
+</p>
+<form method="get">
+  <input type="hidden" name="autoadvance" value="0" />
+  <input type="hidden" name="autoplay" value="0" />
+  <input type="hidden" name="shuffle" value="0" />
+  <input type="hidden" name="current" value="<%= $current %>" />
+  <label for="query"><b>Search:</b></label>
+  <input type="search" id="query" name="query" class="form-control" value="<%= $query %>" />
+  <p></p>
+  <input type="submit" name="submit" class="btn btn-primary" value="Submit" />
+  <input type="button" class="btn btn-outline-secondary" onclick="location.href='/?query=&autoadvance=1&autoplay=1&shuffle=1';" value="Clear & Go" />
+</form>
+% if (@$match) {
+    <p></p>
+    <p><b>Matches:</b> <%= scalar @$match %></p>
+    <ol>
+%   for my $n (@$match) {
+    <li>
+%     if ($track eq $audio->[$n]) {
+      <b><a href="" onclick="linkout(<%= $n - 1 %>); return false;"><%= fix_latin($audio->[$n]) %></a></b>
+%     } else {
+      <a href="" onclick="linkout(<%= $n - 1 %>); return false;"><%= fix_latin($audio->[$n]) %></a>
+%     }
+    </li>
+%   }
+    </ol>
+% } else {
+%   if ($query) {
+    <p>No matches</p>
+%   }
+% }
+<script>
+// XXX This function linkout() does not work when under document-ready.
+// TODO Consolidate the redundant "checked" bits with the relocate() function?
+function linkout (n) {
+  var x = 0;
+  var shuf = document.querySelector('#shuffle');
+  if (shuf.checked) {
+    x = 1;
+  }
+  var y = 0;
+  var autop = document.querySelector('#autoplay');
+  if (autop.checked) {
+    y = 1;
+  }
+  var z = 0;
+  var autoa = document.querySelector('#autoadvance');
+  if (autoa.checked) {
+    z = 1;
+  }
+  var link = '/?current=' + n + '&shuffle=' + x + '&autoplay=' + y + '&autoadvance=' + z + '&query=' + "<%= $query %>";
+  window.location = link
+}
+$(document).ready(function() {
+  function relocate () {
+    var x = 0;
+    if ($('#shuffle').is(':checked')) {
+      x = 1;
+    }
+    var y = 0;
+    if ($('#autoplay').is(':checked')) {
+      y = 1;
+    }
+    var z = 0;
+    if ($('#autoadvance').is(':checked')) {
+      z = 1;
+      window.location = '/?current=' + <%= $current %> + '&shuffle=' + x + '&autoplay=' + y + '&autoadvance=' + z + '&query=' + "<%= $query %>";
+    }
+  }
+
+  // Keep track of the number of page loads (for search play)
+  var n = localStorage.getItem('on_load_counter');
+  if (n === null || <%= $submit %> === 1) {
+    n = 0;
+  }
+  n++;
+  localStorage.setItem('on_load_counter', n);
+
+  // Keep track of the played audio history
+//var pl = [];                                                  // Reset history
+//localStorage.setItem('playlist_history', JSON.stringify(pl)); // Reset history
+  var pl = JSON.parse(localStorage.getItem('playlist_history'));
+  if (pl === null) {
+    pl = [];
+    localStorage.setItem('playlist_history', JSON.stringify(pl));
+  }
+  var max = 10;
+  var j = 0;
+  for (var i = pl.length; i >= 0; i--) {
+    for (var key in pl[i]) {
+      if (pl[i].hasOwnProperty(key)) {
+        $('#playlist').append($('<option>', {
+          text: key,
+          value: pl[i][key]
+        }));
+      }
+    }
+    if (j >= max) {
+      break;
+    }
+    j++;
+  }
+  $('#playlist').on('change', function() {
+    var current = $(this).children('option:selected').val();
+    window.location = '/?current=' + (current - 1);
+  });
+
+  $('#warning').hide();
+  $('#myAudio').attr('src', '<%= $track %>');
+  $('#myAudio').on('error', function() {
+    if ('<%= $track %>') {
+      console.log('Playback error!');
+      $('#warning').show();
+      // If there are matches but we have tried all of them, stop.
+      if (<%= @$match %> > 0 && n > <%= @$match %>) {
+        $('#autoadvance').prop('checked', false);
+      }
+      else {
+        relocate();
+      }
+    }
+  });
+  $('#myAudio').on('playing', function() {
+    console.log('Playing...');
+  });
+  $('#myAudio').on('ended', function() {
+    console.log('...Ended');
+    pl.push({ '<%= $track %>': '<%= $current %>' });
+    localStorage.setItem('playlist_history', JSON.stringify(pl));
+    relocate();
+  });
+});
+</script>
+
+@@ layouts/default.html.ep
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <style>
+      body {
+        padding: 10px;
+      }
+      a:link {
+        color: blue;
+        background-color: transparent;
+        text-decoration: none;
+      }
+      a:hover {
+        color: black;
+        background-color: #cfc;
+      }
+    </style>
+    <title><%= title %></title>
+  </head>
+  <body>
+    <%= content %>
+    <p></p>
+    <div style="font-size: small;">
+      <hr>
+      Built by <a href="http://gene.ology.net/">Gene</a>
+      with <a href="https://www.perl.org/">Perl</a>
+      and <a href="https://mojolicious.org/">Mojolicious</a>
+    </div>
+  </body>
+</html>
