@@ -129,8 +129,6 @@ __DATA__
   </select>
 </p>
 <form method="get">
-  <input type="hidden" name="autoadvance" value="0" />
-  <input type="hidden" name="shuffle" value="0" />
   <input type="hidden" name="current" value="<%= $current %>" />
   <label for="query"><b>Search:</b></label>
   <input type="search" id="query" name="query" class="form-control" value="<%= $query %>" />
