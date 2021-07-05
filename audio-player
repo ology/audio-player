@@ -4,9 +4,9 @@
 # Write-up: https://ology.github.io/2021/06/04/mojolicious-music-player/
 
 # To run, symlink your audio source in a public subdirectory:
-# audio-stream/public $ ln -s /media/you/external_drive/Audio/
+# audio-player/public $ ln -s /media/you/external_drive/Audio/
 # Then:
-# audio-stream $ morbo audio-stream
+# audio-player $ morbo audio-player
 
 use File::Find::Rule;
 use Encoding::FixLatin qw(fix_latin);
