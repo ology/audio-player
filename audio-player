@@ -130,7 +130,6 @@ __DATA__
 </p>
 <form method="get">
   <input type="hidden" name="autoadvance" value="0" />
-  <input type="hidden" name="autoplay" value="0" />
   <input type="hidden" name="shuffle" value="0" />
   <input type="hidden" name="current" value="<%= $current %>" />
   <label for="query"><b>Search:</b></label>
