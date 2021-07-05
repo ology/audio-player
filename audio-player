@@ -203,21 +203,21 @@ $(document).ready(function() {
   localStorage.setItem('on_load_counter', n);
 
   // Keep track of the played audio history
-//var pl = [];                                                  // Reset history
-//localStorage.setItem('playlist_history', JSON.stringify(pl)); // Reset history
-  var pl = JSON.parse(localStorage.getItem('playlist_history'));
-  if (pl === null) {
-    pl = [];
-    localStorage.setItem('playlist_history', JSON.stringify(pl));
+//var plh = [];                                                  // Reset history
+//localStorage.setItem('playlist_history', JSON.stringify(plh)); // Reset history
+  var plh = JSON.parse(localStorage.getItem('playlist_history'));
+  if (plh === null) {
+    plh = [];
+    localStorage.setItem('playlist_history', JSON.stringify(plh));
   }
   var max = 10;
   var j = 0;
-  for (var i = pl.length; i >= 0; i--) {
-    for (var key in pl[i]) {
-      if (pl[i].hasOwnProperty(key)) {
+  for (var i = plh.length; i >= 0; i--) {
+    for (var key in plh[i]) {
+      if (plh[i].hasOwnProperty(key)) {
         $('#playlist').append($('<option>', {
           text: key,
-          value: pl[i][key]
+          value: plh[i][key]
         }));
       }
     }
@@ -251,8 +251,8 @@ $(document).ready(function() {
   });
   $('#myAudio').on('ended', function() {
     console.log('...Ended');
-    pl.push({ '<%= $track %>': '<%= $current %>' });
-    localStorage.setItem('playlist_history', JSON.stringify(pl));
+    plh.push({ '<%= $track %>': '<%= $current %>' });
+    localStorage.setItem('playlist_history', JSON.stringify(plh));
     relocate();
   });
 });
