@@ -7,7 +7,7 @@ Write-up: [Mojolicious Music Player](https://ology.github.io/2021/06/04/mojolici
 
 First symlink your audio source in the public subdirectory:
 
-    audio-player/public $ ln -s /media/you/external_drive/Audio/
+    audio-player/public $ ln -s /media/you/external_drive/Music/ Audio
 
 Then to run the app:
 
