@@ -271,6 +271,7 @@ $(document).ready(function() {
     <style>
       body {
         padding: 10px;
+        background-color: #FAF9F6;
       }
       a:link {
         color: blue;
