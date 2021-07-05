@@ -4,7 +4,7 @@
 # Write-up: https://ology.github.io/2021/06/04/mojolicious-music-player/
 
 # To run, symlink your audio source in a public subdirectory:
-# audio-player/public $ ln -s /media/you/external_drive/Audio/
+# audio-player/public $ ln -s /media/you/external_drive/Music/ Audio
 # Then:
 # audio-player $ morbo audio-player
 
