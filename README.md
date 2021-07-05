@@ -13,5 +13,5 @@ Then to run the app:
 
     audio-player $ morbo audio-stream
 
-And browse to http://127.0.0.1:3000/
+And browse to http://127.0.0.1:3000/refresh
 
