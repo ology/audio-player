@@ -28,7 +28,12 @@ get '/' => sub ($c) {
   my $audio = []; # Bucket for all tracks
   my $match = []; # Bucket for all query matches
 
-  $audio = retrieve(DAT) if -e DAT;
+  if (-e DAT) {
+    $audio = retrieve(DAT) if -e DAT;
+  }
+  else {
+    $c->flash(error => "Can't read track list file");
+  }
 
   my $nf = Number::Format->new;
   my $total = $nf->format_number(scalar @$audio);
@@ -84,6 +89,8 @@ get '/refresh' => sub ($c) {
   # Save the files to disk
   store \@files, DAT;
 
+  $c->flash(message => "Saved track list file");
+
   $c->redirect_to($c->url_for('index'));
 } => 'refresh';
 
@@ -98,6 +105,12 @@ __DATA__
 @@ index.html.ep
 % layout 'default';
 % title 'Music!';
+% if (flash('error')) {                                                                                                                                                      
+    %= tag h4 => (style => 'color:red') => flash('error')
+% }
+% if (flash('message')) {
+    %= tag h4 => (style => 'color:green') => flash('message')
+% }
 <p>
   <label for="autoadvance"><b>Autoadvance:</b></label>
   <input type="checkbox" id="autoadvance" name="autoadvance" title="Automatically advance to the next track" <%= $autoadvance ? 'checked' : '' %> />
