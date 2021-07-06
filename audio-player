@@ -132,7 +132,7 @@ __DATA__
 </div>
 </p>
 <p>
-  <a href="" class="btn btn-outline-dark" onclick="linkout(<%= $current %>); return false;">Next Track &raquo;</a>
+  <a href="" class="btn btn-outline-dark" onclick="linkout(<%= $current %>); return false;">Next Track</a>
   <!-- <a href="<%= url_for('refresh') %>" class="btn btn-light">Reread audio</a> -->
 </p>
 <p>
