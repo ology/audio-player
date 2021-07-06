@@ -9,9 +9,9 @@
 # audio-player $ morbo audio-player
 
 use Encoding::FixLatin qw(fix_latin);
-use File::Find::Rule;
+use File::Find::Rule ();
 use Mojolicious::Lite -signatures;
-use Number::Format;
+use Number::Format ();
 use Storable qw(retrieve store);
 
 use constant PATH => 'public/Audio/'; # Where the audio files live
