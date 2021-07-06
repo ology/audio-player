@@ -154,9 +154,9 @@ __DATA__
 %   for my $n (@$match) {
     <li>
 %     if ($track eq $audio->[$n]) {
-      <b><a href="" onclick="linkout(<%= $n - 1 %>); return false;"><%= fix_latin($audio->[$n]) %></a></b>
+      <b><a href="<%= url_for('index')->query(current => $n - 1, autoplay => 1, query=> $query) %>"><%= fix_latin($audio->[$n]) %></a></b>
 %     } else {
-      <a href="" onclick="linkout(<%= $n - 1 %>); return false;"><%= fix_latin($audio->[$n]) %></a>
+      <a href="<%= url_for('index')->query(current => $n - 1, autoplay => 1, query=> $query) %>"><%= fix_latin($audio->[$n]) %></a>
 %     }
     </li>
 %   }
