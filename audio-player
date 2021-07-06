@@ -111,6 +111,7 @@ __DATA__
 % if (flash('message')) {
     %= tag h4 => (style => 'color:green') => flash('message')
 % }
+<div>
 <label for="autoadvance"><b>Autoadvance:</b></label>
 <input type="checkbox" id="autoadvance" name="autoadvance" title="Automatically advance to the next track" <%= $autoadvance ? 'checked' : '' %> />
 &nbsp;
@@ -119,6 +120,7 @@ __DATA__
 &nbsp;
 <label for="shuffle"><b>Shuffle:</b></label>
 <input type="checkbox" id="shuffle" name="shuffle" title="Select a random track" <%= $shuffle ? 'checked' : '' %> />
+</div>
 <p><b>Track:</b> <%= $track %></p>
 <p>
 <div>
