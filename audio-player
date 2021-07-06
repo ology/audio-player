@@ -147,7 +147,7 @@ __DATA__
   <input type="search" id="query" name="query" class="form-control" value="<%= $query %>" />
   <p></p>
   <input type="submit" name="submit" class="btn btn-primary" value="Submit" />
-  <input type="button" class="btn btn-outline-dark" onclick="location.href='/?query=&autoadvance=1&autoplay=1&shuffle=1';" value="Clear & Go" />
+  <input type="button" class="btn btn-secondary" onclick="location.href='/?query=&autoadvance=1&autoplay=1&shuffle=1';" value="Clear & Go" />
 </form>
 % if (@$match) {
     <p></p>
@@ -241,7 +241,7 @@ $(document).ready(function() {
   }
   $('#playlist').on('change', function() {
     var current = $(this).children('option:selected').val();
-    window.location = '/?current=' + (current - 1);
+    window.location = '/?current=' + (current - 1) + '&autoplay=1';
   });
 
   $('#warning').hide();
