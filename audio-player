@@ -136,15 +136,13 @@ __DATA__
   <!-- <a href="<%= url_for('refresh') %>" class="btn btn-light">Reread audio</a> -->
 </p>
 <p>
-  <label for="playlist"><b>History:</b></label>
   <select id="playlist" name="playlist" class="form-control">
-    <option value=""></option>
+    <option value="">History</option>
   </select>
 </p>
 <form method="get">
   <input type="hidden" name="current" value="<%= $current %>" />
-  <label for="query"><b>Search:</b></label>
-  <input type="search" id="query" name="query" class="form-control" value="<%= $query %>" />
+  <input type="search" id="query" name="query" class="form-control" placeholder="Search" value="<%= $query %>" />
   <p></p>
   <input type="submit" name="submit" class="btn btn-primary" value="Submit" />
   <input type="button" class="btn btn-secondary" onclick="location.href='/?query=&autoadvance=1&autoplay=1&shuffle=1';" value="Clear & Go" />
