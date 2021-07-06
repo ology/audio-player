@@ -168,20 +168,7 @@ __DATA__
 % }
 <script>
 $(document).ready(function() {
-  function autoadv () {
-    var x = 0;
-    if ($('#shuffle').is(':checked')) {
-      x = 1;
-    }
-    var y = 0;
-    if ($('#autoplay').is(':checked')) {
-      y = 1;
-    }
-    if ($('#autoadvance').is(':checked')) {
-      window.location = '/?current=' + <%= $current %> + '&shuffle=' + x + '&autoplay=' + y + '&autoadvance=1' + '&query=' + "<%= $query %>";
-    }
-  }
-  function forceadv () {
+  function advance (force) {
     var x = 0;
     if ($('#shuffle').is(':checked')) {
       x = 1;
@@ -194,8 +181,10 @@ $(document).ready(function() {
     if ($('#autoadvance').is(':checked')) {
       z = 1;
     }
-    var link = '/?current=' + <%= $current %> + '&shuffle=' + x + '&autoplay=' + y + '&autoadvance=' + z + '&query=' + "<%= $query %>";
-    window.location = link;
+    if (force === 1 || z === 1) {
+      var link = '/?current=' + <%= $current %> + '&shuffle=' + x + '&autoplay=' + y + '&autoadvance=' + z + '&query=' + "<%= $query %>";
+      window.location = link;
+    }
   }
 
   // Keep track of the number of page loads (for search play)
@@ -236,7 +225,7 @@ $(document).ready(function() {
   });
 
   $('#nextTrack').on('click', function() {
-    forceadv();
+    advance(1);
   });
 
   $('#warning').hide();
@@ -250,7 +239,7 @@ $(document).ready(function() {
         $('#autoadvance').prop('checked', false);
       }
       else {
-        autoadv();
+        advance(0);
       }
     }
   });
@@ -261,7 +250,7 @@ $(document).ready(function() {
     console.log('...Ended');
     plh.push({ '<%= $track %>': '<%= $current %>' });
     localStorage.setItem('playlist_history', JSON.stringify(plh));
-    autoadv();
+    advance(0);
   });
 });
 </script>
