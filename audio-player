@@ -131,7 +131,7 @@ __DATA__
 </div>
 </p>
 <p>
-  <a href="" class="btn btn-outline-dark" onclick="linkout(<%= $current %>); return false;">Next Track</a>
+  <a href="#" id="nextTrack" class="btn btn-outline-dark">Next Track</a>
   &nbsp;
   Total: <%= $total %> tracks
 </p>
@@ -167,29 +167,8 @@ __DATA__
 %   }
 % }
 <script>
-// XXX This function linkout() does not work when under document-ready.
-// TODO Consolidate the redundant "checked" bits with the relocate() function?
-function linkout (n) {
-  var x = 0;
-  var shuf = document.querySelector('#shuffle');
-  if (shuf.checked) {
-    x = 1;
-  }
-  var y = 0;
-  var autop = document.querySelector('#autoplay');
-  if (autop.checked) {
-    y = 1;
-  }
-  var z = 0;
-  var autoa = document.querySelector('#autoadvance');
-  if (autoa.checked) {
-    z = 1;
-  }
-  var link = '/?current=' + n + '&shuffle=' + x + '&autoplay=' + y + '&autoadvance=' + z + '&query=' + "<%= $query %>";
-  window.location = link
-}
 $(document).ready(function() {
-  function relocate () {
+  function autoadv () {
     var x = 0;
     if ($('#shuffle').is(':checked')) {
       x = 1;
@@ -201,6 +180,22 @@ $(document).ready(function() {
     if ($('#autoadvance').is(':checked')) {
       window.location = '/?current=' + <%= $current %> + '&shuffle=' + x + '&autoplay=' + y + '&autoadvance=1' + '&query=' + "<%= $query %>";
     }
+  }
+  function forceadv () {
+    var x = 0;
+    if ($('#shuffle').is(':checked')) {
+      x = 1;
+    }
+    var y = 0;
+    if ($('#autoplay').is(':checked')) {
+      y = 1;
+    }
+    z = 0;
+    if ($('#autoadvance').is(':checked')) {
+      z = 1;
+    }
+    var link = '/?current=' + <%= $current %> + '&shuffle=' + x + '&autoplay=' + y + '&autoadvance=' + z + '&query=' + "<%= $query %>";
+    window.location = link;
   }
 
   // Keep track of the number of page loads (for search play)
@@ -240,6 +235,10 @@ $(document).ready(function() {
     window.location = '/?current=' + (current - 1) + '&autoplay=1';
   });
 
+  $('#nextTrack').on('click', function() {
+    forceadv();
+  });
+
   $('#warning').hide();
   $('#myAudio').attr('src', '<%= $track %>');
   $('#myAudio').on('error', function() {
@@ -251,7 +250,7 @@ $(document).ready(function() {
         $('#autoadvance').prop('checked', false);
       }
       else {
-        relocate();
+        autoadv();
       }
     }
   });
@@ -262,7 +261,7 @@ $(document).ready(function() {
     console.log('...Ended');
     plh.push({ '<%= $track %>': '<%= $current %>' });
     localStorage.setItem('playlist_history', JSON.stringify(plh));
-    relocate();
+    autoadv();
   });
 });
 </script>
