@@ -111,17 +111,14 @@ __DATA__
 % if (flash('message')) {
     %= tag h4 => (style => 'color:green') => flash('message')
 % }
-<p>
-  <label for="autoadvance"><b>Autoadvance:</b></label>
-  <input type="checkbox" id="autoadvance" name="autoadvance" title="Automatically advance to the next track" <%= $autoadvance ? 'checked' : '' %> />
-  &nbsp;
-  <label for="autoplay"><b>Autoplay:</b></label>
-  <input type="checkbox" id="autoplay" name="autoplay" title="Automatically start playing the current track" <%= $autoplay ? 'checked' : '' %> />
-  &nbsp;
-  <label for="shuffle"><b>Shuffle:</b></label>
-  <input type="checkbox" id="shuffle" name="shuffle" title="Select a random track" <%= $shuffle ? 'checked' : '' %> />
-</p>
-<p><b>Total:</b> <%= $total %> tracks</p>
+<label for="autoadvance"><b>Autoadvance:</b></label>
+<input type="checkbox" id="autoadvance" name="autoadvance" title="Automatically advance to the next track" <%= $autoadvance ? 'checked' : '' %> />
+&nbsp;
+<label for="autoplay"><b>Autoplay:</b></label>
+<input type="checkbox" id="autoplay" name="autoplay" title="Automatically start playing the current track" <%= $autoplay ? 'checked' : '' %> />
+&nbsp;
+<label for="shuffle"><b>Shuffle:</b></label>
+<input type="checkbox" id="shuffle" name="shuffle" title="Select a random track" <%= $shuffle ? 'checked' : '' %> />
 <p><b>Track:</b> <%= $track %></p>
 <p>
 <div>
@@ -133,7 +130,8 @@ __DATA__
 </p>
 <p>
   <a href="" class="btn btn-outline-dark" onclick="linkout(<%= $current %>); return false;">Next Track</a>
-  <!-- <a href="<%= url_for('refresh') %>" class="btn btn-light">Reread audio</a> -->
+  &nbsp;
+  Total: <%= $total %> tracks
 </p>
 <p>
   <select id="playlist" name="playlist" class="form-control">
