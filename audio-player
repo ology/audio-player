@@ -105,7 +105,7 @@ __DATA__
 @@ index.html.ep
 % layout 'default';
 % title 'Music!';
-% if (flash('error')) {                                                                                                                                                      
+% if (flash('error')) {
     %= tag h4 => (style => 'color:red') => flash('error')
 % }
 % if (flash('message')) {
