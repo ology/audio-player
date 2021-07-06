@@ -112,14 +112,14 @@ __DATA__
     %= tag h4 => (style => 'color:green') => flash('message')
 % }
 <div>
-<label for="autoadvance"><b>Autoadvance:</b></label>
-<input type="checkbox" id="autoadvance" name="autoadvance" title="Automatically advance to the next track" <%= $autoadvance ? 'checked' : '' %> />
-&nbsp;
-<label for="autoplay"><b>Autoplay:</b></label>
-<input type="checkbox" id="autoplay" name="autoplay" title="Automatically start playing the current track" <%= $autoplay ? 'checked' : '' %> />
-&nbsp;
-<label for="shuffle"><b>Shuffle:</b></label>
-<input type="checkbox" id="shuffle" name="shuffle" title="Select a random track" <%= $shuffle ? 'checked' : '' %> />
+  <label for="autoadvance"><b>Autoadvance:</b></label>
+  <input type="checkbox" id="autoadvance" name="autoadvance" title="Automatically advance to the next track" <%= $autoadvance ? 'checked' : '' %> />
+  &nbsp;
+  <label for="autoplay"><b>Autoplay:</b></label>
+  <input type="checkbox" id="autoplay" name="autoplay" title="Automatically start playing the current track" <%= $autoplay ? 'checked' : '' %> />
+  &nbsp;
+  <label for="shuffle"><b>Shuffle:</b></label>
+  <input type="checkbox" id="shuffle" name="shuffle" title="Select a random track" <%= $shuffle ? 'checked' : '' %> />
 </div>
 <p><b>Track:</b> <%= $track %></p>
 <p>
