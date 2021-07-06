@@ -11,7 +11,7 @@ First symlink your audio source in the public subdirectory:
 
 Then to run the app:
 
-    audio-player $ morbo audio-stream
+    audio-player $ morbo audio-player
 
 And browse to http://127.0.0.1:3000/refresh
 
