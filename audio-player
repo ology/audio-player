@@ -221,7 +221,7 @@ $(document).ready(function() {
   }
   $('#playlist').on('change', function() {
     var current = $(this).children('option:selected').val();
-    window.location = '/?current=' + (current - 1) + '&autoplay=1';
+    window.location = '<%= url_for('index')->query(autoplay => 1) %>' + '&current=' + (current - 1);
   });
 
   $('#nextTrack').on('click', function() {
