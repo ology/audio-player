@@ -124,7 +124,7 @@ __DATA__
 <p><b>Track:</b> <%= $track %></p>
 <p>
 <div>
-  <audio controls id='myAudio' <%= $autoplay ? "autoplay='autoplay'" : '' %> preload="auto" type="audio/mpeg" crossorigin="anonymous" style="vertical-align: middle;" src="">
+  <audio controls id="myAudio" <%= $autoplay ? "autoplay='autoplay'" : '' %> preload="auto" type="audio/mpeg" crossorigin="anonymous" style="vertical-align: middle;" src="">
     Your browser does not support the <code>audio</code> element.
   </audio>
   <div id="warning" style="border: 1px solid red; color: red; display: inline-block;"><b>Could not load audio!</b></div>
@@ -145,7 +145,7 @@ __DATA__
   <input type="search" id="query" name="query" class="form-control" placeholder="Search" value="<%= $query %>" />
   <p></p>
   <input type="submit" name="submit" class="btn btn-primary" value="Submit" />
-  <input type="button" class="btn btn-secondary" onclick="location.href='/?query=&autoadvance=1&autoplay=1&shuffle=1';" value="Clear & Go" />
+  <input type="button" class="btn btn-secondary" onclick="location.href='<%= url_for('index')->query(autoadvance => 1, autoplay => 1, shuffle => 1) %>';" value="Clear & Go" />
 </form>
 % if (@$match) {
     <p></p>
@@ -182,7 +182,7 @@ $(document).ready(function() {
       z = 1;
     }
     if (force === 1 || z === 1) {
-      var link = '/?current=' + <%= $current %> + '&shuffle=' + x + '&autoplay=' + y + '&autoadvance=' + z + '&query=' + "<%= $query %>";
+      var link = '<%= url_for('index')->query(current => $current, query => $query) %>' + '&shuffle=' + x + '&autoplay=' + y + '&autoadvance=' + z;
       window.location = link;
     }
   }
