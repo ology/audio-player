@@ -59,7 +59,7 @@ get '/' => sub ($c) {
   }
 
   # Do not have a track when a search has been freshly submitted
-  my $track = $submit ? '' : fix_latin($audio->[$current]);
+  my $track = $submit ? '' : $audio->[$current];
 
   $c->render(
     template    => 'index',
@@ -121,7 +121,7 @@ __DATA__
   <label for="shuffle"><b>Shuffle:</b></label>
   <input type="checkbox" id="shuffle" name="shuffle" title="Select a random track" <%= $shuffle ? 'checked' : '' %> />
 </div>
-<p><b>Track:</b> <%= $track %></p>
+<p><b>Track:</b> <%= fix_latin($track) %></p>
 <p>
 <div>
   <audio controls id="myAudio" <%= $autoplay ? "autoplay='autoplay'" : '' %> preload="auto" type="audio/mpeg" crossorigin="anonymous" style="vertical-align: middle;" src="">
