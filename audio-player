@@ -38,7 +38,7 @@ get '/' => sub ($c) {
   if ($query) {
     # Brute force through every track, looking for matches
     for my $n (0 .. $#$audio) {
-      push @$match, $n if lc($audio->[$n]) =~ /$query/i;
+      push @$match, $n if lc(fix_latin($audio->[$n])) =~ /$query/i;
     }
 
     # If shuffling, get a random member of the matches, otherwise increment
