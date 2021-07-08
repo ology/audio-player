@@ -253,7 +253,7 @@ $(document).ready(function() {
   });
   $('#myAudio').on('ended', function() {
     console.log('...Ended');
-    if (plh.length >= 10) {
+    if (plh.length >= max) {
       plh.pop();
     }
     plh.push({ '<%= $track %>': '<%= $current %>' });
