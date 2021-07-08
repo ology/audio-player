@@ -42,7 +42,8 @@ get '/' => sub ($c) {
       push @$match, $n if lc(fix_latin($audio->[$n])) =~ /$query/i;
     }
 
-    # If shuffling, get a random member of the matches, otherwise increment, unless we are told not to
+    # If shuffling, get a random member of the matches,
+    # otherwise increment, unless we are told not to
     $current = $shuffle
       ? $match->[int rand @$match]
       : $noinc
