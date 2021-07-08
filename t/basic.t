@@ -22,4 +22,8 @@ $t->get_ok('/?query=aabbccddeeffgg')
   ->status_is(200)
   ->content_like(qr/No matches/);
 
+$t->get_ok('/?current=999999999')
+  ->status_is(200)
+  ->text_is('p[id=track]' => ' ');
+
 done_testing();
