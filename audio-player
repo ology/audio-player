@@ -39,7 +39,7 @@ get '/' => sub ($c) {
   if ($query) {
     # Brute force through every track, looking for matches
     for my $n (0 .. $#$audio) {
-      push @$match, $n if lc(fix_latin($audio->[$n])) =~ /$query/i;
+      push @$match, $n if lc($audio->[$n]) =~ /$query/i;
     }
 
     # If shuffling, get a random member of the matches,
@@ -93,6 +93,7 @@ get '/refresh' => sub ($c) {
   # Remove "public" from the filename
   for my $file (@files) {
     $file =~ s/^public//;
+    $file = fix_latin($file);
   }
 
   # Save the files to disk
@@ -102,11 +103,6 @@ get '/refresh' => sub ($c) {
 
   $c->redirect_to($c->url_for('index'));
 } => 'refresh';
-
-app->helper(fix_latin => sub {
-  my ($c, $string) = @_;
-  return fix_latin($string);
-});
 
 app->start;
 __DATA__
@@ -130,7 +126,7 @@ __DATA__
   <label for="shuffle"><b>Shuffle:</b></label>
   <input type="checkbox" id="shuffle" name="shuffle" title="Select a random track" <%= $shuffle ? 'checked' : '' %> />
 </div>
-<p id="track"><b>Track:</b> <%= fix_latin($track) %></p>
+<p id="track"><b>Track:</b> <%= $track %></p>
 <p>
 <div>
   <audio controls id="myAudio" <%= $autoplay ? "autoplay='autoplay'" : '' %> preload="auto" type="audio/mpeg" crossorigin="anonymous" style="vertical-align: middle;" src="">
@@ -163,9 +159,9 @@ __DATA__
 %   for my $n (@$match) {
     <li>
 %     if ($track eq $audio->[$n]) {
-      <b><a href="<%= url_for('index')->query(current => $n, noinc => 1, autoplay => 1, query => $query) %>"><%= fix_latin($audio->[$n]) %></a></b>
+      <b><a href="<%= url_for('index')->query(current => $n, noinc => 1, autoplay => 1, query => $query) %>"><%= $audio->[$n] %></a></b>
 %     } else {
-      <a href="<%= url_for('index')->query(current => $n, noinc => 1, autoplay => 1, query => $query) %>"><%= fix_latin($audio->[$n]) %></a>
+      <a href="<%= url_for('index')->query(current => $n, noinc => 1, autoplay => 1, query => $query) %>"><%= $audio->[$n] %></a>
 %     }
     </li>
 %   }
@@ -238,7 +234,7 @@ $(document).ready(function() {
   });
 
   $('#warning').hide();
-  $('#myAudio').attr('src', '<%= fix_latin($track) %>');
+  $('#myAudio').attr('src', '<%= $track %>');
   $('#myAudio').on('error', function() {
     if ('<%= $track %>') {
       console.log('Playback error!');
