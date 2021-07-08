@@ -35,9 +35,6 @@ get '/' => sub ($c) {
     $c->flash(error => "Can't read track list file");
   }
 
-  my $nf = Number::Format->new;
-  my $total = $nf->format_number(scalar @$audio);
-
   if ($query) {
     # Brute force through every track, looking for matches
     for my $n (0 .. $#$audio) {
@@ -51,6 +48,10 @@ get '/' => sub ($c) {
     # If shuffling, get a random audio track index, otherwise increment
     $current = $shuffle ? int(rand @$audio) : $current + 1;
   }
+
+  my $nf = Number::Format->new;
+  my $total = $nf->format_number(scalar @$audio);
+  my $matches = $nf->format_number(scalar @$match);
 
   # Do not allow auto* if at end of audio
   if ($current > @$audio) {
@@ -72,6 +73,7 @@ get '/' => sub ($c) {
     shuffle     => $shuffle,
     query       => $query,
     match       => $match,
+    matches     => $matches,
     submit      => $submit ? 1 : 0,
   );
 } => 'index';
@@ -149,7 +151,7 @@ __DATA__
 </form>
 % if (@$match) {
     <p></p>
-    <p><b>Matches:</b> <%= scalar @$match %></p>
+    <p><b>Matches:</b> <%= $matches %></p>
     <ol>
 %   for my $n (@$match) {
     <li>
