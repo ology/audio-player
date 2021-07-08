@@ -21,10 +21,10 @@ get '/' => sub ($c) {
   my $autoadvance = $c->param('autoadvance') || 0;
   my $autoplay    = $c->param('autoplay') || 0;
   my $current     = $c->param('current') || 0;
+  my $noinc       = $c->param('noinc') || 0;
   my $shuffle     = $c->param('shuffle') || 0;
   my $query       = $c->param('query') || '';
   my $submit      = $c->param('submit') || '';
-  my $noinc       = $c->param('noinc') || 0;
 
   my $audio = []; # Bucket for all tracks
   my $match = []; # Bucket for all query matches
