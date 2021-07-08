@@ -42,11 +42,15 @@ get '/' => sub ($c) {
       push @$match, $n if lc(fix_latin($audio->[$n])) =~ /$query/i;
     }
 
-    # If shuffling, get a random member of the matches, otherwise increment, unless not!
-    $current = $shuffle ? $match->[int rand @$match] : $noinc ? $current : $current + 1;
+    # If shuffling, get a random member of the matches, otherwise increment, unless we are told not to
+    $current = $shuffle
+      ? $match->[int rand @$match]
+      : $noinc
+        ? $current
+        : $current + 1;
   }
   else {
-    # If shuffling, get a random audio track index, otherwise increment, unless not!
+    # If shuffling, get a random audio track index, otherwise increment...
     $current = $shuffle ? int(rand @$audio) : $noinc ? $current : $current + 1;
   }
 
