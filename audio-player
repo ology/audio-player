@@ -232,7 +232,7 @@ $(document).ready(function() {
   });
 
   $('#warning').hide();
-  $('#myAudio').attr('src', '<%= $track %>');
+  $('#myAudio').attr('src', '<%= fix_latin($track) %>');
   $('#myAudio').on('error', function() {
     if ('<%= $track %>') {
       console.log('Playback error!');
