@@ -18,6 +18,10 @@ $t->get_ok('/?autoadvance=1')
   ->status_is(200)
   ->element_exists('input[name=autoadvance]:checked');
 
+$t->get_ok('/?query=')
+  ->status_is(200)
+  ->content_isnt(qr/No matches/);
+
 $t->get_ok('/?query=aabbccddeeffgg')
   ->status_is(200)
   ->content_like(qr/No matches/);
