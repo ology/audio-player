@@ -10,11 +10,11 @@
 
 use Encoding::FixLatin qw(fix_latin);
 use File::Find::Rule ();
+use List::SomeUtils qw(first_index);
 use Mojolicious::Lite -signatures;
 use Mojo::Util qw(url_escape url_unescape);
 use Number::Format ();
 use Storable qw(retrieve store);
-use List::SomeUtils qw(first_index);
 
 use constant PATH => 'public/Audio/'; # Where the audio files live
 use constant DAT  => "$0.dat";        # The tracks file
