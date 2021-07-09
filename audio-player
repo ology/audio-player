@@ -264,7 +264,7 @@ $(document).ready(function() {
   $('#myAudio').on('ended', function() {
     console.log('...Ended');
     if (plh.length >= max) {
-      plh.pop();
+      plh.shift();
     }
     plh.push({ "<%= $track %>": '<%= $current %>' });
     localStorage.setItem('playlist_history', JSON.stringify(plh));
