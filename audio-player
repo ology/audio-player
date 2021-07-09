@@ -101,9 +101,11 @@ get '/refresh' => sub ($c) {
                               ->name('*.mp3', '*.m4a')
                               ->in(PATH);
 
-  # Remove "public" from the filename
+  # Process filenames
   for my $file (@files) {
+    # Remove "public" from the name
     $file =~ s/^public//;
+    # Make sure the name is properly displayable
     $file = fix_latin($file);
   }
 
