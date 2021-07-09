@@ -76,7 +76,7 @@ get '/' => sub ($c) {
 
   # Do not have a track when a search has been freshly submitted
   my $track = $submit ? '' : $audio->[$current];
-#  app->log->debug("Track: $track");
+  app->log->debug("Track: $track");
 
   $c->render(
     template    => 'index',
@@ -189,10 +189,6 @@ __DATA__
 <script>
 $(document).ready(function() {
   function advance (force) {
-    var c = "<%= $current %>";
-    if (c == '') {
-      c = 0;
-    }
     var x = 0;
     if ($('#shuffle').is(':checked')) {
       x = 1;
@@ -206,7 +202,7 @@ $(document).ready(function() {
       z = 1;
     }
     if (force === 1 || z === 1) {
-      var link = '<%= url_for('index') %>?' + '&current=' + c + '&query=' + '<%= url_escape($query) %>' + '&shuffle=' + x + '&autoplay=' + y + '&autoadvance=' + z;
+      var link = "<%= url_for('index') %>?" + '&current=' + <%= $current || 0 %> + '&query=' + '<%= url_escape($query) %>' + '&shuffle=' + x + '&autoplay=' + y + '&autoadvance=' + z;
       window.location = link;
     }
   }
