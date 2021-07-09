@@ -125,10 +125,10 @@ __DATA__
 % layout 'default';
 % title 'Music!';
 % if (flash('error')) {
-    %= tag h4 => (style => 'color:red') => flash('error')
+%= tag h4 => (style => 'color:red') => flash('error')
 % }
 % if (flash('message')) {
-    %= tag h4 => (style => 'color:green') => flash('message')
+%= tag h4 => (style => 'color:green') => flash('message')
 % }
 <div>
   <label for="autoadvance"><b>Autoadvance:</b></label>
@@ -142,12 +142,12 @@ __DATA__
 </div>
 <p id="track"><b>Track:</b> <%= $track %></p>
 <p>
-<div>
-  <audio controls id="myAudio" <%= $autoplay ? "autoplay='autoplay'" : '' %> preload="auto" type="audio/mpeg" crossorigin="anonymous" style="vertical-align: middle;" src="">
-    Your browser does not support the <code>audio</code> element.
-  </audio>
-  <div id="warning" style="border: 1px solid red; color: red; display: inline-block;"><b>Could not load audio!</b></div>
-</div>
+  <div>
+    <audio controls id="myAudio" <%= $autoplay ? "autoplay='autoplay'" : '' %> preload="auto" type="audio/mpeg" crossorigin="anonymous" style="vertical-align: middle;" src="">
+      Your browser does not support the <code>audio</code> element.
+    </audio>
+    <div id="warning" style="border: 1px solid red; color: red; display: inline-block;"><b>Could not load audio!</b></div>
+  </div>
 </p>
 <p>
   <a href="#" id="nextTrack" class="btn btn-outline-dark">Next Track</a>
@@ -167,23 +167,23 @@ __DATA__
   <input type="button" class="btn btn-secondary" onclick="location.href='<%= url_for('index')->query(autoadvance => 1, autoplay => 1, shuffle => 1) %>';" value="Clear & Go" />
 </form>
 % if (@$match) {
-    <p></p>
-    <p><b>Matches:</b> <%= $matches %></p>
-    <ol>
+<p></p>
+<p><b>Matches:</b> <%= $matches %></p>
+<ol>
 %   for my $n (@$match) {
-      <li>
+  <li>
 %     if ($track eq $audio->[$n]) {
-        <b><a href="<%= url_for('index')->query(current => $n, noinc => 1, autoplay => 1, query => url_escape($query)) %>"><%= $audio->[$n] %></a></b>
+    <b><a href="<%= url_for('index')->query(current => $n, noinc => 1, autoplay => 1, query => url_escape($query)) %>"><%= $audio->[$n] %></a></b>
 %     } else {
-        <a href="<%= url_for('index')->query(current => $n, noinc => 1, autoplay => 1, query => url_escape($query)) %>"><%= $audio->[$n] %></a>
+    <a href="<%= url_for('index')->query(current => $n, noinc => 1, autoplay => 1, query => url_escape($query)) %>"><%= $audio->[$n] %></a>
 %     }
-      </li>
+  </li>
 %   }
-    </ol>
+</ol>
 % } else {
 %   if ($query) {
-    <p></p>
-    <p>No matches</p>
+<p></p>
+<p>No matches</p>
 %   }
 % }
 <script>
