@@ -31,7 +31,7 @@ get '/' => sub ($c) {
   my $match = []; # Bucket for all query matches
 
   if (-e DAT) {
-    $audio = retrieve(DAT) if -e DAT;
+    $audio = retrieve(DAT);
   }
   else {
     $c->flash(error => "Can't read track list file");
