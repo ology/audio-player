@@ -96,6 +96,7 @@ get '/' => sub ($c) {
   );
 } => 'index';
 
+
 get '/refresh' => sub ($c) {
   my @files = File::Find::Rule->file()
                               ->name('*.mp3', '*.m4a')
@@ -117,12 +118,15 @@ get '/refresh' => sub ($c) {
   $c->redirect_to($c->url_for('index'));
 } => 'refresh';
 
+
 app->helper(url_escape => sub {
   my ($c, $string) = @_;
   return url_escape($string);
 });
 
+
 app->start;
+
 __DATA__
 
 @@ index.html.ep
