@@ -24,7 +24,7 @@ get '/' => sub ($c) {
   my $autoplay    = $c->param('autoplay') || 0;    # Start playing the current track
   my $current     = $c->param('current') || 0;     # The most currently played track
   my $noinc       = $c->param('noinc') || 0;       # Do not increment to the next track
-  my $shuffle     = $c->param('shuffle') || 0;     # Select a random to play next
+  my $shuffle     = $c->param('shuffle') || 0;     # Select a random track to play next
   my $query       = $c->param('query') || '';      # The (url_encoded) search query
   my $submit      = $c->param('submit') || '';     # A fresh search has been submitted
 
