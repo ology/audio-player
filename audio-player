@@ -76,7 +76,7 @@ get '/' => sub ($c) {
 
   # Do not have a track when a search has been freshly submitted
   my $track = $submit ? '' : $audio->[$current];
-  app->log->debug("Track: $track");
+#  app->log->debug("Track: $track");
 
   $c->render(
     template    => 'index',
