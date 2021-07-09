@@ -202,7 +202,7 @@ $(document).ready(function() {
       z = 1;
     }
     if (force === 1 || z === 1) {
-      var link = "<%= url_for('index') %>?" + '&current=' + <%= $current || 0 %> + '&query=' + '<%= url_escape($query) %>' + '&shuffle=' + x + '&autoplay=' + y + '&autoadvance=' + z;
+      var link = "<%= url_for('index') %>?current=" + <%= $current || 0 %> + '&query=' + '<%= url_escape($query) %>' + '&shuffle=' + x + '&autoplay=' + y + '&autoadvance=' + z;
       window.location = link;
     }
   }
