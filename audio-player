@@ -49,14 +49,14 @@ get '/' => sub ($c) {
 
     # Find the index of the current item in the search results
     my $idx = first_index { $_ == $current } @$match;
-    $idx = $match->[0] if $idx == -1;
+    $idx = 0 if $idx == -1;
 
     # If shuffling, get a random member of the matches,
     # otherwise increment, unless we are told not to
     $current = $shuffle
       ? $match->[int rand @$match]
       : $noinc
-        ? $current
+        ? $match->[$idx]
         : $match->[$idx + 1];
   }
   else {
@@ -189,6 +189,10 @@ __DATA__
 <script>
 $(document).ready(function() {
   function advance (force) {
+    var c = "<%= $current %>";
+    if (c == '') {
+      c = 0;
+    }
     var x = 0;
     if ($('#shuffle').is(':checked')) {
       x = 1;
@@ -202,7 +206,7 @@ $(document).ready(function() {
       z = 1;
     }
     if (force === 1 || z === 1) {
-      var link = '<%= url_for('index')->query(current => $current) %>' + '&query=' + '<%= url_escape($query) %>' + '&shuffle=' + x + '&autoplay=' + y + '&autoadvance=' + z;
+      var link = '<%= url_for('index') %>?' + '&current=' + c + '&query=' + '<%= url_escape($query) %>' + '&shuffle=' + x + '&autoplay=' + y + '&autoadvance=' + z;
       window.location = link;
     }
   }
