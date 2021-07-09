@@ -25,7 +25,7 @@ get '/' => sub ($c) {
   my $current     = $c->param('current') || 0;     # The most currently played track
   my $noinc       = $c->param('noinc') || 0;       # Do not increment to the next track
   my $shuffle     = $c->param('shuffle') || 0;     # Select a random track to play next
-  my $query       = $c->param('query') || '';      # The (url_encoded) search query
+  my $query       = $c->param('query') || '';      # The (url_escaped) search query
   my $submit      = $c->param('submit') || '';     # A fresh search has been submitted
 
   my $audio = []; # Bucket for all tracks
