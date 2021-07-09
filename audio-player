@@ -134,6 +134,8 @@ __DATA__
 % if (flash('message')) {
 %= tag h4 => (style => 'color:green') => flash('message')
 % }
+
+% # Checkboxes
 <div>
   <label for="autoadvance"><b>Autoadvance:</b></label>
   <input type="checkbox" id="autoadvance" name="autoadvance" title="Automatically advance to the next track" <%= $autoadvance ? 'checked' : '' %> />
@@ -144,7 +146,11 @@ __DATA__
   <label for="shuffle"><b>Shuffle:</b></label>
   <input type="checkbox" id="shuffle" name="shuffle" title="Select a random track" <%= $shuffle ? 'checked' : '' %> />
 </div>
+
+% # Current track name
 <p id="track"><b>Track:</b> <%= $track %></p>
+
+% # Audio widget
 <p>
   <div>
     <audio controls id="myAudio" <%= $autoplay ? "autoplay='autoplay'" : '' %> preload="auto" type="audio/mpeg" crossorigin="anonymous" style="vertical-align: middle;" src="">
@@ -153,16 +159,22 @@ __DATA__
     <div id="warning" style="border: 1px solid red; color: red; display: inline-block;"><b>Could not load audio!</b></div>
   </div>
 </p>
+
+% # Next track button
 <p>
   <a href="#" id="nextTrack" class="btn btn-outline-dark">Next Track</a>
   &nbsp;
   Total: <%= $total %> tracks
 </p>
+
+% # Playlist history select
 <p>
   <select id="playlist" name="playlist" class="form-control">
     <option value="">History</option>
   </select>
 </p>
+
+% # Search form
 <form method="get">
   <input type="hidden" name="current" value="<%= $current %>" />
   <input type="search" id="query" name="query" class="form-control" placeholder="Search" value="<%= $query %>" />
@@ -170,6 +182,8 @@ __DATA__
   <input type="submit" name="submit" class="btn btn-primary" value="Submit" />
   <input type="button" class="btn btn-secondary" onclick="location.href='<%= url_for('index')->query(autoadvance => 1, autoplay => 1, shuffle => 1) %>';" value="Clear & Go" />
 </form>
+
+% # Search query matches
 % if (@$match) {
 <p></p>
 <p><b>Matches:</b> <%= $matches %></p>
@@ -190,6 +204,7 @@ __DATA__
 <p>No matches</p>
 %   }
 % }
+
 <script>
 $(document).ready(function() {
   function advance (force) {
