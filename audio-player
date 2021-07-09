@@ -39,6 +39,7 @@ get '/' => sub ($c) {
   }
 
   if ($query) {
+    # Convert encoded things like &amp; back into &
     $query = url_unescape($query);
 
     # Brute force through every track, looking for matches
