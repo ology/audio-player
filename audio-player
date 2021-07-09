@@ -11,6 +11,7 @@
 use Encoding::FixLatin qw(fix_latin);
 use File::Find::Rule ();
 use Mojolicious::Lite -signatures;
+use Mojo::Util qw(url_escape url_unescape);
 use Number::Format ();
 use Storable qw(retrieve store);
 
@@ -37,6 +38,8 @@ get '/' => sub ($c) {
   }
 
   if ($query) {
+    $query = url_unescape($query);
+
     # Brute force through every track, looking for matches
     for my $n (0 .. $#$audio) {
       push @$match, $n if lc($audio->[$n]) =~ /$query/i;
@@ -104,6 +107,11 @@ get '/refresh' => sub ($c) {
   $c->redirect_to($c->url_for('index'));
 } => 'refresh';
 
+app->helper(url_escape => sub {
+  my ($c, $string) = @_;
+  return url_escape($string);
+});
+
 app->start;
 __DATA__
 
@@ -159,9 +167,9 @@ __DATA__
 %   for my $n (@$match) {
     <li>
 %     if ($track eq $audio->[$n]) {
-      <b><a href="<%= url_for('index')->query(current => $n, noinc => 1, autoplay => 1, query => $query) %>"><%= $audio->[$n] %></a></b>
+      <b><a href="<%= url_for('index')->query(current => $n, noinc => 1, autoplay => 1, query => url_escape($query)) %>"><%= $audio->[$n] %></a></b>
 %     } else {
-      <a href="<%= url_for('index')->query(current => $n, noinc => 1, autoplay => 1, query => $query) %>"><%= $audio->[$n] %></a>
+      <a href="<%= url_for('index')->query(current => $n, noinc => 1, autoplay => 1, query => url_escape($query)) %>"><%= $audio->[$n] %></a>
 %     }
     </li>
 %   }
@@ -187,7 +195,7 @@ $(document).ready(function() {
       z = 1;
     }
     if (force === 1 || z === 1) {
-      var link = '<%= url_for('index')->query(current => $current) %>' + '&query=' + '<%= $query %>' + '&shuffle=' + x + '&autoplay=' + y + '&autoadvance=' + z;
+      var link = '<%= url_for('index')->query(current => $current) %>' + '&query=' + '<%= url_escape($query) %>' + '&shuffle=' + x + '&autoplay=' + y + '&autoadvance=' + z;
       window.location = link;
     }
   }
