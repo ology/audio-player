@@ -20,13 +20,13 @@ use constant PATH => 'public/Audio/'; # Where the audio files live
 use constant DAT  => "$0.dat";        # The tracks file
 
 get '/' => sub ($c) {
-  my $autoadvance = $c->param('autoadvance') || 0;
-  my $autoplay    = $c->param('autoplay') || 0;
-  my $current     = $c->param('current') || 0;
-  my $noinc       = $c->param('noinc') || 0;
-  my $shuffle     = $c->param('shuffle') || 0;
-  my $query       = $c->param('query') || '';
-  my $submit      = $c->param('submit') || '';
+  my $autoadvance = $c->param('autoadvance') || 0; # Automatically move to the next track
+  my $autoplay    = $c->param('autoplay') || 0;    # Start playing the current track
+  my $current     = $c->param('current') || 0;     # The most currently played track
+  my $noinc       = $c->param('noinc') || 0;       # Do not increment to the next track
+  my $shuffle     = $c->param('shuffle') || 0;     # Select a random to play next
+  my $query       = $c->param('query') || '';      # The (url_encoded) search query
+  my $submit      = $c->param('submit') || '';     # A fresh search has been submitted
 
   my $audio = []; # Bucket for all tracks
   my $match = []; # Bucket for all query matches
