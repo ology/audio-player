@@ -176,6 +176,7 @@ __DATA__
     </ol>
 % } else {
 %   if ($query) {
+    <p></p>
     <p>No matches</p>
 %   }
 % }
