@@ -266,7 +266,7 @@ $(document).ready(function() {
     if (plh.length >= max) {
       plh.shift();
     }
-    plh.push({ "<%= $track %>": "<%= $current %>" });
+    plh.push({ "<%== $track %>": "<%= $current %>" });
     localStorage.setItem('playlist_history', JSON.stringify(plh));
     advance(0);
   });
