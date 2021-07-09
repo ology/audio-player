@@ -31,6 +31,7 @@ get '/' => sub ($c) {
   my $audio = []; # Bucket for all tracks
   my $match = []; # Bucket for all query matches
 
+  # Load the track list or flash an error
   if (-e DAT) {
     $audio = retrieve(DAT);
   }
@@ -64,6 +65,7 @@ get '/' => sub ($c) {
     $current = $shuffle ? int(rand @$audio) : $noinc ? $current : $current + 1;
   }
 
+  # Add a number separator comma
   my $nf = Number::Format->new;
   my $total = $nf->format_number(scalar @$audio);
   my $matches = $nf->format_number(scalar @$match);
