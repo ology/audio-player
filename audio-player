@@ -243,10 +243,9 @@ $(document).ready(function() {
 
   $('#warning').hide();
 
-  var trackName = "<%== $track %>";
-  $('#myAudio').attr('src', trackName);
+  $('#myAudio').attr('src', "<%== $track %>");
   $('#myAudio').on('error', function() {
-    if ('<%= $track %>') {
+    if ("<%= $track %>") {
       console.log('Playback error!');
       $('#warning').show();
       // If there are matches but we have tried all of them, stop.
@@ -266,7 +265,7 @@ $(document).ready(function() {
     if (plh.length >= max) {
       plh.pop();
     }
-    plh.push({ '<%= $track %>': '<%= $current %>' });
+    plh.push({ "<%= $track %>": '<%= $current %>' });
     localStorage.setItem('playlist_history', JSON.stringify(plh));
     advance(0);
   });
