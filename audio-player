@@ -71,13 +71,15 @@ get '/' => sub ($c) {
   my $matches = $nf->format_number(scalar @$match);
 
   # Do not allow auto* if at end of audio
-  if ($current > @$audio) {
+  if ($current && $current > @$audio) {
     $autoadvance = 0;
     $autoplay    = 0;
   }
 
-  # Do not have a track when a search has been freshly submitted
-  my $track = $submit ? '' : $audio->[$current];
+  # Do not have a track when a search has been freshly submitted,
+  # or there is no current track index
+  my $track = $submit || !$current ? '' : $audio->[$current];
+  $track ||= '';
 #  app->log->debug("Track: $track");
 
   $c->render(
