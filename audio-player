@@ -330,8 +330,9 @@ $(document).ready(function() {
     <div style="font-size: small;">
       <hr>
       Built by <a href="http://gene.ology.net/">Gene</a>
-      with <a href="https://www.perl.org/">Perl</a>
-      and <a href="https://mojolicious.org/">Mojolicious</a>
+      with <a href="https://www.perl.org/">Perl</a>,
+      <a href="https://mojolicious.org/">Mojolicious</a>
+      and <a href="https://jquery.com/">jQuery</a>
     </div>
   </body>
 </html>
