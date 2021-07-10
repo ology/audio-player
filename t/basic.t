@@ -39,6 +39,6 @@ $t->get_ok('/?query=aabbccddeeffgg')
 $t->get_ok('/refresh')
   ->status_is(200);
 
-ok -e 'audio-player.dat', 'track file created';
+ok -e $t->app->moniker . '.dat', 'track file created';
 
 done_testing();
