@@ -26,7 +26,7 @@ $t->get_ok('/?current=999999999&autoadvance=1')
   ->element_exists('input[name=autoadvance]:not(:checked)')
   ->text_is('p[id=track]' => ' ');
 
-# no matches and no track is found
+# no matches and no track are found
 $t->get_ok('/?query=aabbccddeeffgg')
   ->status_is(200)
   ->content_like(qr/No matches/)
