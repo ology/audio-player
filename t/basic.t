@@ -18,13 +18,13 @@ $t->get_ok('/?autoadvance=1')
   ->status_is(200)
   ->element_exists('input[name=autoadvance]:checked');
 
+$t->get_ok('/?current=999999999&autoadvance=1')
+  ->status_is(200)
+  ->element_exists('input[name=autoadvance]:not(:checked)')
+  ->text_is('p[id=track]' => ' ');
+
 $t->get_ok('/?query=aabbccddeeffgg')
   ->status_is(200)
   ->content_like(qr/No matches/);
-
-$t->get_ok('/?current=999999999&autoadvance=1')
-  ->status_is(200)
-  ->text_is('p[id=track]' => ' ')
-  ->element_exists('input[name=autoadvance]:not(:checked)');
 
 done_testing();
