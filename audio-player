@@ -16,8 +16,8 @@ use Mojo::Util qw(url_escape url_unescape);
 use Number::Format ();
 use Storable qw(retrieve store);
 
-use constant PATH => 'public/Audio/'; # Where the audio files live
-use constant DAT  => "$0.dat";        # The tracks file
+use constant PATH => 'public/Audio/';       # Where the audio files live
+use constant DAT  => app->moniker . ".dat"; # The tracks file
 
 get '/' => sub ($c) {
   my $autoadvance = $c->param('autoadvance') || 0; # Automatically move to the next track
