@@ -10,6 +10,9 @@ my $script = curfile->dirname->sibling('audio-player');
 
 my $t = Test::Mojo->new($script);
 
+# Allow 302 redirect responses
+$t->ua->max_redirects(1);
+
 # autoadvance is not checked
 $t->get_ok('/')
   ->status_is(200)
@@ -31,5 +34,11 @@ $t->get_ok('/?query=aabbccddeeffgg')
   ->status_is(200)
   ->content_like(qr/No matches/)
   ->text_is('p[id=track]' => ' ');
+
+# refresh creates track file
+$t->get_ok('/refresh')
+  ->status_is(200);
+
+ok -e 'audio-player.dat', 'track file created';
 
 done_testing();
