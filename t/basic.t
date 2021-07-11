@@ -44,7 +44,7 @@ my $now = time;
 
 ok -e $filename, 'track file created';
 
-my $got = (stat($filename))[9];
-ok $got >= $now, 'track file is new';
+my $mtime = (stat($filename))[9];
+ok $mtime >= $now, 'track file is new';
 
 done_testing();
