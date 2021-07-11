@@ -45,7 +45,7 @@ subtest 'refresh creates track file' => sub {
 
   $t->get_ok('/refresh')
     ->status_is(200)
-    ->content_like(qr/Saved track list file/);
+    ->text_is('h4' => 'Saved track list file');
 
   my $mtime = (stat($filename))[9];
 
