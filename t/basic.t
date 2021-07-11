@@ -39,6 +39,12 @@ $t->get_ok('/?query=aabbccddeeffgg')
 $t->get_ok('/refresh')
   ->status_is(200);
 
-ok -e $t->app->moniker . '.dat', 'track file created';
+my $filename = $t->app->moniker . '.dat';
+my $now = time;
+
+ok -e $filename, 'track file created';
+
+my $got = (stat($filename))[9];
+ok $got >= $now, 'track file is new';
 
 done_testing();
