@@ -209,7 +209,7 @@ __DATA__
 % } else {
 %   if ($query) {
 <p></p>
-<p>No matches</p>
+<p id="no_matches">No matches</p>
 %   }
 % }
 

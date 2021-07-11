@@ -32,8 +32,8 @@ subtest 'autoadvance is not checked and no track is found' => sub {
 subtest 'no matches and no track are found' => sub {
   $t->get_ok('/?query=aabbccddeeffgg')
     ->status_is(200)
-    ->content_like(qr/No matches/)
-    ->text_is('p[id=track]' => ' ');
+    ->text_is('p[id=track]' => ' ')
+    ->text_is('p[id=no_matches]' => 'No matches');
 };
 
 subtest 'refresh creates track file' => sub {
