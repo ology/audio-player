@@ -13,38 +13,43 @@ my $t = Test::Mojo->new($script);
 # Allow 302 redirect responses
 $t->ua->max_redirects(1);
 
-# autoadvance is not checked
-$t->get_ok('/')
-  ->status_is(200)
-  ->element_exists('input[name=autoadvance]:not(:checked)');
+subtest 'autoadvance is not checked' => sub {
+  $t->get_ok('/')
+    ->status_is(200)
+    ->element_exists('input[name=autoadvance]:not(:checked)');
+};
 
-# autoadvance is checked
-$t->get_ok('/?autoadvance=1')
-  ->status_is(200)
-  ->element_exists('input[name=autoadvance]:checked');
+subtest 'autoadvance is checked' => sub {
+  $t->get_ok('/?autoadvance=1')
+    ->status_is(200)
+    ->element_exists('input[name=autoadvance]:checked');
+};
 
-# autoadvance is not checked and no track is found
-$t->get_ok('/?current=999999999&autoadvance=1')
-  ->status_is(200)
-  ->element_exists('input[name=autoadvance]:not(:checked)')
-  ->text_is('p[id=track]' => ' ');
+subtest 'autoadvance is not checked and no track is found' => sub {
+  $t->get_ok('/?current=999999999&autoadvance=1')
+    ->status_is(200)
+    ->element_exists('input[name=autoadvance]:not(:checked)')
+    ->text_is('p[id=track]' => ' ');
+};
 
-# no matches and no track are found
-$t->get_ok('/?query=aabbccddeeffgg')
-  ->status_is(200)
-  ->content_like(qr/No matches/)
-  ->text_is('p[id=track]' => ' ');
+subtest 'no matches and no track are found' => sub {
+  $t->get_ok('/?query=aabbccddeeffgg')
+    ->status_is(200)
+    ->content_like(qr/No matches/)
+    ->text_is('p[id=track]' => ' ');
+};
 
-# refresh creates track file
-$t->get_ok('/refresh')
-  ->status_is(200);
+subtest 'refresh creates track file' => sub {
+  $t->get_ok('/refresh')
+    ->status_is(200);
 
-my $filename = $t->app->moniker . '.dat';
-my $now = time;
+  my $filename = $t->app->moniker . '.dat';
+  my $now = time;
 
-ok -e $filename, 'track file created';
+  ok -e $filename, 'track file created';
 
-my $mtime = (stat($filename))[9];
-ok $mtime >= $now, 'track file is new';
+  my $mtime = (stat($filename))[9];
+  ok $mtime >= $now, 'track file is new';
+};
 
 done_testing();
