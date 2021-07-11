@@ -37,14 +37,15 @@ subtest 'no matches and no track are found' => sub {
 };
 
 subtest 'refresh creates track file' => sub {
+  my $filename = $t->app->moniker . '.dat';
+  my $now = time;
+
   # Allow 302 redirect responses
   $t->ua->max_redirects(1);
 
   $t->get_ok('/refresh')
     ->status_is(200);
 
-  my $now = time;
-  my $filename = $t->app->moniker . '.dat';
   my $mtime = (stat($filename))[9];
 
   ok -e $filename, 'track file created';
