@@ -48,8 +48,8 @@ subtest 'refresh creates track file' => sub {
 
   my $mtime = (stat($filename))[9];
 
-  ok -e $filename, 'track file created';
-  ok $mtime >= $now, 'track file is new';
+  ok -e $filename, 'file created';
+  ok $mtime >= $now, 'file is new';
 };
 
 done_testing();
