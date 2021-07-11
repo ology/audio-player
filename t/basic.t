@@ -44,7 +44,8 @@ subtest 'refresh creates track file' => sub {
   $t->ua->max_redirects(1);
 
   $t->get_ok('/refresh')
-    ->status_is(200);
+    ->status_is(200)
+    ->content_like(qr/Saved track list file/);
 
   my $mtime = (stat($filename))[9];
 
