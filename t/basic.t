@@ -43,12 +43,11 @@ subtest 'refresh creates track file' => sub {
   $t->get_ok('/refresh')
     ->status_is(200);
 
-  my $filename = $t->app->moniker . '.dat';
   my $now = time;
+  my $filename = $t->app->moniker . '.dat';
+  my $mtime = (stat($filename))[9];
 
   ok -e $filename, 'track file created';
-
-  my $mtime = (stat($filename))[9];
   ok $mtime >= $now, 'track file is new';
 };
 
