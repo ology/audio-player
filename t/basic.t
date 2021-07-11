@@ -10,9 +10,6 @@ my $script = curfile->dirname->sibling('audio-player');
 
 my $t = Test::Mojo->new($script);
 
-# Allow 302 redirect responses
-$t->ua->max_redirects(1);
-
 subtest 'autoadvance is not checked' => sub {
   $t->get_ok('/')
     ->status_is(200)
@@ -40,6 +37,9 @@ subtest 'no matches and no track are found' => sub {
 };
 
 subtest 'refresh creates track file' => sub {
+  # Allow 302 redirect responses
+  $t->ua->max_redirects(1);
+
   $t->get_ok('/refresh')
     ->status_is(200);
 
