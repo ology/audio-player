@@ -26,7 +26,7 @@ get '/' => sub ($c) {
   my $shuffle     = $c->param('shuffle') || 0;     # Select a random track to play next
   my $query       = $c->param('query') || '';      # The (url_escaped) search query
   my $submit      = $c->param('submit') || '';     # A fresh search has been submitted
-  my $show_rate   = $c->param('show_rate') || '';     # 
+  my $show_rate   = $c->param('show_rate') || '';  # Filter by the requested rate
 
   my $audio = {}; # Bucket for all tracks
   my $match = []; # Bucket for all query matches
