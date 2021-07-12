@@ -146,10 +146,7 @@ get '/refresh' => sub ($c) {
     $file = fix_latin($file);
 
     # Add the track to the audio list
-    $audio->{$i} = {
-      track  => $file,
-      rating => 0,
-    };
+    $audio->{$i} = { track => $file, rating => 0 };
 
     $i++;
   }
