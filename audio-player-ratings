@@ -214,7 +214,7 @@ __DATA__
 
 % # Rate track
   <b>Rating:</b>
-% for my $rate (qw(1 2 3 4 5)) {
+% for my $rate (qw(1 .. 5)) {
   &nbsp;
   <input type="radio" name="rating" value="<%= $current . ' ' . $rate %>" <%= $rate eq $rating ? 'checked' : '' %> />
 % }
