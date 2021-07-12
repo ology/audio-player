@@ -285,9 +285,9 @@ __DATA__
 %   for my $n (@$match) {
   <li>
 %     if ($track eq $audio->{$n}{track}) {
-    <b><a href="#" class="track_match" data-current="<%= $n %>"><%= $audio->[$n] %></a></b>
+    <b><a href="#" class="track_match" data-current="<%= $n %>"><%= $audio->{$n}{track} %></a></b>
 %     } else {
-    <a href="#" class="track_match" data-current="<%= $n %>"><%= $audio->[$n] %></a>
+    <a href="#" class="track_match" data-current="<%= $n %>"><%= $audio->{$n}{track} %></a>
 %     }
   </li>
 %   }
