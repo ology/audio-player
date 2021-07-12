@@ -78,7 +78,7 @@ get '/' => sub ($c) {
     }
 
     # Find the index of the current item in the search results
-    my $idx = $filtered->[$current];
+    my $idx = first_index { $current == $_ } @$filtered;
     $idx = 0 unless $idx;
 
     # If shuffling, get a random member of the matches,
