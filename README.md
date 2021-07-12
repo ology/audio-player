@@ -1,9 +1,13 @@
 # audio-player
 Mojolicious + HTML5 Audio Player App
 
-Lightweight, ultra-simple audio server!
+Light-weight, ultra-simple audio server!
 
 Write-up: [Mojolicious Music Player](https://ology.github.io/2021/06/04/mojolicious-music-player/)
+
+Before running, the perl dependencies are required:
+
+    audio-player $ cpanm --installdeps .
 
 First symlink your audio source in the public subdirectory:
 
