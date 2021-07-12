@@ -234,13 +234,13 @@ __DATA__
 
 % # Rate track
 <b>Rating:</b>
-% for my $rate (1 .. 5) {
+% for my $rate ([1,'Bad'], [2,'Poor'], [3,'Fair'], [4,'Good'], [5,'Best']) {
 &nbsp;
-<input type="radio" name="rating" value="<%= $current . ' ' . $rate %>" <%= $rate eq $rating ? 'checked' : '' %> />
+<input type="radio" name="rating" value="<%= $current . ' ' . $rate->[0] %>" <%= $rate->[0] eq $rating ? 'checked' : '' %> title="<%= $rate->[1] %>" />
 % }
 &nbsp;
 <b>Play:</b>
-<select name="show_rate" class="btn btn-mini">
+<select name="show_rate" class="btn btn-mini" title="Filter by rating">
   <option value="0">Any</option>
 % for my $show (
 %   '< 1', '= 1', '> 1',
