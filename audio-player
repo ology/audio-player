@@ -271,7 +271,7 @@ $(document).ready(function() {
   }
   $('#playlist').on('change', function() {
     var current = $(this).children('option:selected').val();
-    window.location = '<%= url_for('index')->query(autoplay => 1) %>' + '&current=' + current + '&noinc=1';
+    advance(1, current, 1);
   });
 
   $('#nextTrack').on('click', function() {
