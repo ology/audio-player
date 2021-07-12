@@ -306,10 +306,10 @@ $(document).ready( function () {
     $.ajax({
       url: "<%= url_for('rating') %>" + '?rating=' + rating,
       method: 'POST',
-      success: function(data, textStatus, jQxhr) {
+      success: function(data, textStatus, jqXHR) {
         console.log('Rating: ' + rating);
       },
-      error: function(jqXhr, textStatus, error) {
+      error: function(jqXHR, textStatus, error) {
         console.log('Rating: ' + error);
       }
     });
