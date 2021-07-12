@@ -10,6 +10,7 @@
 
 use Encoding::FixLatin qw(fix_latin);
 use File::Find::Rule ();
+use List::SomeUtils qw(first_index);
 use Mojolicious::Lite -signatures;
 use Mojo::Util qw(url_escape url_unescape);
 use Number::Format ();
@@ -44,12 +45,12 @@ get '/' => sub ($c) {
     $query = url_unescape($query);
 
     # Brute force through every track, looking for matches
-    for my $key (keys %$audio) {
+    for my $key (sort { $a <=> $b } keys %$audio) {
       push @$match, $key if lc($audio->{$key}{track}) =~ /$query/i;
     }
 
     # Find the index of the current item in the search results
-    my $idx = $match->[$current];
+    my $idx = first_index { $current == $_ } @$match;
     $idx = 0 unless $idx;
 
     # If shuffling, get a random member of the matches,
@@ -64,7 +65,7 @@ get '/' => sub ($c) {
     my ($op, $rate) = split / /, $show_rate;
     my $filtered = [];
 
-    for my $trk (keys %$audio) {
+    for my $trk (sort { $a <=> $b } keys %$audio) {
       if ($op eq '<') {
         push @$filtered, $trk if $audio->{$trk}{rating} < $rate;
       }
