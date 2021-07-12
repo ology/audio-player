@@ -216,9 +216,18 @@ __DATA__
 <script>
 $(document).ready(function() {
   function advance (force) {
-    var x = $('input[id=shuffle]:checked').val();
-    var y = $('input[id=autoplay]:checked').val();
-    var z = $('input[id=autoadvance]:checked').val();
+    var x = 0;
+    if ($('#shuffle').is(':checked')) {
+      x = 1;
+    }
+    var y = 0;
+    if ($('#autoplay').is(':checked')) {
+      y = 1;
+    }
+    z = 0;
+    if ($('#autoadvance').is(':checked')) {
+      z = 1;
+    }
     if (force === 1 || z === 1) {
       var link = "<%= url_for('index') %>?current=" + <%= $current || 0 %> + '&query=' + '<%= url_escape($query) %>' + '&shuffle=' + x + '&autoplay=' + y + '&autoadvance=' + z;
       window.location = link;
