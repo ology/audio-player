@@ -220,15 +220,15 @@ __DATA__
 </p>
 
 % # Rate track
-  <b>Rating:</b>
+<b>Rating:</b>
 % for my $rate (1 .. 5) {
-  &nbsp;
-  <input type="radio" name="rating" value="<%= $current . ' ' . $rate %>" <%= $rate eq $rating ? 'checked' : '' %> />
+&nbsp;
+<input type="radio" name="rating" value="<%= $current . ' ' . $rate %>" <%= $rate eq $rating ? 'checked' : '' %> />
 % }
-  &nbsp;
-  <b>Play:</b>
-  <select name="show_rate" class="btn btn-mini">
-    <option value="0">Any</option>
+&nbsp;
+<b>Play:</b>
+<select name="show_rate" class="btn btn-mini">
+  <option value="0">Any</option>
 % for my $show (
 %   '< 1', '= 1', '> 1',
 %   '< 2', '= 2', '> 2',
@@ -236,9 +236,10 @@ __DATA__
 %   '< 4', '= 4', '> 4',
 %   '< 5'
 % ) {
-    <option value="<%= $show %>" <%= $show_rate eq $show ? 'selected' : '' %>><%= $show %></option>
+  <option value="<%= $show %>" <%= $show_rate eq $show ? 'selected' : '' %>><%= $show %></option>
 % }
-  </select>
+</select>
+<p></p>
 
 % # Next track button
 <p>
