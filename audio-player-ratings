@@ -71,7 +71,7 @@ get '/' => sub ($c) {
   }
   else {
     # If shuffling, get a random audio track index, otherwise increment...
-    $current = $shuffle ? int(rand keys %$audio) : $noinc ? $current : $current + 1;
+    $current = $shuffle && !$noinc ? int(rand keys %$audio) : $noinc ? $current : $current + 1;
   }
 
   # Add a number separator comma
@@ -114,7 +114,7 @@ get '/' => sub ($c) {
 sub _get_current ($match, $current, $shuffle, $noinc) {
   # If shuffling, get a random member of the matches,
   # otherwise increment, unless we are told not to
-  if ($shuffle) {
+  if ($shuffle && !$noinc) {
     $current = $match->[int rand @$match];
   }
   else {
@@ -285,9 +285,9 @@ __DATA__
 %   for my $n (@$match) {
   <li>
 %     if ($track eq $audio->{$n}{track}) {
-    <b><a href="<%= url_for('index')->query(current => $n, noinc => 1, autoplay => 1, query => url_escape($query)) %>"><%= $audio->{$n}{track} %></a></b>
+    <b><a href="#" class="track_match" data-current="<%= $n %>"><%= $audio->[$n] %></a></b>
 %     } else {
-    <a href="<%= url_for('index')->query(current => $n, noinc => 1, autoplay => 1, query => url_escape($query)) %>"><%= $audio->{$n}{track} %></a>
+    <a href="#" class="track_match" data-current="<%= $n %>"><%= $audio->[$n] %></a>
 %     }
   </li>
 %   }
@@ -315,7 +315,10 @@ $(document).ready( function () {
     });
   }
 
-  function advance (force) {
+  function advance (force = 0, current = -1, noinc = 0) {
+    if (current === -1) {
+      current = <%= $current || 0 %>;
+    }
     var show_rate = $('select[name=show_rate] option').filter(':selected').val();
     var x = 0;
     if ($('#shuffle').is(':checked')) {
@@ -330,7 +333,7 @@ $(document).ready( function () {
       z = 1;
     }
     if (force === 1 || z === 1) {
-      var link = "<%= url_for('index') %>?current=" + <%= $current || 0 %> + '&query=' + '<%= url_escape($query) %>' + '&shuffle=' + x + '&autoplay=' + y + '&autoadvance=' + z + '&show_rate=' + show_rate;
+      var link = "<%= url_for('index') %>?current=" + current + '&noinc=' + noinc + '&query=' + '<%= url_escape($query) %>' + '&shuffle=' + x + '&autoplay=' + y + '&autoadvance=' + z;
       window.location = link;
     }
   }
@@ -369,7 +372,7 @@ $(document).ready( function () {
   }
   $('#playlist').on('change', function() {
     var current = $(this).children('option:selected').val();
-    window.location = '<%= url_for('index')->query(autoplay => 1) %>' + '&current=' + current + '&noinc=1';
+    advance(1, current, 1);
   });
 
   $('input[type=radio]').on('click', function() {
@@ -378,6 +381,11 @@ $(document).ready( function () {
 
   $('#nextTrack').on('click', function() {
     advance(1);
+  });
+
+  $('.track_match').on('click', function() {
+    current = $(this).attr('data-current');
+    advance(1, current, 1);
   });
 
   $('#warning').hide();
@@ -392,7 +400,7 @@ $(document).ready( function () {
         $('#autoadvance').prop('checked', false);
       }
       else {
-        advance(0);
+        advance();
       }
     }
   });
@@ -406,7 +414,7 @@ $(document).ready( function () {
     }
     plh.push({ "<%== $track %>": "<%= $current %>" });
     localStorage.setItem('playlist_history', JSON.stringify(plh));
-    advance(0);
+    advance();
   });
 });
 </script>
