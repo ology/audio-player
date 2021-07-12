@@ -136,7 +136,13 @@ get '/refresh' => sub ($c) {
                               ->name('*.mp3', '*.m4a')
                               ->in(PATH);
   my $audio = {};
+  my $old = {};
   my $i = 0;
+
+  # If a previous track file exists, use its ratings
+  if (-e DAT) {
+    $old = retrieve(DAT);
+  }
 
   # Process the filenames
   for my $file (@files) {
@@ -145,8 +151,12 @@ get '/refresh' => sub ($c) {
     # Make sure the name is properly displayable
     $file = fix_latin($file);
 
-    # Add the track to the audio list
-    $audio->{$i} = { track => $file, rating => 0 };
+    # Determine the track rating
+    my $rate = 0;
+    $rate = $old->{$i}{rating} if exists $old->{$i};
+
+    # Add the track and rate to the audio list
+    $audio->{$i} = { track => $file, rating => $rate };
 
     $i++;
   }
