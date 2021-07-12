@@ -338,6 +338,13 @@ $(document).ready( function () {
     }
   }
 
+  // Keep track of the volume
+  var vol = localStorage.getItem('playback_volume');
+  if (vol === null) {
+    vol = 1;
+    localStorage.setItem('playback_volume', vol);
+  }
+
   // Keep track of the number of page loads (for search play)
   var n = localStorage.getItem('on_load_counter');
   if (n === null || <%= $submit %> === 1) {
@@ -404,7 +411,13 @@ $(document).ready( function () {
       }
     }
   });
+  $('#myAudio').on('volumechange', function() {
+    var v = document.getElementById('myAudio').volume;
+    localStorage.setItem('playback_volume', v);
+    console.log('Volume changed to ' + v);
+  });
   $('#myAudio').on('playing', function() {
+    document.getElementById('myAudio').volume = vol;
     console.log('Playing...');
   });
   $('#myAudio').on('ended', function() {
