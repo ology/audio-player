@@ -49,17 +49,23 @@ get '/' => sub ($c) {
       push @$match, $key if lc($audio->{$key}{track}) =~ /$query/i;
     }
 
-    # Find the index of the current item in the search results
-    my $idx = first_index { $current == $_ } @$match;
-    $idx = 0 unless $idx;
-
     # If shuffling, get a random member of the matches,
     # otherwise increment, unless we are told not to
-    $current = $shuffle
-      ? $match->[int rand @$match]
-      : $noinc
-        ? $match->[$idx]
-        : $match->[$idx + 1];
+    if ($shuffle) {
+      $current = $match->[int rand @$match];
+    }
+    else {
+      # Find the index of the current item in the search results
+      my $idx = first_index { $current == $_ } @$match;
+      $idx = 0 unless $idx;
+
+      if ($noinc) {
+        $current = $match->[$idx];
+      }
+      else {
+        $current = $match->[$idx + 1];
+      }
+    }
   }
   elsif ($show_rate) {
     my ($op, $rate) = split / /, $show_rate;
@@ -77,17 +83,23 @@ get '/' => sub ($c) {
       }
     }
 
-    # Find the index of the current item in the search results
-    my $idx = first_index { $current == $_ } @$filtered;
-    $idx = 0 unless $idx;
-
     # If shuffling, get a random member of the matches,
     # otherwise increment, unless we are told not to
-    $current = $shuffle
-      ? $filtered->[int rand @$filtered]
-      : $noinc
-        ? $filtered->[$idx]
-        : $filtered->[$idx + 1];
+    if ($shuffle) {
+      $current = $filtered->[int rand @$filtered];
+    }
+    else {
+      # Find the index of the current item in the search results
+      my $idx = first_index { $current == $_ } @$filtered;
+      $idx = 0 unless $idx;
+
+      if ($noinc) {
+        $current = $filtered->[$idx];
+      }
+      else {
+        $current = $filtered->[$idx + 1];
+      }
+    }
   }
   else {
     # If shuffling, get a random audio track index, otherwise increment...
