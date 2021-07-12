@@ -307,7 +307,7 @@ $(document).ready( function () {
       url: "<%= url_for('rating') %>" + '?rating=' + rating,
       method: 'POST',
       success: function(data, textStatus, jQxhr) {
-        console.log('Rating: Success');
+        console.log('Rating: ' + rating);
       },
       error: function(jqXhr, textStatus, error) {
         console.log('Rating: ' + error);
