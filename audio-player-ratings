@@ -6,7 +6,7 @@
 # To run, symlink your audio source in a public subdirectory:
 # audio-player/public $ ln -s /media/you/external_drive/Music/ Audio
 # Then:
-# audio-player $ morbo audio-player
+# audio-player $ morbo audio-player-ratings
 
 use Encoding::FixLatin qw(fix_latin);
 use File::Find::Rule ();
