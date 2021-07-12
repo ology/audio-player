@@ -199,9 +199,9 @@ __DATA__
 %   for my $n (@$match) {
   <li>
 %     if ($track eq $audio->[$n]) {
-    <b><a href="<%= url_for('index')->query(current => $n, noinc => 1, autoplay => 1, query => url_escape($query)) %>"><%= $audio->[$n] %></a></b>
+    <b><a href="#" class="track_match" data-current="<%= $n %>"><%= $audio->[$n] %></a></b>
 %     } else {
-    <a href="<%= url_for('index')->query(current => $n, noinc => 1, autoplay => 1, query => url_escape($query)) %>"><%= $audio->[$n] %></a>
+    <a href="#" class="track_match" data-current="<%= $n %>"><%= $audio->[$n] %></a>
 %     }
   </li>
 %   }
@@ -216,6 +216,9 @@ __DATA__
 <script>
 $(document).ready(function() {
   function advance (force = 0, current = -1, noinc = 0) {
+    if (current === -1) {
+      current = <%= $current || 0 %>;
+    }
     var x = 0;
     if ($('#shuffle').is(':checked')) {
       x = 1;
@@ -229,7 +232,7 @@ $(document).ready(function() {
       z = 1;
     }
     if (force === 1 || z === 1) {
-      var link = "<%= url_for('index') %>?current=" + <%= $current || 0 %> + '&query=' + '<%= url_escape($query) %>' + '&shuffle=' + x + '&autoplay=' + y + '&autoadvance=' + z;
+      var link = "<%= url_for('index') %>?current=" + current + '&noinc=' + noinc + '&query=' + '<%= url_escape($query) %>' + '&shuffle=' + x + '&autoplay=' + y + '&autoadvance=' + z;
       window.location = link;
     }
   }
@@ -273,6 +276,11 @@ $(document).ready(function() {
 
   $('#nextTrack').on('click', function() {
     advance(1);
+  });
+
+  $('.track_match').on('click', function() {
+    current = $(this).attr('data-current');
+    advance(1, current, 1);
   });
 
   $('#warning').hide();
