@@ -36,7 +36,7 @@ get '/' => sub ($c) {
     $audio = retrieve(DAT);
   }
   else {
-    $c->flash(error => "Can't read track list file");
+    $c->flash(error => "Can't read track list file. Please /refresh");
   }
 
   if ($query) {
