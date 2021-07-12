@@ -209,6 +209,16 @@ __DATA__
 % # Current track name
 <p id="track"><b>Track:</b> <%= $track %></p>
 
+% # Audio widget
+<p>
+  <div>
+    <audio controls id="myAudio" <%= $autoplay ? "autoplay='autoplay'" : '' %> preload="auto" type="audio/mpeg" crossorigin="anonymous" style="vertical-align: middle;" src="">
+      Your browser does not support the <code>audio</code> element.
+    </audio>
+    <div id="warning" style="border: 1px solid red; color: red; display: inline-block;"><b>Could not load audio!</b></div>
+  </div>
+</p>
+
 % # Rate track
   <b>Rating:</b>
 % for my $rate (1 .. 5) {
@@ -229,16 +239,6 @@ __DATA__
     <option value="<%= $show %>" <%= $show_rate eq $show ? 'selected' : '' %>><%= $show %></option>
 % }
   </select>
-
-% # Audio widget
-<p>
-  <div>
-    <audio controls id="myAudio" <%= $autoplay ? "autoplay='autoplay'" : '' %> preload="auto" type="audio/mpeg" crossorigin="anonymous" style="vertical-align: middle;" src="">
-      Your browser does not support the <code>audio</code> element.
-    </audio>
-    <div id="warning" style="border: 1px solid red; color: red; display: inline-block;"><b>Could not load audio!</b></div>
-  </div>
-</p>
 
 % # Next track button
 <p>
