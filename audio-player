@@ -115,7 +115,7 @@ get '/refresh' => sub ($c) {
   # Save the files to disk
   store \@files, DAT;
 
-  $c->flash(message => "Saved track list file");
+  $c->flash(message => 'Saved track list file');
 
   $c->redirect_to($c->url_for('index'));
 } => 'refresh';
