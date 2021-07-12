@@ -281,10 +281,10 @@ __DATA__
 <ol>
 %   for my $n (@$match) {
   <li>
-%     if ($track eq $audio->[$n]) {
-    <b><a href="<%= url_for('index')->query(current => $n, noinc => 1, autoplay => 1, query => url_escape($query)) %>"><%= $audio->[$n] %></a></b>
+%     if ($track eq $audio->{$n}{track}) {
+    <b><a href="<%= url_for('index')->query(current => $n, noinc => 1, autoplay => 1, query => url_escape($query)) %>"><%= $audio->{$n}{track} %></a></b>
 %     } else {
-    <a href="<%= url_for('index')->query(current => $n, noinc => 1, autoplay => 1, query => url_escape($query)) %>"><%= $audio->[$n] %></a>
+    <a href="<%= url_for('index')->query(current => $n, noinc => 1, autoplay => 1, query => url_escape($query)) %>"><%= $audio->{$n}{track} %></a>
 %     }
   </li>
 %   }
