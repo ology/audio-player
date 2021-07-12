@@ -215,7 +215,7 @@ __DATA__
 
 <script>
 $(document).ready(function() {
-  function advance (force) {
+  function advance (force = 0, current = -1, noinc = 0) {
     var x = 0;
     if ($('#shuffle').is(':checked')) {
       x = 1;
@@ -287,7 +287,7 @@ $(document).ready(function() {
         $('#autoadvance').prop('checked', false);
       }
       else {
-        advance(0);
+        advance();
       }
     }
   });
@@ -301,7 +301,7 @@ $(document).ready(function() {
     }
     plh.push({ "<%== $track %>": "<%= $current %>" });
     localStorage.setItem('playlist_history', JSON.stringify(plh));
-    advance(0);
+    advance();
   });
 });
 </script>
