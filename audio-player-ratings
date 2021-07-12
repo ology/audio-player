@@ -220,7 +220,7 @@ __DATA__
 % }
   &nbsp;
   <b>Play:</b>
-  <select name="show_rate">
+  <select name="show_rate" class="btn btn-mini">
     <option value="0">Any</option>
 % for my $show (
 %   '< 1', '= 1', '> 1',
