@@ -1,0 +1,432 @@
+#!/usr/bin/env perl
+
+# Lightweight, ultra-simple audio server
+# Write-up: https://ology.github.io/2021/06/04/mojolicious-music-player/
+
+# To run, symlink your audio source in a public subdirectory:
+# audio-player/public $ ln -s /media/you/external_drive/Music/ Audio
+# Then:
+# audio-player $ morbo audio-player
+
+use Encoding::FixLatin qw(fix_latin);
+use File::Find::Rule ();
+use Mojolicious::Lite -signatures;
+use Mojo::Util qw(url_escape url_unescape);
+use Number::Format ();
+use Storable qw(retrieve store);
+
+use constant PATH => 'public/Audio/';       # Where the audio files live
+use constant DAT  => app->moniker . '.dat'; # The tracks file
+
+get '/' => sub ($c) {
+  my $autoadvance = $c->param('autoadvance') || 0; # Automatically move to the next track
+  my $autoplay    = $c->param('autoplay') || 0;    # Start playing the current track
+  my $current     = $c->param('current') || 0;     # The most currently played track
+  my $noinc       = $c->param('noinc') || 0;       # Do not increment to the next track
+  my $shuffle     = $c->param('shuffle') || 0;     # Select a random track to play next
+  my $query       = $c->param('query') || '';      # The (url_escaped) search query
+  my $submit      = $c->param('submit') || '';     # A fresh search has been submitted
+  my $show_rate   = $c->param('show_rate') || '';     # 
+
+  my $audio = {}; # Bucket for all tracks
+  my $match = []; # Bucket for all query matches
+
+  # Load the track list or flash an error
+  if (-e DAT) {
+    $audio = retrieve(DAT);
+  }
+  else {
+    $c->flash(error => "Can't read track list file");
+  }
+
+  if ($query) {
+    # Convert encoded things like &amp; back into &
+    $query = url_unescape($query);
+
+    # Brute force through every track, looking for matches
+    for my $key (keys %$audio) {
+      push @$match, $key if lc($audio->{$key}{track}) =~ /$query/i;
+    }
+
+    # Find the index of the current item in the search results
+    my $idx = $match->[$current];
+    $idx = 0 unless $idx;
+
+    # If shuffling, get a random member of the matches,
+    # otherwise increment, unless we are told not to
+    $current = $shuffle
+      ? $match->[int rand @$match]
+      : $noinc
+        ? $match->[$idx]
+        : $match->[$idx + 1];
+  }
+  elsif ($show_rate) {
+    my ($op, $rate) = split / /, $show_rate;
+    my $filtered = [];
+
+    for my $trk (keys %$audio) {
+      if ($op eq '<') {
+        push @$filtered, $trk if $audio->{$trk}{rating} < $rate;
+      }
+      if ($op eq '=') {
+        push @$filtered, $trk if $audio->{$trk}{rating} == $rate;
+      }
+      if ($op eq '>') {
+        push @$filtered, $trk if $audio->{$trk}{rating} > $rate;
+      }
+    }
+
+    # Find the index of the current item in the search results
+    my $idx = $filtered->[$current];
+    $idx = 0 unless $idx;
+
+    # If shuffling, get a random member of the matches,
+    # otherwise increment, unless we are told not to
+    $current = $shuffle
+      ? $filtered->[int rand @$filtered]
+      : $noinc
+        ? $filtered->[$idx]
+        : $filtered->[$idx + 1];
+  }
+  else {
+    # If shuffling, get a random audio track index, otherwise increment...
+    $current = $shuffle ? int(rand keys %$audio) : $noinc ? $current : $current + 1;
+  }
+
+  # Add a number separator comma
+  my $nf = Number::Format->new;
+  my $total = $nf->format_number(scalar keys %$audio);
+  my $matches = $nf->format_number(scalar @$match);
+
+  # Do not allow auto* if at end of audio
+  if ($current && $current > keys %$audio) {
+    $autoadvance = 0;
+    $autoplay    = 0;
+  }
+
+  # Do not have a track when a search has been freshly submitted,
+  # or there is no current track index
+  my $track = $submit || !$current ? '' : $audio->{$current}{track};
+  $track ||= '';
+#  app->log->debug("Track: $track");
+
+  my $rating = $audio->{$current}{rating} || 0;
+
+  $c->render(
+    template    => 'index',
+    total       => $total,
+    audio       => $audio,
+    track       => $track,
+    rating      => $rating,
+    autoplay    => $autoplay,
+    autoadvance => $autoadvance,
+    current     => $current,
+    shuffle     => $shuffle,
+    query       => $query,
+    match       => $match,
+    matches     => $matches,
+    submit      => $submit ? 1 : 0,
+    show_rate   => $show_rate,
+  );
+} => 'index';
+
+
+get '/refresh' => sub ($c) {
+  my @files = File::Find::Rule->file()
+                              ->name('*.mp3', '*.m4a')
+                              ->in(PATH);
+  my $audio = {};
+  my $i = 0;
+
+  # Process the filenames
+  for my $file (@files) {
+    # Remove "public" from the name
+    $file =~ s/^public//;
+    # Make sure the name is properly displayable
+    $file = fix_latin($file);
+
+    # Add the track to the audio list
+    $audio->{$i} = {
+      track  => $file,
+      rating => 0,
+    };
+
+    $i++;
+  }
+
+  # Save the files to disk
+  store $audio, DAT;
+
+  $c->flash(message => 'Saved track list file');
+
+  $c->redirect_to($c->url_for('index'));
+} => 'refresh';
+
+post '/rating' => sub ($c) {
+  my ($track, $rate) = split / /, $c->param('rating');
+
+  my $audio = retrieve(DAT);
+
+  $audio->{$track}{rating} = $rate;
+
+  store $audio, DAT;
+
+  $c->redirect_to($c->url_for('index'));
+} => 'rating';
+
+
+app->helper(url_escape => sub {
+  my ($c, $string) = @_;
+  return url_escape($string);
+});
+
+
+app->start;
+
+__DATA__
+
+@@ index.html.ep
+% layout 'default';
+% title 'Music!';
+
+% # Flash error/message
+% if (flash('error')) {
+%= tag h4 => (style => 'color:red') => flash('error')
+% }
+% if (flash('message')) {
+%= tag h4 => (style => 'color:green') => flash('message')
+% }
+
+% # Checkboxes
+<div>
+  <label for="autoadvance"><b>Autoadvance:</b></label>
+  <input type="checkbox" id="autoadvance" name="autoadvance" title="Automatically advance to the next track" <%= $autoadvance ? 'checked' : '' %> />
+  &nbsp;
+  <label for="autoplay"><b>Autoplay:</b></label>
+  <input type="checkbox" id="autoplay" name="autoplay" title="Automatically start playing the current track" <%= $autoplay ? 'checked' : '' %> />
+  &nbsp;
+  <label for="shuffle"><b>Shuffle:</b></label>
+  <input type="checkbox" id="shuffle" name="shuffle" title="Select a random track" <%= $shuffle ? 'checked' : '' %> />
+</div>
+
+% # Current track name
+<p id="track"><b>Track:</b> <%= $track %></p>
+
+% # Rate track
+  <b>Rating:</b>
+% for my $rate (qw(1 2 3 4 5)) {
+  &nbsp;
+  <input type="radio" name="rating" value="<%= $current . ' ' . $rate %>" <%= $rate eq $rating ? 'checked' : '' %> />
+% }
+  &nbsp;
+  <b>Play:</b>
+  <select name="show_rate">
+    <option value="0">Any</option>
+% for my $show (
+%   '< 1', '= 1', '> 1',
+%   '< 2', '= 2', '> 2',
+%   '< 3', '= 3', '> 3',
+%   '< 4', '= 4', '> 4',
+%   '< 5', '= 5'
+% ) {
+    <option value="<%= $show %>" <%= $show_rate eq $show ? 'selected' : '' %>><%= $show %></option>
+% }
+  </select>
+
+% # Audio widget
+<p>
+  <div>
+    <audio controls id="myAudio" <%= $autoplay ? "autoplay='autoplay'" : '' %> preload="auto" type="audio/mpeg" crossorigin="anonymous" style="vertical-align: middle;" src="">
+      Your browser does not support the <code>audio</code> element.
+    </audio>
+    <div id="warning" style="border: 1px solid red; color: red; display: inline-block;"><b>Could not load audio!</b></div>
+  </div>
+</p>
+
+% # Next track button
+<p>
+  <a href="#" id="nextTrack" class="btn btn-outline-dark">Next Track</a>
+  &nbsp;
+  Total: <%= $total %> tracks
+</p>
+
+% # Playlist history select
+<p>
+  <select id="playlist" name="playlist" class="form-control">
+    <option value="">History</option>
+  </select>
+</p>
+
+% # Search form
+<form method="get">
+  <input type="hidden" name="current" value="<%= $current %>" />
+  <input type="search" id="query" name="query" class="form-control" placeholder="Search" value="<%= $query %>" />
+  <p></p>
+  <input type="submit" name="submit" class="btn btn-primary" value="Submit" />
+  <input type="button" class="btn btn-secondary" onclick="location.href='<%= url_for('index')->query(autoadvance => 1, autoplay => 1, shuffle => 1) %>';" value="Clear & Go" />
+</form>
+
+% # Search query matches
+% if (@$match) {
+<p></p>
+<p><b>Matches:</b> <%= $matches %></p>
+<ol>
+%   for my $n (@$match) {
+  <li>
+%     if ($track eq $audio->[$n]) {
+    <b><a href="<%= url_for('index')->query(current => $n, noinc => 1, autoplay => 1, query => url_escape($query)) %>"><%= $audio->[$n] %></a></b>
+%     } else {
+    <a href="<%= url_for('index')->query(current => $n, noinc => 1, autoplay => 1, query => url_escape($query)) %>"><%= $audio->[$n] %></a>
+%     }
+  </li>
+%   }
+</ol>
+% } else {
+%   if ($query) {
+<p></p>
+<p id="no_matches">No matches</p>
+%   }
+% }
+
+<script>
+$(document).ready( function () {
+  function rating (e) {
+    var rating = $('input[name=rating]:checked').val();
+    $.ajax({
+      url: "<%= url_for('rating') %>" + '?rating=' + rating,
+      method: 'POST',
+      success: function(data, textStatus, jQxhr) {
+        console.log('Rating: Success');
+      },
+      error: function(jqXhr, textStatus, error) {
+        console.log('Rating: ' + error);
+      }
+    });
+  }
+
+  function advance (force) {
+    var show_rate = $('select[name=show_rate] option').filter(':selected').val();
+    var x = 0;
+    if ($('#shuffle').is(':checked')) {
+      x = 1;
+    }
+    var y = 0;
+    if ($('#autoplay').is(':checked')) {
+      y = 1;
+    }
+    z = 0;
+    if ($('#autoadvance').is(':checked')) {
+      z = 1;
+    }
+    if (force === 1 || z === 1) {
+      var link = "<%= url_for('index') %>?current=" + <%= $current || 0 %> + '&query=' + '<%= url_escape($query) %>' + '&shuffle=' + x + '&autoplay=' + y + '&autoadvance=' + z + '&show_rate=' + show_rate;
+      window.location = link;
+    }
+  }
+
+  // Keep track of the number of page loads (for search play)
+  var n = localStorage.getItem('on_load_counter');
+  if (n === null || <%= $submit %> === 1) {
+    n = 0;
+  }
+  n++;
+  localStorage.setItem('on_load_counter', n);
+
+  // Keep track of the played audio history
+//var plh = [];                                                  // Reset history
+//localStorage.setItem('playlist_history', JSON.stringify(plh)); // Reset history
+  var plh = JSON.parse(localStorage.getItem('playlist_history'));
+  if (plh === null) {
+    plh = [];
+    localStorage.setItem('playlist_history', JSON.stringify(plh));
+  }
+  var max = 10;
+  var j = 0;
+  for (var i = plh.length; i >= 0; i--) {
+    for (var key in plh[i]) {
+      if (plh[i].hasOwnProperty(key)) {
+        $('#playlist').append($('<option>', {
+          text: key,
+          value: plh[i][key]
+        }));
+      }
+    }
+    if (j >= max) {
+      break;
+    }
+    j++;
+  }
+  $('#playlist').on('change', function() {
+    var current = $(this).children('option:selected').val();
+    window.location = '<%= url_for('index')->query(autoplay => 1) %>' + '&current=' + current + '&noinc=1';
+  });
+
+  $('input[type=radio]').on('click', function() {
+    rating();
+  });
+
+  $('#nextTrack').on('click', function() {
+    advance(1);
+  });
+
+  $('#warning').hide();
+
+  $('#myAudio').attr('src', "<%== $track %>");
+  $('#myAudio').on('error', function() {
+    if ("<%= $track %>") {
+      console.log('Playback error!');
+      $('#warning').show();
+      // If there are matches but we have tried all of them, stop.
+      if (<%= @$match %> > 0 && n > <%= @$match %>) {
+        $('#autoadvance').prop('checked', false);
+      }
+      else {
+        advance(0);
+      }
+    }
+  });
+  $('#myAudio').on('playing', function() {
+    console.log('Playing...');
+  });
+  $('#myAudio').on('ended', function() {
+    console.log('...Ended');
+    if (plh.length >= max) {
+      plh.shift();
+    }
+    plh.push({ "<%== $track %>": "<%= $current %>" });
+    localStorage.setItem('playlist_history', JSON.stringify(plh));
+    advance(0);
+  });
+});
+</script>
+
+@@ layouts/default.html.ep
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <style>
+      body {
+        padding: 10px;
+        background-color: #FAF9F6;
+      }
+    </style>
+    <title><%= title %></title>
+  </head>
+  <body>
+    <%= content %>
+    <p></p>
+    <div style="font-size: small;">
+      <hr>
+      Built by <a href="http://gene.ology.net/">Gene</a>
+      with <a href="https://www.perl.org/">Perl</a>,
+      <a href="https://mojolicious.org/">Mojolicious</a>
+      and <a href="https://jquery.com/">jQuery</a>
+    </div>
+  </body>
+</html>
