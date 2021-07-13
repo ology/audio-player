@@ -307,6 +307,7 @@ $(document).ready( function () {
   }
 
   function advance (force = 0, current = -1, noinc = 0, useq = 1) {
+    var show_rate = $('select[name=show_rate] option').filter(':selected').val();
     var query = '';
     if (useq === 1) {
       query = $('input[name=query]').val();
@@ -314,7 +315,6 @@ $(document).ready( function () {
     if (current === -1) {
       current = <%= $current || 0 %>;
     }
-    var show_rate = $('select[name=show_rate] option').filter(':selected').val();
     var x = 0;
     if ($('#shuffle').is(':checked')) {
       x = 1;
