@@ -266,13 +266,6 @@ __DATA__
 </select>
 <p></p>
 
-% # Next track button
-<p>
-  <a href="#" id="nextTrack" class="btn btn-outline-dark" title="Advance to the next track">Next Track</a>
-  &nbsp;
-  Total: <%= $total %> tracks
-</p>
-
 % # Playlist history select
 <p>
   <select id="playlist" name="playlist" class="form-control">
@@ -288,6 +281,14 @@ __DATA__
     <i class="fa fa-times"></i>
   </button>
 </div>
+
+% # Next track button
+<p></p>
+<p>
+  <a href="#" id="nextTrack" class="btn btn-outline-dark" title="Advance to the next track">Next Track</a>
+  &nbsp;
+  Total: <%= $total %> tracks
+</p>
 
 % # Search query matches
 % if (@$match) {
