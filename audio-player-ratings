@@ -270,8 +270,6 @@ __DATA__
 
 % # Search query
 <input type="search" id="query" name="query" class="form-control" placeholder="Search" value="<%= $query %>" />
-<p></p>
-<input type="button" class="btn btn-secondary" onclick="location.href='<%= url_for('index')->query(autoadvance => 1, autoplay => 1, shuffle => 1) %>';" value="Clear & Go" />
 
 % # Search query matches
 % if (@$match) {
