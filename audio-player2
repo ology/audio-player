@@ -269,7 +269,7 @@ __DATA__
 % # Playlist history select
 <p>
   <select id="playlist" name="playlist" class="form-control">
-    <option value="">History</option>
+    <option value="" disabled selected>History</option>
   </select>
   <i class="fa fa-chevron-down"></i>
 </p>
