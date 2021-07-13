@@ -364,7 +364,7 @@ $(document).ready( function () {
 
   // Keep track of the played audio history
 //var plh = [];                                                  // Reset history
-//localStorage.setItem('playlist_history', JSON.stringify(plh)); // Reset history
+//localStorage.setItem('playlist_history', JSON.stringify(plh)); // Reset history & comment the next 5 lines:
   var plh = JSON.parse(localStorage.getItem('playlist_history'));
   if (plh === null) {
     plh = [];
