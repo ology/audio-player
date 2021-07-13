@@ -268,13 +268,10 @@ __DATA__
   </select>
 </p>
 
-% # Search form
-<form method="get">
-  <input type="search" id="query" name="query" class="form-control" placeholder="Search" value="<%= $query %>" />
-  <p></p>
-  <input type="submit" name="submit" class="btn btn-primary" value="Submit" />
-  <input type="button" class="btn btn-secondary" onclick="location.href='<%= url_for('index')->query(autoadvance => 1, autoplay => 1, shuffle => 1) %>';" value="Clear & Go" />
-</form>
+% # Search query
+<input type="search" id="query" name="query" class="form-control" placeholder="Search" value="<%= $query %>" />
+<p></p>
+<input type="button" class="btn btn-secondary" onclick="location.href='<%= url_for('index')->query(autoadvance => 1, autoplay => 1, shuffle => 1) %>';" value="Clear & Go" />
 
 % # Search query matches
 % if (@$match) {
@@ -314,7 +311,11 @@ $(document).ready( function () {
     });
   }
 
-  function advance (force = 0, current = -1, noinc = 0) {
+  function advance (force = 0, current = -1, noinc = 0, useq = 1) {
+    var query = '';
+    if (useq === 1) {
+      query = $('input[name=query]').val();
+    }
     if (current === -1) {
       current = <%= $current || 0 %>;
     }
@@ -332,7 +333,7 @@ $(document).ready( function () {
       z = 1;
     }
     if (force === 1 || z === 1) {
-      var link = "<%= url_for('index') %>?current=" + current + '&noinc=' + noinc + '&query=' + '<%= url_escape($query) %>' + '&shuffle=' + x + '&autoplay=' + y + '&autoadvance=' + z;
+      var link = "<%= url_for('index') %>?current=" + current + '&noinc=' + noinc + '&query=' + encodeURI(query) + '&shuffle=' + x + '&autoplay=' + y + '&autoadvance=' + z;
       window.location = link;
     }
   }
@@ -378,7 +379,7 @@ $(document).ready( function () {
   }
   $('#playlist').on('change', function() {
     var current = $(this).children('option:selected').val();
-    advance(1, current, 1);
+    advance(1, current, 1, 0);
   });
 
   $('input[type=radio]').on('click', function() {
