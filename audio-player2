@@ -190,9 +190,9 @@ get '/stats' => sub ($c) {
   my ($total, $unrated, $rate) = (0, 0, []);
 
   for my $key (keys %$audio) {
-    $total++;
     my $r = $audio->{$key}{rating};
     $rate->[$r]++;
+    $total++;
   }
 
   $c->render(
