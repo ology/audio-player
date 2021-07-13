@@ -26,7 +26,6 @@ get '/' => sub ($c) {
   my $noinc       = $c->param('noinc') || 0;       # Do not increment to the next track
   my $shuffle     = $c->param('shuffle') || 0;     # Select a random track to play next
   my $query       = $c->param('query') || '';      # The (url_escaped) search query
-  my $submit      = $c->param('submit') || '';     # A fresh search has been submitted
   my $show_rate   = $c->param('show_rate') || '';  # Filter by the requested rate
 
   my $audio = {}; # Bucket for all tracks
@@ -85,9 +84,8 @@ get '/' => sub ($c) {
     $autoplay    = 0;
   }
 
-  # Do not have a track when a search has been freshly submitted,
-  # or there is no current track index
-  my $track = $submit || !$current ? '' : $audio->{$current}{track};
+  # Do not have a track when there is no current track index
+  my $track = $current ? $audio->{$current}{track} : '';
   $track ||= '';
 #  app->log->debug("Track: $track");
 
@@ -106,7 +104,6 @@ get '/' => sub ($c) {
     query       => $query,
     match       => $match,
     matches     => $matches,
-    submit      => $submit ? 1 : 0,
     show_rate   => $show_rate,
   );
 } => 'index';
@@ -343,14 +340,6 @@ $(document).ready( function () {
     localStorage.setItem('playback_volume', vol);
   }
 
-  // Keep track of the number of page loads (for search play)
-  var n = localStorage.getItem('on_load_counter');
-  if (n === null || <%= $submit %> === 1) {
-    n = 0;
-  }
-  n++;
-  localStorage.setItem('on_load_counter', n);
-
   // Keep track of the played audio history
 //var plh = [];                                                  // Reset history
 //localStorage.setItem('playlist_history', JSON.stringify(plh)); // Reset history
@@ -400,13 +389,7 @@ $(document).ready( function () {
     if ("<%= $track %>") {
       console.log('Playback error!');
       $('#warning').show();
-      // If there are matches but we have tried all of them, stop.
-      if (<%= @$match %> > 0 && n > <%= @$match %>) {
-        $('#autoadvance').prop('checked', false);
-      }
-      else {
-        advance();
-      }
+      advance();
     }
   });
   $('#myAudio').on('volumechange', function() {
