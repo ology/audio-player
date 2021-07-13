@@ -463,32 +463,7 @@ $(document).ready( function () {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <style>
-      body {
-        padding: 10px;
-        background-color: #FAF9F6;
-      }
-
-      /* remove the original arrow */
-      select.input-lg {
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        -o-appearance: none;
-        /* no standardized syntax available, no ie-friendly solution available */
-      }
-
-      select + i.fa {
-        float: right;
-        margin-top: -30px;
-        margin-right: 5px;
-        /* this is so when you click on the chevron, your click actually goes on the dropdown menu */
-        pointer-events: none;
-        /* everything after this is just to cover up the original arrow */
-        /* (for browsers that don't support the syntax used above) */
-        background-color: #fff;
-        padding-right: 5px;
-      }
-    </style>
+    <link rel="stylesheet" href="/style.css">
     <title><%= title %></title>
   </head>
   <body>
