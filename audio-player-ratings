@@ -270,7 +270,6 @@ __DATA__
 
 % # Search form
 <form method="get">
-  <input type="hidden" name="current" value="<%= $current %>" />
   <input type="search" id="query" name="query" class="form-control" placeholder="Search" value="<%= $query %>" />
   <p></p>
   <input type="submit" name="submit" class="btn btn-primary" value="Submit" />
