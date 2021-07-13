@@ -80,12 +80,6 @@ get '/' => sub ($c) {
   my $total = $nf->format_number(scalar keys %$audio);
   my $matches = $nf->format_number(scalar @$match);
 
-  # Do not allow auto* if at end of audio
-  if ($current && $current > keys %$audio) {
-    $autoadvance = 0;
-    $autoplay    = 0;
-  }
-
   # Do not have a track when there is no current track index
   my $track = $current ? $audio->{$current}{track} : '';
   $track ||= '';
