@@ -278,11 +278,12 @@ __DATA__
   <select id="playlist" name="playlist" class="form-control">
     <option value="">History</option>
   </select>
+  <i class="fa fa-chevron-down"></i>
 </p>
 
 % # Search query
 <div class="input-group">
-  <input type="search" id="query" name="query" class="form-control" placeholder="Search" value="<%= $query %>" />
+  <input type="search" id="query" name="query" class="form-control input-lg" placeholder="Search" value="<%= $query %>" />
   <button type="button" id="clear_search" class="btn bg-transparent" style="margin-left: -40px; z-index: 100;">
     <i class="fa fa-times"></i>
   </button>
@@ -466,6 +467,26 @@ $(document).ready( function () {
       body {
         padding: 10px;
         background-color: #FAF9F6;
+      }
+
+      /* remove the original arrow */
+      select.input-lg {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        -o-appearance: none;
+        /* no standardized syntax available, no ie-friendly solution available */
+      }
+
+      select + i.fa {
+        float: right;
+        margin-top: -30px;
+        margin-right: 5px;
+        /* this is so when you click on the chevron, your click actually goes on the dropdown menu */
+        pointer-events: none;
+        /* everything after this is just to cover up the original arrow */
+        /* (for browsers that don't support the syntax used above) */
+        background-color: #fff;
+        padding-right: 5px;
       }
     </style>
     <title><%= title %></title>
