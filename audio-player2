@@ -425,13 +425,16 @@ $(document).ready( function () {
       advance();
     }
   });
+  $('#myAudio').on('loadedmetadata', function() {
+    console.log('Loaded metadata');
+    document.getElementById('myAudio').volume = vol;
+  });
   $('#myAudio').on('volumechange', function() {
     var v = document.getElementById('myAudio').volume;
     localStorage.setItem('playback_volume', v);
     console.log('Volume changed to ' + v);
   });
   $('#myAudio').on('playing', function() {
-    document.getElementById('myAudio').volume = vol;
     console.log('Playing: ' + '<%= $current %>');
   });
   $('#myAudio').on('ended', function() {
