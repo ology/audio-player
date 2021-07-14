@@ -241,7 +241,7 @@ __DATA__
 </p>
 
 % # Rate track
-<b><a href="/stats" style="color: black; text-decoration: none;">Rating</a>:</b>
+<b><a href="/stats" style="color: black; text-decoration: none;" title="Inspect rating stats">Rating</a>:</b>
 % for my $rate ([1,'Bad'], [2,'Poor'], [3,'Fair'], [4,'Good'], [5,'Best']) {
 &nbsp;
 <input type="radio" name="rating" value="<%= $current . ' ' . $rate->[0] %>" <%= $rate->[0] eq $rating ? 'checked' : '' %> title="<%= $rate->[1] %>" />
@@ -346,7 +346,7 @@ $(document).ready( function () {
       z = 1;
     }
     if (force === 1 || z === 1) {
-      var link = "<%= url_for('index') %>?current=" + current + '&noinc=' + noinc + '&query=' + encodeURI(query) + '&shuffle=' + x + '&autoplay=' + y + '&autoadvance=' + z;
+      var link = "<%= url_for('index') %>?current=" + current + '&noinc=' + noinc + '&query=' + encodeURI(query) + '&shuffle=' + x + '&autoplay=' + y + '&autoadvance=' + z + '&show_rate=' + show_rate;
       window.location = link;
     }
   }
