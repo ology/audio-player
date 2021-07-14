@@ -327,14 +327,17 @@ $(document).ready( function () {
   }
 
   function advance (force = 0, current = -1, noinc = 0, useq = 1) {
+    var show_rate = $('select[name=show_rate] option').filter(':selected').val();
     var query = '';
     if (useq === 1) {
       query = $('input[name=query]').val();
+      if (query) {
+        show_rate = '';
+      }
     }
-    var show_rate = $('select[name=show_rate] option').filter(':selected').val();
-//    if (query) {
+    else {
       show_rate = '';
-//    }
+    }
     if (current === -1) {
       current = <%= $current || 0 %>;
     }
