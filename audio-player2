@@ -116,6 +116,7 @@ sub _get_current ($match, $current, $shuffle, $noinc) {
     my $idx = first_index { $current == $_ } @$match;
     $idx = 0 unless $idx;
 
+    # To increment, or not to increment...
     if ($noinc) {
       $current = $match->[$idx];
     }
