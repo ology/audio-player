@@ -77,17 +77,17 @@ get '/' => sub ($c) {
     $current = $shuffle && !$noinc ? int(rand keys %$audio) : $noinc ? $current : $current + 1;
   }
 
-  # Add a number separator comma
-  my $nf = Number::Format->new;
-  my $total = $nf->format_number(scalar keys %$audio);
-  my $matches = $nf->format_number(scalar @$match);
-
   # Do not have a track when there is no current track index
   my $track = $current ? $audio->{$current}{track} : '';
   $track ||= '';
 #  app->log->debug("Track: $track");
 
   my $rating = $audio->{$current}{rating} || 0;
+
+  # Add a number separator comma
+  my $nf = Number::Format->new;
+  my $total = $nf->format_number(scalar keys %$audio);
+  my $matches = $nf->format_number(scalar @$match);
 
   $c->render(
     template    => 'index',
