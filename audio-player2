@@ -338,20 +338,20 @@ $(document).ready( function () {
     if (current === -1) {
       current = <%= $current || 0 %>;
     }
-    var x = 0;
+    var shuffle = 0;
     if ($('#shuffle').is(':checked')) {
-      x = 1;
+      shuffle = 1;
     }
-    var y = 0;
+    var autoplay = 0;
     if ($('#autoplay').is(':checked')) {
-      y = 1;
+      autoplay = 1;
     }
-    z = 0;
+    autoadvance = 0;
     if ($('#autoadvance').is(':checked')) {
-      z = 1;
+      autoadvance = 1;
     }
     if (force === 1 || z === 1) {
-      var link = "<%= url_for('index') %>?current=" + current + '&noinc=' + noinc + '&query=' + encodeURI(query) + '&shuffle=' + x + '&autoplay=' + y + '&autoadvance=' + z + '&show_rate=' + show_rate;
+      var link = "<%= url_for('index') %>?current=" + current + '&noinc=' + noinc + '&query=' + encodeURI(query) + '&shuffle=' + shuffle + '&autoplay=' + autoplay + '&autoadvance=' + autoadvance + '&show_rate=' + show_rate;
       window.location = link;
     }
   }
