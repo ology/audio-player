@@ -431,7 +431,7 @@ $(document).ready( function () {
   });
   $('#myAudio').on('playing', function() {
     document.getElementById('myAudio').volume = vol;
-    console.log('Playing...');
+    console.log('Playing: ' + '<%= $current %>');
   });
   $('#myAudio').on('ended', function() {
     console.log('...Ended');
