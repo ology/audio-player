@@ -14,7 +14,7 @@ use Encoding::FixLatin qw(fix_latin);
 use File::Find::Rule ();
 use List::SomeUtils qw(first_index);
 use Mojolicious::Lite -signatures;
-use Mojo::Util qw(url_escape url_unescape);
+use Mojo::Util qw(url_unescape);
 use Number::Format ();
 use Storable qw(retrieve store);
 
@@ -195,12 +195,6 @@ get '/stats' => sub ($c) {
     rate     => $rate,
   );
 } => 'stats';
-
-
-app->helper(url_escape => sub {
-  my ($c, $string) = @_;
-  return url_escape($string);
-});
 
 
 app->start;
