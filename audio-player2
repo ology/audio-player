@@ -85,12 +85,10 @@ get '/' => sub ($c) {
 
   # Add a number separator comma
   my $nf = Number::Format->new;
-  my $total = $nf->format_number(scalar keys %$audio);
   my $matches = $nf->format_number(scalar @$match);
 
   $c->render(
     template    => 'index',
-    total       => $total,
     audio       => $audio,
     track       => $track,
     rating      => $rating,
@@ -279,12 +277,12 @@ __DATA__
   </button>
 </div>
 
-% # Next track button
+% # Track buttons
 <p></p>
 <p>
-  <button id="nextTrack" class="btn btn-outline-dark" title="Advance to the next track">Next Track</button>
+  <button id="firstTrack" class="btn btn-outline-dark" title="Move to the first track"><i class="fa fa-fast-backward" aria-hidden="true"></i> First track</button>
   &nbsp;
-  <span class="text-secondary">Total: <%= $total %> tracks</span>
+  <button id="nextTrack" class="btn btn-outline-dark" title="Advance to the next track">Next track <i class="fa fa-step-forward" aria-hidden="true"></i></button>
 </p>
 
 % # Search query matches
@@ -409,6 +407,10 @@ $(document).ready( function () {
 
   $('#clear_search').on('click', function() {
     $('input[name=query]').val('');
+  });
+
+  $('#firstTrack').on('click', function() {
+    advance(1, 0, 1);
   });
 
   $('#nextTrack').on('click', function() {
