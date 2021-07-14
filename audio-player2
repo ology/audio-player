@@ -183,7 +183,7 @@ post '/rating' => sub ($c) {
 get '/stats' => sub ($c) {
   my $audio = retrieve(DAT);
 
-  my ($total, $unrated, $rate, $rated) = (0, 0, []);
+  my ($total, $rate, $rated) = (0, 0, []);
 
   for my $key (keys %$audio) {
     my $r = $audio->{$key}{rating};
