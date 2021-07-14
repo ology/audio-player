@@ -183,10 +183,11 @@ post '/rating' => sub ($c) {
 get '/stats' => sub ($c) {
   my $audio = retrieve(DAT);
 
-  my ($total, $unrated, $rate) = (0, 0, []);
+  my ($total, $unrated, $rate, $rated) = (0, 0, []);
 
   for my $key (keys %$audio) {
     my $r = $audio->{$key}{rating};
+    $rated++ if $r;
     $rate->[$r]++;
     $total++;
   }
@@ -195,6 +196,7 @@ get '/stats' => sub ($c) {
     template => 'stats',
     total    => $total,
     rate     => $rate,
+    rated    => $rated,
   );
 } => 'stats';
 
@@ -445,6 +447,7 @@ $(document).ready( function () {
 % layout 'default';
 % title 'Music stats';
 <p><b>Total:</b> <%= $total %></p>
+<p><b>Rated:</b> <%= $rated %></p>
 % for my $i (0 .. $#$rate) {
 <p><b><%= $i %> rating:</b> <%= $rate->[$i] %></p>
 % }
