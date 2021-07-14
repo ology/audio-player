@@ -350,7 +350,7 @@ $(document).ready( function () {
     if ($('#autoadvance').is(':checked')) {
       autoadvance = 1;
     }
-    if (force === 1 || z === 1) {
+    if (force === 1 || autoadvance === 1) {
       var link = "<%= url_for('index') %>?current=" + current + '&noinc=' + noinc + '&query=' + encodeURI(query) + '&shuffle=' + shuffle + '&autoplay=' + autoplay + '&autoadvance=' + autoadvance + '&show_rate=' + show_rate;
       window.location = link;
     }
