@@ -249,7 +249,6 @@ __DATA__
 <input type="radio" name="rating" value="<%= $current . ' ' . $rate->[0] %>" <%= $rate->[0] eq $rating ? 'checked' : '' %> title="<%= $rate->[1] %>" />
 % }
 &nbsp;
-<b>Play:</b>
 <select name="show_rate" class="btn btn-mini" title="Filter by rating">
   <option value="0">Any</option>
 % for my $show (
