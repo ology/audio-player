@@ -15,7 +15,7 @@ select + i.fa {
   float: right;
   margin-top: -30px;
   margin-right: 5px;
-  /* this is so when you click on the chevron, your click actually goes on the dropdown menu */
+  /* this is so when you click on the chevron, the click goes to the dropdown menu */
   pointer-events: none;
   /* everything after this is just to cover up the original arrow */
   /* (for browsers that don't support the syntax used above) */
