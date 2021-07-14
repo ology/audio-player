@@ -113,7 +113,7 @@ sub _get_current ($match, $current, $shuffle, $noinc) {
   }
   else {
     # Find the index of the current item in the search results
-    my $idx = first_index { $current == $_ } @$match;
+    my $idx = first_index { $_ >= $current } @$match;
     $idx = 0 unless $idx;
 
     # To increment, or not to increment...
