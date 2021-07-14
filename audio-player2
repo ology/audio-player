@@ -40,7 +40,7 @@ get '/' => sub ($c) {
     $audio = retrieve(DAT);
   }
   else {
-    $c->flash(error => "Can't read track list file. Please /refresh");
+    $c->flash(message => 'Cannot read track list file. Please <a href="/refresh">refresh</a>');
   }
 
   if ($query) {
@@ -214,7 +214,7 @@ __DATA__
 %= tag h4 => (style => 'color:red') => flash('error')
 % }
 % if (flash('message')) {
-%= tag h4 => (style => 'color:green') => flash('message')
+%= tag h4 => (style => 'color:green') => sub { flash('message') }
 % }
 
 % # Checkboxes
