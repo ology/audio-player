@@ -21,4 +21,4 @@ And browse to http://127.0.0.1:3000/refresh
 
 ~
 
-The audio-player2 app is the evolution of the original, but with ratings and more streamlined interface/behavior.
+The audio-player2 app is the evolution of the original, but with ratings and streamlined interface/behavior.
