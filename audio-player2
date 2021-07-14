@@ -277,7 +277,7 @@ __DATA__
 % # Search query
 <div class="input-group">
   <input type="search" id="query" name="query" class="form-control" placeholder="Search" value="<%= $query %>" />
-  <button type="button" id="clear_search" class="btn bg-transparent" style="margin-left: -40px; z-index: 100;">
+  <button type="button" id="clear_search" class="btn bg-transparent" style="margin-left: -40px; z-index: 100;" title="Clear the search query">
     <i class="fa fa-times"></i>
   </button>
 </div>
