@@ -332,9 +332,9 @@ $(document).ready( function () {
       query = $('input[name=query]').val();
     }
     var show_rate = $('select[name=show_rate] option').filter(':selected').val();
-    if (query) {
+//    if (query) {
       show_rate = '';
-    }
+//    }
     if (current === -1) {
       current = <%= $current || 0 %>;
     }
