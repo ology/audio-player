@@ -62,10 +62,10 @@ get '/' => sub ($c) {
       if ($op eq '<') {
         push @$filtered, $trk if $audio->{$trk}{rating} < $rate;
       }
-      if ($op eq '=') {
+      elsif ($op eq '=') {
         push @$filtered, $trk if $audio->{$trk}{rating} == $rate;
       }
-      if ($op eq '>') {
+      elsif ($op eq '>') {
         push @$filtered, $trk if $audio->{$trk}{rating} > $rate;
       }
     }
