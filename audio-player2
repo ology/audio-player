@@ -285,7 +285,7 @@ __DATA__
 % # Next track button
 <p></p>
 <p>
-  <a href="#" id="nextTrack" class="btn btn-outline-dark" title="Advance to the next track">Next Track</a>
+  <button id="nextTrack" class="btn btn-outline-dark" title="Advance to the next track">Next Track</button>
   &nbsp;
   Total: <%= $total %> tracks
 </p>
