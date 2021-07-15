@@ -410,7 +410,7 @@ $(document).ready( function () {
   });
 
   $('#firstTrack').on('click', function() {
-    advance(0, 0, 1, 0);
+    advance(1, 0, 1, 0);
   });
 
   $('#nextTrack').on('click', function() {
