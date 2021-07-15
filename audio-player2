@@ -233,7 +233,7 @@ __DATA__
 % # Audio widget
 <p>
   <div>
-    <audio controls id="myAudio" <%= $autoplay ? "autoplay='autoplay'" : '' %> preload="auto" type="audio/mpeg" crossorigin="anonymous" style="vertical-align: middle;" volume="0" src="<%== $track %>">
+    <audio controls id="myAudio" <%= $autoplay ? "autoplay='autoplay'" : '' %> preload="auto" type="audio/mpeg" crossorigin="anonymous" style="vertical-align: middle;" src="<%== $track %>">
       Your browser does not support the <code>audio</code> element.
     </audio>
     <div id="warning" style="border: 1px solid red; color: red; display: inline-block;"><b>Could not load audio!</b></div>
