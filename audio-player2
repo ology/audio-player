@@ -419,7 +419,7 @@ $(document).ready( function () {
 
   $('.track_match').on('click', function() {
     current = $(this).attr('data-current');
-    advance(1, current, 1);
+    advance(1, current, 1, 0);
   });
 
   $('#warning').hide();
