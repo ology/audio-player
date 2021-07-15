@@ -248,7 +248,7 @@ __DATA__
 % }
 &nbsp;
 <select name="show_rate" class="btn btn-mini" title="Filter by rating">
-  <option value="0">Any</option>
+  <option value="">Any</option>
 % for my $show (
 %   '< 1', '= 1', '> 1',
 %   '< 2', '= 2', '> 2',
