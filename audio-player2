@@ -20,8 +20,8 @@ use Mojo::Util qw(url_unescape);
 use Number::Format ();
 use Storable qw(retrieve store);
 
-use constant PATH => 'public/Audio/';       # Where the audio files live
-use constant DAT  => app->moniker . '.dat'; # The tracks file
+use constant PATH   => 'public/Audio/';       # Where the audio files live
+use constant TRACKS => app->moniker . '.dat'; # The tracks file
 
 get '/' => sub ($c) {
   my $autoadvance = $c->param('autoadvance') || 0; # Automatically move to the next track
@@ -36,8 +36,8 @@ get '/' => sub ($c) {
   my $match = []; # Bucket for all query matches
 
   # Load the track list or flash an error
-  if (-e DAT) {
-    $audio = retrieve(DAT);
+  if (-e TRACKS) {
+    $audio = retrieve(TRACKS);
   }
   else {
     $c->flash(message => 'Cannot read track list file. Please <a href="/refresh">refresh</a>');
@@ -130,8 +130,8 @@ sub _get_current ($match, $current, $shuffle, $noinc) {
 get '/refresh' => sub ($c) {
   # If a previous track file exists, use its ratings
   my $old = {};
-  if (-e DAT) {
-    $old = retrieve(DAT);
+  if (-e TRACKS) {
+    $old = retrieve(TRACKS);
   }
 
   my %by_name;
@@ -163,7 +163,7 @@ get '/refresh' => sub ($c) {
   }
 
   # Save the files to disk
-  store $audio, DAT;
+  store $audio, TRACKS;
 
   $c->flash(message => 'Saved track list file');
 
@@ -173,18 +173,18 @@ get '/refresh' => sub ($c) {
 post '/rating' => sub ($c) {
   my ($track, $rate) = split / /, $c->param('rating');
 
-  my $audio = retrieve(DAT);
+  my $audio = retrieve(TRACKS);
 
   $audio->{$track}{rating} = $rate;
 
-  store $audio, DAT;
+  store $audio, TRACKS;
 
   $c->redirect_to($c->url_for('index'));
 } => 'rating';
 
 
 get '/stats' => sub ($c) {
-  my $audio = retrieve(DAT);
+  my $audio = retrieve(TRACKS);
 
   my ($total, $rated, $rate) = (0, 0, []);
 
