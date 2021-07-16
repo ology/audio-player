@@ -136,6 +136,7 @@ get '/refresh' => sub ($c) {
     $old = retrieve(TRACKS);
   }
 
+  # Assume there are no duplicate tracks
   my %by_name;
   for my $i (keys %$old) {
     $by_name{ $old->{$i}{track} } = $old->{$i}{rating};
