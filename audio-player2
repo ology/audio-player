@@ -58,6 +58,7 @@ get '/' => sub ($c) {
     my ($op, $rate) = split / /, $show_rate;
     my $filtered = [];
 
+    # Gather the filtered tracks
     for my $trk (sort { $a <=> $b } keys %$audio) {
       if ($op eq '<') {
         push @$filtered, $trk if $audio->{$trk}{rating} < $rate;
