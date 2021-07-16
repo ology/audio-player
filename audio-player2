@@ -56,6 +56,7 @@ get '/' => sub ($c) {
   }
   elsif ($show_rate) {
     my ($op, $rate) = split / /, $show_rate;
+
     my $filtered = [];
 
     # Gather the filtered tracks
