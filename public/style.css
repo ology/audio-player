@@ -22,3 +22,27 @@ select + i.fa {
   background-color: #fff;
   padding-right: 5px;
 }
+
+#warning {
+  border: 1px solid red;
+  color: red;
+  display: inline-block;
+}
+
+#myAudio {
+  vertical-align: middle;
+}
+
+#stats_link {
+  color: black;
+  text-decoration: none;
+}
+
+#clear_search {
+  margin-left: -40px;
+  z-index: 100;
+}
+
+#footer {
+  font-size: small;
+}
