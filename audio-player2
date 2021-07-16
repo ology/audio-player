@@ -128,19 +128,23 @@ sub _get_current ($match, $current, $shuffle, $noinc) {
 
 
 get '/refresh' => sub ($c) {
-  my @files = File::Find::Rule->file()
-                              ->name('*.mp3', '*.m4a')
-                              ->in(PATH);
-  my $audio = {};
-  my $old = {};
-  my $i = 0;
-
   # If a previous track file exists, use its ratings
+  my $old = {};
   if (-e DAT) {
     $old = retrieve(DAT);
   }
 
+  my %by_name;
+  for my $i (keys %$old) {
+    $by_name{ $old->{$i}{track} } = $old->{$i}{rating};
+  }
+
   # Process the filenames
+  my @files = File::Find::Rule->file()
+                              ->name('*.mp3', '*.m4a')
+                              ->in(PATH);
+  my $audio = {};
+  my $n = 0;
   for my $file (@files) {
     # Remove "public" from the name
     $file =~ s/^public//;
@@ -149,13 +153,13 @@ get '/refresh' => sub ($c) {
 
     # Determine the track rating
     my $rate = 0;
-    $rate = $old->{$i}{rating}
-      if exists $old->{$i} && $old->{$i}{track} eq $file;
+    $rate = $by_name{$file}
+      if exists $by_name{$file};
 
     # Add the track and rate to the audio list
-    $audio->{$i} = { track => $file, rating => $rate };
+    $audio->{$n} = { track => $file, rating => $rate };
 
-    $i++;
+    $n++;
   }
 
   # Save the files to disk
