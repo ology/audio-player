@@ -309,6 +309,8 @@ __DATA__
 
 <script>
 $(document).ready( function () {
+
+% # Rate track function
   function rating (e) {
     var rating = $('input[name=rating]:checked').val();
     $.ajax({
@@ -323,6 +325,7 @@ $(document).ready( function () {
     });
   }
 
+% # Advance track function
   function advance (force = 0, current = -1, noinc = 0, useq = 1) {
     var show_rate = '';
     var query = '';
@@ -359,14 +362,14 @@ $(document).ready( function () {
     }
   }
 
-  // Keep track of the volume
+% # Keep track of the volume
   var vol = localStorage.getItem('playback_volume');
   if (vol === null) {
     vol = 1;
     localStorage.setItem('playback_volume', vol);
   }
 
-  // Keep track of the played audio history
+% # Keep track of the played audio history
 //var plh = [];                                                  // Reset history
 //localStorage.setItem('playlist_history', JSON.stringify(plh)); // Reset history & comment the next 5 lines:
   var plh = JSON.parse(localStorage.getItem('playlist_history'));
@@ -390,40 +393,38 @@ $(document).ready( function () {
     }
     j++;
   }
+
+% # Miscelaneous jQuery on events
   $('#playlist').on('change', function() {
     var current = $(this).children('option:selected').val();
     advance(1, current, 1, 0);
   });
-
   $('#query').on('keypress', function (e) {
       if (e.which == 13) {
         advance();
       }
   });
-
   $('input[type=radio]').on('click', function() {
     rating();
   });
-
   $('#clear_search').on('click', function() {
     $('input[name=query]').val('');
   });
-
   $('#firstTrack').on('click', function() {
     advance(1, 0, 1, 0);
   });
-
   $('#nextTrack').on('click', function() {
     advance(1);
   });
-
   $('.track_match').on('click', function() {
     current = $(this).attr('data-current');
     advance(1, current, 1);
   });
 
+% # Hide the playback warning
   $('#warning').hide();
 
+% # Configure the audio element
   $('#myAudio').attr('src', "<%== $track %>");
   $('#myAudio').on('error', function() {
     if ("<%= $track %>") {
@@ -453,6 +454,7 @@ $(document).ready( function () {
     localStorage.setItem('playlist_history', JSON.stringify(plh));
     advance();
   });
+
 });
 </script>
 
