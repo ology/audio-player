@@ -149,7 +149,8 @@ get '/refresh' => sub ($c) {
 
     # Determine the track rating
     my $rate = 0;
-    $rate = $old->{$i}{rating} if exists $old->{$i};
+    $rate = $old->{$i}{rating}
+      if exists $old->{$i} && $old->{$i}{track} eq $file;
 
     # Add the track and rate to the audio list
     $audio->{$i} = { track => $file, rating => $rate };
