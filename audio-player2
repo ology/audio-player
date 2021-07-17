@@ -174,7 +174,9 @@ get '/refresh' => sub ($c) {
 } => 'refresh';
 
 post '/rating' => sub ($c) {
-  my ($track, $rate) = split / /, $c->param('rating');
+  my $track = $c->param('current');
+  my $rate  = $c->param('rating');
+warn(__PACKAGE__,' ',__LINE__," MARK: $track, $rate\n");
 
   my $audio = retrieve(TRACKS);
 
@@ -252,7 +254,7 @@ __DATA__
 <b><a href="/stats" id="stats_link" title="Inspect rating stats">Rating</a>:</b>
 % for my $rate ([0,'None'], [1,'Bad'], [2,'Poor'], [3,'Fair'], [4,'Good'], [5,'Best']) {
 &nbsp;
-<input type="radio" name="rating" value="<%= $current . ' ' . $rate->[0] %>" <%= $rate->[0] eq $rating ? 'checked' : '' %> title="<%= $rate->[1] %>" />
+<input type="radio" name="rating" value="<%= $rate->[0] %>" <%= $rate->[0] eq $rating ? 'checked' : '' %> title="<%= $rate->[1] %>" />
 % }
 &nbsp;
 <select name="show_rate" class="btn btn-mini" title="Filter by rating">
@@ -322,7 +324,7 @@ $(document).ready( function () {
   function rating (e) {
     var rating = $('input[name=rating]:checked').val();
     $.ajax({
-      url: "<%= url_for('rating') %>" + '?rating=' + rating,
+      url: "<%= url_for('rating') %>" + '?current=' + <%= $current %> + '&rating=' + rating,
       method: 'POST',
       success: function(data, textStatus, jqXHR) {
         console.log('Rating: ' + rating);
