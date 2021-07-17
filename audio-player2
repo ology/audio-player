@@ -176,7 +176,6 @@ get '/refresh' => sub ($c) {
 post '/rating' => sub ($c) {
   my $track = $c->param('current');
   my $rate  = $c->param('rating');
-warn(__PACKAGE__,' ',__LINE__," MARK: $track, $rate\n");
 
   my $audio = retrieve(TRACKS);
 
