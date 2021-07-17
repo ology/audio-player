@@ -30,7 +30,7 @@ get '/' => sub ($c) {
   my $noinc       = $c->param('noinc') || 0;       # Do not increment to the next track
   my $shuffle     = $c->param('shuffle') || 0;     # Select a random track to play next
   my $query       = $c->param('query') || '';      # The (url_escaped) search query
-  my $show_rate   = $c->param('show_rate') || '';  # Filter by the requested rate
+  my $show_rate   = $c->param('showrate') || '';   # Filter by the requested rate
 
   my $audio = {}; # Bucket for all tracks
   my $match = []; # Bucket for all query matches
@@ -257,7 +257,7 @@ __DATA__
 <input type="radio" name="rating" value="<%= $rate->[0] %>" <%= $rate->[0] eq $rating ? 'checked' : '' %> title="<%= $rate->[1] %>" />
 % }
 &nbsp;
-<select name="show_rate" class="btn btn-mini" title="Filter by rating">
+<select name="showrate" class="btn btn-mini" title="Filter by rating">
   <option value="">Any</option>
 % for my $show (
 %   '< 1', '= 1', '> 1',
@@ -337,13 +337,13 @@ $(document).ready( function () {
 
 % # Advance track function
   function advance (force = 0, current = -1, noinc = 0, useq = 1) {
-    var show_rate = '';
+    var showrate = '';
     var query = '';
     if (useq === 1) {
       query = $('input[name=query]').val();
     }
     if (!query || query.length === 0) {
-      show_rate = $('select[name=show_rate] option').filter(':selected').val();
+      showrate = $('select[name=showrate] option').filter(':selected').val();
     }
     if (current === -1) {
       current = <%= $current || 0 %>;
@@ -367,7 +367,7 @@ $(document).ready( function () {
         + '&shuffle=' + shuffle
         + '&autoplay=' + autoplay
         + '&autoadvance=' + autoadvance
-        + '&show_rate=' + show_rate;
+        + '&showrate=' + showrate;
       window.location = link;
     }
   }
