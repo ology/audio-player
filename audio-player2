@@ -282,7 +282,7 @@ __DATA__
 % # Search query
 <div class="input-group">
   <input type="search" id="query" name="query" class="form-control" placeholder="Search" value="<%= $query %>" title="Track search query" />
-  <button type="button" id="clear_search" class="btn bg-transparent" title="Clear the search query">
+  <button type="button" id="clearsearch" class="btn bg-transparent" title="Clear the search query">
     <i class="fa fa-times"></i>
   </button>
 </div>
@@ -303,9 +303,9 @@ __DATA__
 %   for my $n (@$match) {
   <li>
 %     if ($track eq $audio->{$n}{track}) {
-    <b><a href="#" class="track_match" data-current="<%= $n %>"><%= $audio->{$n}{track} %></a></b>
+    <b><a href="#" class="trackmatch" data-current="<%= $n %>"><%= $audio->{$n}{track} %></a></b>
 %     } else {
-    <a href="#" class="track_match" data-current="<%= $n %>"><%= $audio->{$n}{track} %></a>
+    <a href="#" class="trackmatch" data-current="<%= $n %>"><%= $audio->{$n}{track} %></a>
 %     }
   </li>
 %   }
@@ -417,7 +417,7 @@ $(document).ready( function () {
   $('input[type=radio]').on('click', function() {
     rating();
   });
-  $('#clear_search').on('click', function() {
+  $('#clearsearch').on('click', function() {
     $('input[name=query]').val('');
   });
   $('#firsttrack').on('click', function() {
@@ -426,7 +426,7 @@ $(document).ready( function () {
   $('#nexttrack').on('click', function() {
     advance(1);
   });
-  $('.track_match').on('click', function() {
+  $('.trackmatch').on('click', function() {
     current = $(this).attr('data-current');
     advance(1, current, 1);
   });
