@@ -33,12 +33,12 @@ select + i.fa {
   display: inline-block;
 }
 
-#stats_link {
+#statslink {
   color: black;
   text-decoration: none;
 }
 
-#clear_search {
+#clearsearch {
   margin-left: -40px;
   z-index: 100;
 }

@@ -251,7 +251,7 @@ __DATA__
 </p>
 
 % # Rate track
-<b><a href="/stats" id="stats_link" title="Inspect rating stats">Rating</a>:</b>
+<b><a href="/stats" id="statslink" title="Inspect rating stats">Rating</a>:</b>
 % for my $rate ([0,'None'], [1,'Bad'], [2,'Poor'], [3,'Fair'], [4,'Good'], [5,'Best']) {
 &nbsp;
 <input type="radio" name="rating" value="<%= $rate->[0] %>" <%= $rate->[0] eq $rating ? 'checked' : '' %> title="<%= $rate->[1] %>" />
