@@ -54,7 +54,8 @@ get '/' => sub ($c) {
 
     $current = _get_current($match, $current, $shuffle, $noinc);
   }
-  elsif ($show_rate) {
+  # Don't compute track rates if not incrementing
+  elsif ($show_rate && !$noinc) {
     my ($op, $rate) = split / /, $show_rate;
 
     my $filtered = [];
@@ -340,9 +341,9 @@ $(document).ready( function () {
     var query = '';
     if (useq === 1) {
       query = $('input[name=query]').val();
-      if (!query || query.length === 0) {
-        show_rate = $('select[name=show_rate] option').filter(':selected').val();
-      }
+    }
+    if (!query || query.length === 0) {
+      show_rate = $('select[name=show_rate] option').filter(':selected').val();
     }
     if (current === -1) {
       current = <%= $current || 0 %>;
