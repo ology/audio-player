@@ -30,7 +30,7 @@ get '/' => sub ($c) {
   my $noinc       = $c->param('noinc') || 0;       # Do not increment to the next track
   my $shuffle     = $c->param('shuffle') || 0;     # Select a random track to play next
   my $query       = $c->param('query') || '';      # The (url_escaped) search query
-  my $show_rate   = $c->param('showrate') || '';   # Filter by the requested rate
+  my $showrate    = $c->param('showrate') || '';   # Filter by the requested rate
 
   my $audio = {}; # Bucket for all tracks
   my $match = []; # Bucket for all query matches
@@ -55,8 +55,8 @@ get '/' => sub ($c) {
     $current = _get_current($match, $current, $shuffle, $noinc);
   }
   # Don't compute track rates if not incrementing
-  elsif ($show_rate && !$noinc) {
-    my ($op, $rate) = split / /, $show_rate;
+  elsif ($showrate && !$noinc) {
+    my ($op, $rate) = split / /, $showrate;
 
     my $filtered = [];
 
@@ -102,7 +102,7 @@ get '/' => sub ($c) {
     query       => $query,
     match       => $match,
     matches     => $matches,
-    show_rate   => $show_rate,
+    showrate    => $showrate,
   );
 } => 'index';
 
@@ -266,7 +266,7 @@ __DATA__
 %   '< 4', '= 4', '> 4',
 %   '< 5'
 % ) {
-  <option value="<%= $show %>" <%= $show_rate eq $show ? 'selected' : '' %>><%= $show %></option>
+  <option value="<%= $show %>" <%= $showrate eq $show ? 'selected' : '' %>><%= $show %></option>
 % }
 </select>
 <p></p>
