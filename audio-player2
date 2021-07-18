@@ -187,6 +187,10 @@ get '/refresh' => sub ($c) {
 } => 'refresh';
 
 
+get '/noop' => sub ($c) {
+  $c->render(template => 'noop');
+} => 'noop';
+
 post '/rating' => sub ($c) {
   my $track = $c->param('current');
   my $rate  = $c->param('rating');
@@ -197,7 +201,7 @@ post '/rating' => sub ($c) {
 
   store $audio, TRACKS;
 
-  $c->redirect_to($c->url_for('index'));
+  $c->redirect_to($c->url_for('noop'));
 } => 'rating';
 
 
@@ -480,6 +484,11 @@ $(document).ready( function () {
 
 });
 </script>
+
+
+@@ noop.html.ep
+% layout 'default';
+% title 'noop';
 
 
 @@ stats.html.ep
