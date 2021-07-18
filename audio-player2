@@ -470,7 +470,7 @@ $(document).ready( function () {
     console.log('Volume: ' + v);
   });
   $('#myAudio').on('playing', function() {
-    console.log('Playing: ' + '<%= $current %>');
+    console.log('Playing: ' + <%= $current %>);
   });
   $('#myAudio').on('ended', function() {
     console.log('...Ended');
