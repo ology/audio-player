@@ -2,11 +2,11 @@
 
 * Without git:
 
-1. Create a new folder on the desktop called 'audio-player'.
+1. Create a new folder on the Desktop called 'audio-player'.
 
 2. Create a folder under this called 'public'.
 
-3. Save the 'audio-player2', 'cpanfile' and 'public/style.css' files to the Desktop audio-player folder.
+3. Save the 'audio-player2', 'cpanfile' and 'public/style.css' files to the Desktop audio-player (and public) folder.
 
   https://raw.githubusercontent.com/ology/audio-player/main/audio-player2
   https://raw.githubusercontent.com/ology/audio-player/main/cpanfile
