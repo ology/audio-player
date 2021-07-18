@@ -21,6 +21,7 @@ use Number::Format ();
 use Storable qw(retrieve store);
 
 use constant PATH   => 'public/Audio/';       # Where the audio files live
+use constant EXTS   => ('*.mp3', '*.m4a');    # The track files of interest
 use constant TRACKS => app->moniker . '.dat'; # The tracks file
 
 get '/' => sub ($c) {
@@ -146,7 +147,7 @@ get '/refresh' => sub ($c) {
   # Process the filenames
   my $audio = {};
   my @files = File::Find::Rule->file()
-                              ->name('*.mp3', '*.m4a')
+                              ->name(EXTS)
                               ->in(PATH);
   my $n = 0;
   for my $file (@files) {
