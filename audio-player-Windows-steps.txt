@@ -1,0 +1,46 @@
+0. Install https://strawberryperl.com/
+
+* Without git:
+
+1. Create a new folder on the desktop called 'audio-player'.
+
+2. Create a folder under this called 'public'.
+
+3. Save the 'audio-player2', 'cpanfile' and 'public/style.css' files to the Desktop audio-player folder.
+
+  https://raw.githubusercontent.com/ology/audio-player/main/audio-player2
+  https://raw.githubusercontent.com/ology/audio-player/main/cpanfile
+  https://raw.githubusercontent.com/ology/audio-player/main/public/style.css
+
+4. Open the program "Perl (command line)", which is basically a cmd prompt, *as* the Administrator.
+
+5. Type "cd C:\Users\you\Desktop\audio-player" (without quotes) and hit enter!
+
+6. Type: cpanm --installdeps .
+
+7. Create a shortcut to your music files, called 'Audio', under the public subdirectory. Type:
+
+  mklink /D C:\Users\you\Desktop\audio-player\public\Audio "C:\Users\you\some external network share\Music"
+
+8. Type: morbo audio-player2
+
+9. Browse to http://127.0.0.1:3000/refresh and hit the "Next" track button.
+
+(Remember to turn on "Allow audio and video" for this site, in your browser security settings - usually an icon left of the URL.)
+
+~~~
+
+* With git:
+
+1. Open the program "Perl (command line)" *as* the Administrator.
+
+2. Type:
+
+  cd C:\Users\you\Desktop
+
+  git clone https://github.com/ology/audio-player.git
+
+  cd audio-player
+
+3. Follow the above steps, starting with #6.
+
