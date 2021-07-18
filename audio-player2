@@ -78,7 +78,7 @@ get '/' => sub ($c) {
 
   # Do not have a track when there is no current track index
   my $track = $audio->{$current}{track} || '';
-#  app->log->debug("Track: $track");
+#  app->log->debug("Current: $current, Track: $track");
 
   my $rating = $audio->{$current}{rating} || 0;
 
