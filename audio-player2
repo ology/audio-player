@@ -220,7 +220,7 @@ __DATA__
 
 % # Flash error/message
 % if (flash('error')) {
-%= tag h4 => (style => 'color:red') => flash('error')
+%= tag h4 => (style => 'color:red') => sub { flash('error') }
 % }
 % if (flash('message')) {
 %= tag h4 => (style => 'color:green') => sub { flash('message') }
