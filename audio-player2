@@ -21,7 +21,7 @@ use Number::Format ();
 use Storable qw(retrieve store);
 
 use constant PATH   => 'public/Audio/';       # Where the audio files live
-use constant EXTS   => ('*.mp3', '*.m4a');    # The track files of interest
+use constant EXTS   => ('*.mp3', '*.m4a');    # The tracks of interest
 use constant TRACKS => app->moniker . '.dat'; # The tracks file
 
 get '/' => sub ($c) {
