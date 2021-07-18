@@ -447,6 +447,7 @@ $(document).ready( function () {
   $('#warning').hide();
 
 % # Configure the audio element
+  $('#myAudio').focus();
   $('#myAudio').attr('src', "<%== $track %>");
   $('#myAudio').on('error', function() {
     if ("<%= $track %>") {
