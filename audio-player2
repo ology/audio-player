@@ -467,7 +467,7 @@ $(document).ready( function () {
   $('#myAudio').on('volumechange', function() {
     var v = document.getElementById('myAudio').volume;
     localStorage.setItem('playback_volume', v);
-    console.log('Volume changed to ' + v);
+    console.log('Volume: ' + v);
   });
   $('#myAudio').on('playing', function() {
     console.log('Playing: ' + '<%= $current %>');
