@@ -51,6 +51,7 @@ get '/' => sub ($c) {
 
     # Brute force through every track, looking for matches
     for my $key (sort { $a <=> $b } keys %$audio) {
+      next if $showrate && !_in_rate_range($showrate, $audio->{$key}{rating});
       push @$match, $key if lc($audio->{$key}{track}) =~ /$query/i;
     }
 
@@ -129,6 +130,24 @@ sub _get_current ($match, $current, $shuffle, $noinc) {
   }
 
   return $current;
+}
+
+sub _in_rate_range ($shown, $rating) {
+  my ($op, $rate) = split / /, $shown;
+
+  my $in_range = 0;
+
+  if ($op eq '<') {
+    $in_range++ if $rating < $rate;
+  }
+  elsif ($op eq '=') {
+    $in_range++ if $rating == $rate;
+  }
+  elsif ($op eq '>') {
+    $in_range++ if $rating > $rate;
+  }
+
+  return $in_range;
 }
 
 
@@ -338,13 +357,10 @@ $(document).ready( function () {
 
 % # Advance track function
   function advance (force = 0, current = -1, noinc = 0, useq = 1) {
-    var showrate = '';
+    var showrate = $('select[name=showrate] option').filter(':selected').val();
     var query = '';
     if (useq === 1) {
       query = $('input[name=query]').val();
-    }
-    if (!query || query.length === 0) {
-      showrate = $('select[name=showrate] option').filter(':selected').val();
     }
     if (current === -1) {
       current = <%= $current || 0 %>;
