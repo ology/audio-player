@@ -46,12 +46,14 @@ get '/' => sub ($c) {
   }
 
   if ($query) {
+    my ($op, $rate) = split / /, $showrate;
+
     # Convert encoded things like &amp; back into &
     $query = url_unescape($query);
 
     # Brute force through every track, looking for matches
     for my $key (sort { $a <=> $b } keys %$audio) {
-      next if $showrate && !_in_rate_range($showrate, $audio->{$key}{rating});
+      next if $showrate && !_in_rate_range($op, $rate, $audio->{$key}{rating});
       push @$match, $key if lc($audio->{$key}{track}) =~ /$query/i;
     }
 
@@ -65,15 +67,8 @@ get '/' => sub ($c) {
 
     # Gather the filtered tracks
     for my $trk (sort { $a <=> $b } keys %$audio) {
-      if ($op eq '<') {
-        push @$filtered, $trk if $audio->{$trk}{rating} < $rate;
-      }
-      elsif ($op eq '=') {
-        push @$filtered, $trk if $audio->{$trk}{rating} == $rate;
-      }
-      elsif ($op eq '>') {
-        push @$filtered, $trk if $audio->{$trk}{rating} > $rate;
-      }
+      next if !_in_rate_range($op, $rate, $audio->{$trk}{rating});
+      push @$filtered, $trk;
     }
 
     $current = _get_current($filtered, $current, $shuffle, $noinc);
@@ -132,19 +127,17 @@ sub _get_current ($match, $current, $shuffle, $noinc) {
   return $current;
 }
 
-sub _in_rate_range ($shown, $rating) {
-  my ($op, $rate) = split / /, $shown;
-
+sub _in_rate_range ($op, $rate, $track_rating) {
   my $in_range = 0;
 
   if ($op eq '<') {
-    $in_range++ if $rating < $rate;
+    $in_range++ if $track_rating < $rate;
   }
   elsif ($op eq '=') {
-    $in_range++ if $rating == $rate;
+    $in_range++ if $track_rating == $rate;
   }
   elsif ($op eq '>') {
-    $in_range++ if $rating > $rate;
+    $in_range++ if $track_rating > $rate;
   }
 
   return $in_range;
