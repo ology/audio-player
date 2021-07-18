@@ -26,7 +26,7 @@
 
 9. Browse to http://127.0.0.1:3000/refresh and hit the "Next" track button.
 
-(Remember to turn on "Allow audio and video" for this site, in your browser security settings - usually an icon left of the URL.)
+(Remember to "Allow audio and video" for this site, in your browser security settings - usually an icon left of the URL.)
 
 ~~~
 
