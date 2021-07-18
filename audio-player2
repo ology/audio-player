@@ -84,11 +84,13 @@ get '/' => sub ($c) {
 
   # Add a number separator comma
   my $nf = Number::Format->new;
+  my $total = $nf->format_number(scalar keys %$audio);
   my $matches = $nf->format_number(scalar @$match);
 
   $c->render(
     template    => 'index',
     audio       => $audio,
+    total       => $total,
     track       => $track,
     rating      => $rating,
     autoplay    => $autoplay,
@@ -304,6 +306,8 @@ __DATA__
   <button id="firsttrack" class="btn btn-outline-dark" title="Move to the first track"><i class="fa fa-fast-backward" aria-hidden="true"></i> First</button>
   &nbsp;
   <button id="nexttrack" class="btn btn-outline-dark" title="Advance to the next track">Next <i class="fa fa-step-forward" aria-hidden="true"></i></button>
+  &nbsp;
+  <span class="text-secondary"><%= $total %> tracks</span>
 </p>
 
 % # Search query matches
