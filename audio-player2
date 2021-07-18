@@ -34,6 +34,8 @@ get '/' => sub ($c) {
   my $query       = $c->param('query') || '';      # The (url_escaped) search query
   my $showrate    = $c->param('showrate') || '';   # Filter by the requested rate
 
+  my ($op, $rate) = split / /, $showrate;
+
   my $audio = {}; # Bucket for all tracks
   my $match = []; # Bucket for all query matches
 
@@ -46,8 +48,6 @@ get '/' => sub ($c) {
   }
 
   if ($query) {
-    my ($op, $rate) = split / /, $showrate;
-
     # Convert encoded things like &amp; back into &
     $query = url_unescape($query);
 
@@ -61,8 +61,6 @@ get '/' => sub ($c) {
   }
   # Don't compute track rates if not incrementing
   elsif ($showrate && !$noinc) {
-    my ($op, $rate) = split / /, $showrate;
-
     my $filtered = [];
 
     # Gather the filtered tracks
