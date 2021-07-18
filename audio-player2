@@ -24,6 +24,7 @@ use constant PATH   => 'public/Audio/';       # Where the audio files live
 use constant EXTS   => ('*.mp3', '*.m4a');    # The tracks of interest
 use constant TRACKS => app->moniker . '.dat'; # The tracks file
 
+
 get '/' => sub ($c) {
   my $autoadvance = $c->param('autoadvance') || 0; # Automatically move to the next track
   my $autoplay    = $c->param('autoplay') || 0;    # Start playing the current track
@@ -174,6 +175,7 @@ get '/refresh' => sub ($c) {
 
   $c->redirect_to($c->url_for('index'));
 } => 'refresh';
+
 
 post '/rating' => sub ($c) {
   my $track = $c->param('current');
