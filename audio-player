@@ -82,7 +82,7 @@ get '/' => sub ($c) {
 
   # Do not have a track when a search has been freshly submitted,
   # or there is no current track index
-  my $track = $submit || !$current ? '' : $audio->[$current];
+  my $track = $submit || !defined $current ? '' : $audio->[$current];
   $track ||= '';
 #  app->log->debug("Track: $track");
 
