@@ -5,8 +5,10 @@
 # Lightweight, ultra-simple audio server
 # Write-up: https://ology.github.io/2021/06/04/mojolicious-music-player/
 
-# To run, symlink your audio source in a public subdirectory:
+# To run, symlink your audio source in the public subdirectory:
 # audio-player/public $ ln -s /media/you/external_drive/Music/ Audio
+# Or on windows, as the Administrator:
+# mklink /D C:\Users\you\wherever\audio-player\public\Audio "C:\Users\you\external drive\Music"
 # Then:
 # audio-player $ morbo audio-player2
 # And browse to:
