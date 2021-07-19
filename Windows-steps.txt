@@ -14,15 +14,21 @@
 
 4. Open the program "Perl (command line)", which is basically a cmd prompt, *as* the Administrator.
 
-5. Type "cd C:\Users\you\Desktop\audio-player" (without quotes) and hit enter!
+5. Change directory to where the audio-player lives.  Type:
 
-6. Type: cpanm --installdeps .
+  cd C:\Users\you\Desktop\audio-player
+
+6. Install the app dependencies.  Type:
+
+  cpanm --installdeps .
 
 7. Create a shortcut to your music files, called 'Audio', under the public subdirectory. Type:
 
   mklink /D C:\Users\you\Desktop\audio-player\public\Audio "C:\Users\you\some external network share\Music"
 
-8. Type: morbo audio-player2
+8. Start the webserver!  Type:
+
+  morbo audio-player2
 
 9. Browse to http://127.0.0.1:3000/refresh and hit the "Next" track button.
 
