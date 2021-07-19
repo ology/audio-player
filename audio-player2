@@ -199,12 +199,8 @@ post '/rating' => sub ($c) {
 
   store $audio, TRACKS;
 
-  $c->redirect_to($c->url_for('noop'));
+  $c->render(text => "Rated track $track at $rate");
 } => 'rating';
-
-get '/noop' => sub ($c) {
-  $c->render(template => 'noop');
-} => 'noop';
 
 
 get '/stats' => sub ($c) {
@@ -486,11 +482,6 @@ $(document).ready( function () {
 
 });
 </script>
-
-
-@@ noop.html.ep
-% layout 'default';
-% title 'noop';
 
 
 @@ stats.html.ep
