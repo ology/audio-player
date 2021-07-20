@@ -82,7 +82,7 @@ get '/' => sub ($c) {
   my $track = $audio->{$current}{track} || '';
 #  app->log->debug("Current: $current, Track: $track");
 
-  my $rating = $audio->{$current}{rating};
+  my $rating = $audio->{$current}{rating} || 0;
 
   # Add a number separator comma
   my $nf = Number::Format->new;
