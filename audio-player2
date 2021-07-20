@@ -78,6 +78,7 @@ get '/' => sub ($c) {
     $current = $shuffle && !$noinc ? int(rand keys %$audio) : $noinc ? $current : $current + 1;
   }
 
+  # Handle the undef case that makes bad things happen
   $current = -1 if !defined $current;
 
   # Do not have a track when there is no current track index
