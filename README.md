@@ -1,5 +1,4 @@
-# audio-player
-Mojolicious + HTML5 Audio Player App
+# Mojolicious + HTML5 Audio Player App
 
 Light-weight, ultra-simple audio server!
 
