@@ -200,11 +200,17 @@ post '/rating' => sub ($c) {
 
   my $audio = retrieve(TRACKS);
 
-  $audio->{$track}{rating} = $rate;
+  my $message = 'Failed to rate track!';
 
-  store $audio, TRACKS;
+  if (exists $audio->{$track}) {
+    $audio->{$track}{rating} = $rate;
 
-  $c->render(text => "Rated track $track at $rate");
+    store $audio, TRACKS;
+
+    $message = "Rated track $track at $rate";
+  }
+
+  $c->render(text => $message);
 } => 'rating';
 
 
