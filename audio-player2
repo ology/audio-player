@@ -299,9 +299,9 @@ __DATA__
 % }
 </select>
 </div>
-<p></p>
 
 % # Playlist history select
+<p></p>
 <p>
   <select id="playlist" name="playlist" class="form-control input-lg" title="Playback history">
     <option value="" disabled selected>History</option>
