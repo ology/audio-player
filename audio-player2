@@ -454,7 +454,7 @@ $(document).ready( function () {
       }
   });
   $(document).on('keypress', function (e) {
-      var value = 0;
+      var value = -1;
       if (e.which == 48) {
         value = 0;
       }
@@ -473,8 +473,10 @@ $(document).ready( function () {
       else if (e.which == 53) {
         value = 5;
       }
-      $('input[name=rating][value=' + value + ']').attr('checked', 'checked');
-      rating(value);
+      if (value >= 0) {
+          $('input[name=rating][value=' + value + ']').attr('checked', 'checked');
+          rating(value);
+      }
   });
   $('input[type=radio]').on('click', function() {
     var r = $('input[name=rating]:checked').val();
