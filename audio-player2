@@ -353,13 +353,12 @@ __DATA__
 $(document).ready( function () {
 
 % # Rate track function
-  function rating (e) {
-    var rating = $('input[name=rating]:checked').val();
+  function rating (r) {
     $.ajax({
-      url: "<%= url_for('rating') %>" + '?current=' + <%= $current %> + '&rating=' + rating,
+      url: "<%= url_for('rating') %>" + '?current=' + <%= $current %> + '&rating=' + r,
       method: 'POST',
       success: function(data, textStatus, jqXHR) {
-        console.log('Rating: ' + rating);
+        console.log('Rating: ' + r);
       },
       error: function(jqXHR, textStatus, error) {
         console.log('Rating: ' + error);
@@ -455,7 +454,8 @@ $(document).ready( function () {
       }
   });
   $('input[type=radio]').on('click', function() {
-    rating();
+    var r = $('input[name=rating]:checked').val();
+    rating(r);
   });
   $('#clearsearch').on('click', function() {
     $('input[name=query]').val('');
