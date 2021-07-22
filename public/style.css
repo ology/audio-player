@@ -6,6 +6,7 @@ body {
 
 @media (max-device-width: 600px) {
   body {
+    padding-top: 20px;
     text-align: center;
   }
 }
