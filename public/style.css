@@ -19,6 +19,7 @@ select + i.fa {
   pointer-events: none;
   /* everything after this is just to cover up the original arrow */
   /* (for browsers that don't support the syntax used above) */
+  color: #6c757d;
   background-color: #fff;
   padding-right: 5px;
 }
