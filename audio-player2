@@ -430,9 +430,9 @@ $(document).ready( function () {
   }
 
 % # Miscelaneous jQuery on events
+  audio = document.getElementById('myAudio');
   $(document).on('keypress', function (e) {
     if(e.which == 112) {
-      audio = document.getElementById('myAudio');
       if (audio.paused) {
         audio.play();
       }
