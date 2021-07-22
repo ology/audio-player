@@ -1,6 +1,13 @@
 body {
   padding: 10px;
   background-color: #FAF9F6;
+  text-align: left;
+}
+
+@media (max-device-width: 600px) {
+  body {
+    text-align: center;
+  }
 }
 
 /* remove the original arrow */
