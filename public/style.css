@@ -38,11 +38,6 @@ select + i.fa {
   text-decoration: none;
 }
 
-#clearsearch {
-  margin-left: -40px;
-  z-index: 100;
-}
-
 #footer {
   font-size: small;
 }
