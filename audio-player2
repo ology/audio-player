@@ -277,11 +277,14 @@ __DATA__
 </p>
 
 % # Rate track
-<b><a href="/stats" id="statslink" title="Inspect rating stats">Rating</a>:</b>
+<div class="form-check form-check-inline">
+  <b><a href="/stats" id="statslink" title="Inspect rating stats">Rating</a>:</b>
+  &nbsp;
 % for my $rate (0 .. $#$ratings) {
-&nbsp;
-<input type="radio" name="rating" value="<%= $rate %>" <%= $rate == $rating ? 'checked' : '' %> title="<%= $ratings->[$rate] %>" />
+  &nbsp;
+  <input type="radio" name="rating" class="form-check-input" value="<%= $rate %>" <%= $rate == $rating ? 'checked' : '' %> title="<%= $ratings->[$rate] %>" />
 % }
+&nbsp;
 &nbsp;
 <select name="showrate" class="btn btn-mini" title="Filter by rating">
   <option value="">Any</option>
@@ -295,6 +298,7 @@ __DATA__
   <option value="<%= $show %>" <%= $showrate eq $show ? 'selected' : '' %>><%= $show %></option>
 % }
 </select>
+</div>
 <p></p>
 
 % # Playlist history select
