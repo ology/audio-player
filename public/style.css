@@ -13,8 +13,8 @@ select.input-lg {
 
 select + i.fa {
   float: right;
-  margin-top: -30px;
-  margin-right: 5px;
+  margin-top: -1.7em;
+  margin-right: 0.5em;
   /* this is so when you click on the chevron, the click goes to the dropdown menu */
   pointer-events: none;
   /* everything after this is just to cover up the original arrow */
