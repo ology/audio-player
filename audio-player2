@@ -477,6 +477,12 @@ $(document).ready( function () {
           $('input[name=rating][value=' + value + ']').attr('checked', 'checked');
           rating(value);
       }
+      if (e.which == 110) {
+        advance();
+      }
+      else if (e.which == 102) {
+        advance(1, 0, 1, 0);
+      }
   });
   $('input[type=radio]').on('click', function() {
     var r = $('input[name=rating]:checked').val();
