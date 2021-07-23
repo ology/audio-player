@@ -455,23 +455,8 @@ $(document).ready( function () {
           audio.pause();
         }
       }
-      else if (e.which == 48) {
-        rate = 0;
-      }
-      else if (e.which == 49) {
-        rate = 1;
-      }
-      else if (e.which == 50) {
-        rate = 2;
-      }
-      else if (e.which == 51) {
-        rate = 3;
-      }
-      else if (e.which == 52) {
-        rate = 4;
-      }
-      else if (e.which == 53) {
-        rate = 5;
+      else if ((e.which == 48) || (e.which == 49) || (e.which == 50) || (e.which == 51) || (e.which == 52) || (e.which == 53)) {
+        rate = e.which - 48;
       }
       if (rate >= 0) {
           $('input[name=rating][value=' + rate + ']').attr('checked', 'checked');
