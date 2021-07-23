@@ -461,6 +461,12 @@ $(document).ready( function () {
       else if (e.which == 110) {
         advance();
       }
+      else if (e.which == 104) {
+        $('#playlist').focus();
+      }
+      else if (e.which == 115) {
+        $('#query').focus();
+      }
       else if ((e.which == 48) || (e.which == 49) || (e.which == 50) || (e.which == 51) || (e.which == 52) || (e.which == 53)) {
         rate = e.which - 48;
       }
