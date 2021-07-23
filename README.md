@@ -28,7 +28,7 @@ The audio-player2 app is the evolution of the original, but with ratings and str
 
 This app does not have traditional form submission. Instead, changing a setting (like shuffle, or the search query) will take effect when the track is advanced.  And this happens either when the Next track button is clicked, or **advance** is on and either the current track ends or a decoding error occurs.
 
-Clicking the word "Rating" will take you to the /stats breakdown, if you have rated tracks.
+Hidden interface features:  Clicking the word "Rating" will take you to the /stats breakdown, if you have rated tracks.  Pressing the `p` key will either pause or play the current track.  Pressing the `0` through `5` keys will rate the current track at that level.  Pressing the `f` key will relocate to the first track (if not shuffling).  This is the same as clicking the "First" button.  Pressing the `n` key is the same as clicking the "Next" button.
 
 This app has built-in playback error detection.  So for example, if **advance** is on and an error is detected, the app will attempt to load to the next track. And the same goes for **shuffle** mode.  Now if none of the selected tracks (e.g. search results) can be loaded, the app will try each and fail.  If **shuffle** is on and this happens, an infinite loop will occur.  In order to stop this, just click the "Clear Search" button - the bold **x** on the right of the search box in the audio-player2 app.
 
