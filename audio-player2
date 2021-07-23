@@ -464,8 +464,12 @@ $(document).ready( function () {
         // Next track = n
         advance();
       }
+      else if (e.which == 114) {
+        // Rate filter focus = r
+        $('#showrate').focus();
+      }
       else if (e.which == 104) {
-        // History playlist = h
+        // History playlist focus = h
         $('#playlist').focus();
       }
       else if (e.which == 120) {
