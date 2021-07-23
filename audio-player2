@@ -284,7 +284,7 @@ __DATA__
   <input type="radio" name="rating" value="<%= $rate %>" <%= $rate == $rating ? 'checked' : '' %> title="<%= $ratings->[$rate] %>" />
 % }
   &nbsp;
-  <select name="showrate" class="btn btn-mini" title="Filter by rating">
+  <select id="showrate" name="showrate" class="btn btn-mini" title="Filter by rating">
     <option value="">Any</option>
 % for my $show (
 %   '< 1', '= 1', '> 1',
