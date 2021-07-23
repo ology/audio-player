@@ -445,8 +445,8 @@ $(document).ready( function () {
   $(document).on('keypress', function (e) {
     var x = $('#query').is(':focus');
     if (!x) {
+      var rate = -1;
       if(e.which == 112) {
-        var rate = -1;
         var audio = document.getElementById('myAudio');
         if (audio.paused) {
           audio.play();
