@@ -464,6 +464,9 @@ $(document).ready( function () {
       else if (e.which == 104) {
         $('#playlist').focus();
       }
+      else if (e.which == 120) {
+        $('#clearsearch').click();
+      }
       else if (e.which == 115) {
         $('#query').focus();
       }
