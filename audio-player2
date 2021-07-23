@@ -445,8 +445,9 @@ $(document).ready( function () {
   $(document).on('keypress', function (e) {
     var x = $('#query').is(':focus');
     if (!x) {
-      var rate = -1;
+      var rate = -1; // For rating below
       if(e.which == 112) {
+        // Pause-Play = p
         var audio = document.getElementById('myAudio');
         if (audio.paused) {
           audio.play();
@@ -456,21 +457,27 @@ $(document).ready( function () {
         }
       }
       else if (e.which == 102) {
+        // First track = f
         advance(1, 0, 1, 0);
       }
       else if (e.which == 110) {
+        // Next track = n
         advance();
       }
       else if (e.which == 104) {
+        // History playlist = h
         $('#playlist').focus();
       }
       else if (e.which == 120) {
+        // Clear search query = x
         $('#clearsearch').click();
       }
       else if (e.which == 115) {
+        // Search query focus = s
         $('#query').focus();
       }
       else if ((e.which == 48) || (e.which == 49) || (e.which == 50) || (e.which == 51) || (e.which == 52) || (e.which == 53)) {
+        // Track rating = 0-5
         rate = e.which - 48;
       }
       if (rate >= 0) {
