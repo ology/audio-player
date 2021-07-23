@@ -455,18 +455,18 @@ $(document).ready( function () {
           audio.pause();
         }
       }
+      else if (e.which == 110) {
+        advance();
+      }
+      else if (e.which == 102) {
+        advance(1, 0, 1, 0);
+      }
       else if ((e.which == 48) || (e.which == 49) || (e.which == 50) || (e.which == 51) || (e.which == 52) || (e.which == 53)) {
         rate = e.which - 48;
       }
       if (rate >= 0) {
           $('input[name=rating][value=' + rate + ']').attr('checked', 'checked');
           rating(rate);
-      }
-      if (e.which == 110) {
-        advance();
-      }
-      else if (e.which == 102) {
-        advance(1, 0, 1, 0);
       }
     }
   });
