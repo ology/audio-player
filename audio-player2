@@ -229,8 +229,8 @@ get '/stats' => sub ($c) {
   $c->render(
     template => 'stats',
     total    => $total,
-    rate     => $rate,
     rated    => $rated,
+    rate     => $rate,
   );
 } => 'stats';
 
