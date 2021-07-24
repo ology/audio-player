@@ -83,10 +83,10 @@ get '/' => sub ($c) {
   $current = -1 if !defined $current;
 
   # Do not have a track when there is no current track index
-  my $track = $audio->{$current}{track} || '';
+  my $track = $current >= 0 ? $audio->{$current}{track} : '';
 #  app->log->debug("Current: $current, Track: $track");
 
-  my $rating = $audio->{$current}{rating} || 0;
+  my $rating = $current >= 0 ? $audio->{$current}{rating} : 0;
 
   # Add a number separator comma
   my $nf = Number::Format->new;
