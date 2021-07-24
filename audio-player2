@@ -278,7 +278,7 @@ __DATA__
 
 % # Rate track
 <div>
-  <b><a href="<%= url_for('stats') %>" id="statslink" title="Inspect rating stats">Rating</a>:</b>
+  <b><a id="stats" href="<%= url_for('stats') %>" id="statslink" title="Inspect rating stats">Rating</a>:</b>
 % for my $rate (0 .. $#$ratings) {
   &nbsp;
   <input type="radio" name="rating" value="<%= $rate %>" <%= $rate == $rating ? 'checked' : '' %> title="<%= $ratings->[$rate] %>" />
