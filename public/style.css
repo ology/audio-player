@@ -57,6 +57,10 @@ select + i.fa {
   display: inline-block;
 }
 
+.text-medium {
+  color: #DDD;
+}
+
 #footer {
   font-size: small;
 }
