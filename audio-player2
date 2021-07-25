@@ -253,6 +253,8 @@ __DATA__
 
 % # Checkboxes
 <div>
+  <a href="<%= url_for('index') %>"><img src="<%= url_for('index') %>logo.png" class="logo" /></a>
+  &nbsp;
   <label for="autoadvance"><b>Advance:</b></label>
   <input type="checkbox" id="autoadvance" name="autoadvance" title="Automatically advance to the next track" <%= $autoadvance ? 'checked' : '' %> />
   &nbsp;
