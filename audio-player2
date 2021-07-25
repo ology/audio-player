@@ -319,6 +319,10 @@ __DATA__
       <i class="fa fa-times"></i>
     </button>
   </div>
+  &nbsp;
+  <button type="button" id="submitsearch" class="btn btn-outline-secondary" title="Submit the search query">
+    <i class="fa fa-chevron-right"></i>
+  </button>
 </div>
 
 % # Track buttons
@@ -357,6 +361,7 @@ __DATA__
 $(document).ready( function () {
   if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
     $('#clearsearch').attr('class', 'btn btn-outline-light');
+    $('#submitsearch').attr('class', 'btn btn-outline-light');
     $('#firsttrack').attr('class', 'btn btn-outline-light');
     $('#nexttrack').attr('class', 'btn btn-outline-light');
     $('[class="text-secondary"]').attr('class', 'text-light');
@@ -512,6 +517,9 @@ $(document).ready( function () {
     advance(1, 0, 1, 0);
   });
   $('#nexttrack').on('click', function() {
+    advance(1);
+  });
+  $('#submitsearch').on('click', function() {
     advance(1);
   });
   $('.trackmatch').on('click', function() {
