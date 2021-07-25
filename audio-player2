@@ -359,6 +359,8 @@ __DATA__
 
 <script>
 $(document).ready( function () {
+
+% # Replace classes when in dark mode
   if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
     $('#clearsearch').attr('class', 'btn btn-outline-white rounded-right');
     $('#submitsearch').attr('class', 'btn btn-outline-light');
