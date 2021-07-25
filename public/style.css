@@ -5,15 +5,25 @@ body {
   text-align: left;
 }
 
+a:link {
+  color: #414A4C;
+}
+
 @media (max-device-width: 600px) {
   body {
     padding-top: 20px;
   }
 }
 
-a:link {
-  color: #414A4C;
-//  text-decoration: none;
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #414A4C;
+    color: #DDD;
+  }
+
+  a:link {
+    color: #DDD;
+  }
 }
 
 /* remove the original arrow */
