@@ -332,7 +332,7 @@ __DATA__
   &nbsp;
   <button id="nexttrack" class="btn btn-outline-dark" title="Advance to the next track">Next <i class="fa fa-step-forward" aria-hidden="true"></i></button>
   &nbsp;
-  <span class="text-secondary"><%= $total %> tracks</span>
+  <span id="total" class="text-secondary"><%= $total %> tracks</span>
 </p>
 
 % # Search query matches
@@ -364,7 +364,7 @@ $(document).ready( function () {
     $('#submitsearch').attr('class', 'btn btn-outline-light');
     $('#firsttrack').attr('class', 'btn btn-outline-light');
     $('#nexttrack').attr('class', 'btn btn-outline-light');
-    $('[class="text-secondary"]').attr('class', 'text-light');
+    $('[class="text-secondary"]').attr('class', 'text-medium');
   }
 
 % # Rate track function
