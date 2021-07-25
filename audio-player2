@@ -360,7 +360,7 @@ __DATA__
 <script>
 $(document).ready( function () {
   if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    $('#clearsearch').attr('class', 'btn btn-outline-light');
+    $('#clearsearch').attr('class', 'btn btn-outline-light rounded');
     $('#submitsearch').attr('class', 'btn btn-outline-light');
     $('#firsttrack').attr('class', 'btn btn-outline-light');
     $('#nexttrack').attr('class', 'btn btn-outline-light');
