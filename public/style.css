@@ -1,6 +1,7 @@
 body {
   padding: 10px;
 //  background-color: #FAF9F6;
+  color: #414A4C;
   text-align: left;
 }
 
@@ -11,7 +12,7 @@ body {
 }
 
 a:link {
-  color: black;
+  color: #414A4C;
 //  text-decoration: none;
 }
 
