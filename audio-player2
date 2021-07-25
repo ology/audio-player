@@ -285,6 +285,7 @@ __DATA__
   <b><a href="<%= url_for('stats') %>" id="statslink" title="Inspect rating stats">Rating</a>:</b>
 % for my $rate (0 .. $#$ratings) {
   &nbsp;
+  &nbsp;
   <input type="radio" name="rating" value="<%= $rate %>" <%= $rate == $rating ? 'checked' : '' %> title="<%= $ratings->[$rate] %>" />
 % }
   &nbsp;
