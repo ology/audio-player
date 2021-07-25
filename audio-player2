@@ -261,8 +261,10 @@ __DATA__
   &nbsp;
   <label for="shuffle"><b>Shuffle:</b></label>
   <input type="checkbox" id="shuffle" name="shuffle" title="Select a random track" <%= $shuffle ? 'checked' : '' %> />
+<!--
   &nbsp;
   <a href="<%= url_for('index')->query(noinc => 1) %>"><img src="<%= url_for('index') %>logo.png" class="logo" /></a>
+-->
 </div>
 
 % # Current track name
