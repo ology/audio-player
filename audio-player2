@@ -480,7 +480,7 @@ $(document).ready( function () {
         // Search query focus = s
         $('#query').focus();
       }
-      else if ((e.which == 48) || (e.which == 49) || (e.which == 50) || (e.which == 51) || (e.which == 52) || (e.which == 53)) {
+      else if (e.which >= 48 && e.which <= 53) {
         // Track rating = 0-5
         rate = e.which - 48;
       }
