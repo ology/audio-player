@@ -7,8 +7,12 @@ body {
 @media (max-device-width: 600px) {
   body {
     padding-top: 20px;
-//    text-align: center;
   }
+}
+
+a:link {
+  color: black;
+//  text-decoration: none;
 }
 
 /* remove the original arrow */
@@ -40,11 +44,6 @@ select + i.fa {
   border: 1px solid red;
   color: red;
   display: inline-block;
-}
-
-#statslink {
-  color: black;
-  text-decoration: none;
 }
 
 #footer {
