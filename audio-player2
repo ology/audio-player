@@ -485,6 +485,7 @@ $(document).ready( function () {
         rate = e.which - 48;
       }
       if (rate >= 0) {
+          $('input[name=rating]:checked').attr('checked', false);
           $('input[name=rating][value=' + rate + ']').attr('checked', 'checked');
           rating(rate);
       }
