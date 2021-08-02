@@ -217,13 +217,16 @@ post '/rating' => sub ($c) {
 get '/stats' => sub ($c) {
   my $audio = retrieve(TRACKS);
 
-  my ($total, $rated, $rate) = (0, 0, []);
+  my ($total, $rated, $rate, $by_genre) = (0, 0, [], {});
 
   for my $key (keys %$audio) {
     my $r = $audio->{$key}{rating};
     $rated++ if $r;
     $rate->[$r]++;
     $total++;
+
+    (my $genre = $audio->{$key}{track}) =~ s|^/Audio/(.+?)/.+$|$1|;
+    $by_genre->{$genre}++ if $audio->{$key}{rating};
   }
 
   $c->render(
@@ -231,6 +234,7 @@ get '/stats' => sub ($c) {
     total    => $total,
     rated    => $rated,
     rate     => $rate,
+    by_genre => $by_genre,
   );
 } => 'stats';
 
@@ -573,8 +577,13 @@ $(document).ready( function () {
 % title 'Music stats';
 <p><b>Total:</b> <%= $total %></p>
 <p><b>Rated:</b> <%= $rated %></p>
+<hr>
 % for my $i (0 .. $#$rate) {
 <p><b><%= $i %> rating:</b> <%= $rate->[$i] %></p>
+% }
+<hr>
+% for my $i (sort keys %$by_genre) {
+<p><b><%= $i %> rating:</b> <%= $by_genre->{$i} %></p>
 % }
 
 
