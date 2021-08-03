@@ -1,18 +1,36 @@
 #!/usr/bin/env perl
 
-# This program is the evolution of audio-player.
+=head1 NAME
 
-# Lightweight, ultra-simple audio server
-# Write-up: https://ology.github.io/2021/06/04/mojolicious-music-player/
+audio-player2
 
-# To run, symlink your audio source in the public subdirectory:
-# audio-player/public $ ln -s /media/you/external_drive/Music/ Audio
-# Or on windows, as the Administrator:
-# mklink /D C:\Users\you\wherever\audio-player\public\Audio "C:\Users\you\external drive\Music"
-# Then:
-# audio-player $ morbo audio-player2
-# And browse to:
-# http://127.0.0.1:3000/refresh
+=head1 DESCRIPTION
+
+This program is the evolution of audio-player, and is a lightweight,
+simple audio server.
+
+Write-up: https://ology.github.io/2021/06/04/mojolicious-music-player/
+
+=head1 SYNOPSIS
+
+To run, symlink your audio source in the public subdirectory:
+
+  audio-player/public $ ln -s /media/you/external_drive/Music/ Audio
+
+Or on windows, as the Administrator:
+
+  mklink /D C:\Users\you\wherever\audio-player\public\Audio "C:\Users\you\external drive\Music"
+
+Then:
+
+  audio-player $ morbo audio-player2
+
+And browse to:
+
+  http://127.0.0.1:3000/refresh
+
+=cut
+
 
 use Encoding::FixLatin qw(fix_latin);
 use File::Find::Rule ();
@@ -27,6 +45,16 @@ use constant EXTS   => ('*.mp3', '*.m4a');    # The tracks of interest
 use constant PATH   => 'public/Audio/';       # Where the audio files live
 use constant TRACKS => app->moniker . '.dat'; # The tracks file
 
+
+=head1 ROUTES
+
+=head2 GET /
+
+The main endpoint and player page.
+
+Name: C<index>
+
+=cut
 
 get '/' => sub ($c) {
   my $autoadvance = $c->param('autoadvance') || 0; # Automatically move to the next track
@@ -151,6 +179,15 @@ sub _in_rate_range ($op, $rate, $track_rating) {
 }
 
 
+=head2 GET /refresh
+
+Track file initialize and refresh endpoint that redirects back to the
+C<index>.
+
+Name: C<refresh>
+
+=cut
+
 get '/refresh' => sub ($c) {
   # If a previous track file exists, use its ratings
   my $old = {};
@@ -194,6 +231,14 @@ get '/refresh' => sub ($c) {
 } => 'refresh';
 
 
+=head2 POST /rating
+
+Track rating endpoint that renders a success or failure text message.
+
+Name: C<rating>
+
+=cut
+
 post '/rating' => sub ($c) {
   my $track = $c->param('current');
   my $rate  = $c->param('rating');
@@ -213,6 +258,14 @@ post '/rating' => sub ($c) {
   $c->render(text => $message);
 } => 'rating';
 
+
+=head2 GET /stats
+
+Track stats endpoint that renders a page with rating counts.
+
+Name: C<stats>
+
+=cut
 
 get '/stats' => sub ($c) {
   my $audio = retrieve(TRACKS);
@@ -240,6 +293,22 @@ get '/stats' => sub ($c) {
 
 
 app->start;
+
+
+=head1 AUTHOR
+
+Gene Boggs <gene@cpan.org>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is Copyright (c) 2021 by Gene Boggs.
+
+This is free software, licensed under:
+
+  The Artistic License 2.0 (GPL Compatible)
+
+=cut
+
 
 __DATA__
 
