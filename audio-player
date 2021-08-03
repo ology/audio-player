@@ -6,7 +6,7 @@
 # To run, symlink your audio source in a public subdirectory:
 # audio-player/public $ ln -s /media/you/external_drive/Music/ Audio
 # Or on windows, as the Administrator:
-# mklink /D C:\Users\you\wherever\audio-player\public\Audio "C:\Users\you\external drive\Music"
+# mklink /D C:\Users\you\wherever\audio-player\public\Audio "X:\My Music"
 # Then:
 # audio-player $ morbo audio-player
 # And browse to:
