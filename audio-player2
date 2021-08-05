@@ -605,6 +605,9 @@ $(document).ready( function () {
 % # Hide the playback warning
   $('#warning').hide();
 
+% # Disable the rating radios
+$('input[name=rating]').attr('disabled', true);
+
 % # Configure the audio element
   $('#myAudio').focus();
   $('#myAudio').attr('src', "<%== $track %>");
@@ -626,6 +629,7 @@ $(document).ready( function () {
   });
   $('#myAudio').on('playing', function() {
     console.log('Playing: ' + <%= $current %>);
+    $('input[name=rating]').attr('disabled', false);
   });
   $('#myAudio').on('ended', function() {
     console.log('...Ended');
