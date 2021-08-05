@@ -388,7 +388,7 @@ __DATA__
 <div class="input-group">
   <input type="search" id="query" name="query" class="form-control" placeholder="Search" value="<%= $query %>" title="Track search query" />
   <div class="input-group-append">
-    <button type="button" id="clearsearch" class="btn btn-outline-secondary rounded-right" title="Clear the search query">
+    <button type="button" id="clearsearch" class="btn btn-light rounded-right" title="Clear the search query" style="border: 1px solid #ced4da;">
       <i class="fa fa-times"></i>
     </button>
   </div>
