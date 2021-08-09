@@ -40,7 +40,7 @@ use Mojo::Util qw(url_unescape);
 use Number::Format ();
 use Storable qw(retrieve store);
 
-use constant RATES  => qw(None Bad Poor Fair Good Best);
+use constant RATES  => (0 .. 5); #qw(None Bad Poor Fair Good Best);
 use constant EXTS   => ('*.mp3', '*.m4a');    # The tracks of interest
 use constant PATH   => 'public/Audio/';       # Where the audio files live
 use constant TRACKS => app->moniker . '.dat'; # The tracks file
@@ -290,6 +290,7 @@ get '/stats' => sub ($c) {
     by_genre => $by_genre,
   );
 } => 'stats';
+
 
 
 app->start;
