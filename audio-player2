@@ -389,14 +389,13 @@ __DATA__
 <div class="input-group">
   <input type="search" id="query" name="query" class="form-control" placeholder="Search" value="<%= $query %>" title="Track search query" />
   <div class="input-group-append">
-    <button type="button" id="clearsearch" class="btn btn-light rounded-right" title="Clear the search query" style="border: 1px solid #ced4da; color: #6c757d;">
+    <button type="button" id="clearsearch" class="btn btn-outline-secondary" title="Clear the search query">
       <i class="fa fa-times"></i>
     </button>
-  </div>
-  &nbsp;
-  <button type="button" id="submitsearch" class="btn btn-outline-secondary" title="Submit the search query">
+  <button type="button" id="submitsearch" class="btn btn-outline-secondary rounded-right" title="Submit the search query">
     <i class="fa fa-chevron-right"></i>
   </button>
+  </div>
 </div>
 
 % # Track buttons
