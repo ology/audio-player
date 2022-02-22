@@ -528,9 +528,9 @@ $(document).ready( function () {
     advance(1, current, 1, 0);
   });
   $('#query').on('keypress', function (e) {
-      if (e.which == 13) {
-        advance();
-      }
+    if (e.which == 13) {
+      advance();
+    }
   });
   $(document).on('keypress', function (e) {
     var x = $('#query').is(':focus');
