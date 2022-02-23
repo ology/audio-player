@@ -328,13 +328,13 @@ __DATA__
 % # Checkboxes
 <div>
   <label for="autoadvance"><b>Advance:</b></label>
-  <input type="checkbox" id="autoadvance" name="autoadvance" title="Automatically advance to the next track" <%= $autoadvance ? 'checked' : '' %> />
+  <input type="checkbox" id="autoadvance" name="autoadvance" title="Automatically advance to the next track (a)" <%= $autoadvance ? 'checked' : '' %> />
   &nbsp;
   <label for="autoplay"><b>Play:</b></label>
-  <input type="checkbox" id="autoplay" name="autoplay" title="Automatically start playing the current track" <%= $autoplay ? 'checked' : '' %> />
+  <input type="checkbox" id="autoplay" name="autoplay" title="Automatically start playing the current track (y)" <%= $autoplay ? 'checked' : '' %> />
   &nbsp;
   <label for="shuffle"><b>Shuffle:</b></label>
-  <input type="checkbox" id="shuffle" name="shuffle" title="Select a random track" <%= $shuffle ? 'checked' : '' %> />
+  <input type="checkbox" id="shuffle" name="shuffle" title="Select a random track (e)" <%= $shuffle ? 'checked' : '' %> />
 <!--
   &nbsp;
   <a href="<%= url_for('index')->query(noinc => 1) %>"><img src="<%= url_for('index') %>logo.png" class="logo" /></a>
@@ -362,7 +362,7 @@ __DATA__
   <input type="radio" name="rating" value="<%= $rate %>" <%= $rate == $rating ? 'checked' : '' %> title="<%= $ratings->[$rate] %>" />
 % }
   &nbsp;
-  <select id="showrate" name="showrate" class="btn btn-mini" title="Filter by rating">
+  <select id="showrate" name="showrate" class="btn btn-mini" title="Filter by rating (r)">
     <option value="">Any</option>
 % for my $show (
 %   '< 1', '= 1', '> 1',
@@ -379,7 +379,7 @@ __DATA__
 % # Playlist history select
 <p></p>
 <p>
-  <select id="playlist" name="playlist" class="form-control input-lg" title="Playback history">
+  <select id="playlist" name="playlist" class="form-control input-lg" title="Playback history (h)">
     <option value="" disabled selected>History</option>
   </select>
   <i class="fa fa-chevron-down"></i>
@@ -387,9 +387,9 @@ __DATA__
 
 % # Search query
 <div class="input-group">
-  <input type="search" id="query" name="query" class="form-control" placeholder="Search" value="<%= $query %>" title="Track search query" />
+  <input type="search" id="query" name="query" class="form-control" placeholder="Search" value="<%= $query %>" title="Track search query (s)" />
   <div class="input-group-append">
-    <button type="button" id="clearsearch" class="btn btn-outline-secondary" title="Clear the search query">
+    <button type="button" id="clearsearch" class="btn btn-outline-secondary" title="Clear the search query (x)">
       <i class="fa fa-times"></i>
     </button>
   <button type="button" id="submitsearch" class="btn btn-outline-secondary rounded-right" title="Submit the search query">
@@ -401,9 +401,9 @@ __DATA__
 % # Track buttons
 <p></p>
 <p>
-  <button id="firsttrack" class="btn btn-outline-dark" title="Move to the first track"><i class="fa fa-fast-backward" aria-hidden="true"></i> First</button>
+  <button id="firsttrack" class="btn btn-outline-dark" title="Move to the first track (f)"><i class="fa fa-fast-backward" aria-hidden="true"></i> First</button>
   &nbsp;
-  <button id="nexttrack" class="btn btn-outline-dark" title="Advance to the next track">Next <i class="fa fa-step-forward" aria-hidden="true"></i></button>
+  <button id="nexttrack" class="btn btn-outline-dark" title="Advance to the next track (n)">Next <i class="fa fa-step-forward" aria-hidden="true"></i></button>
   &nbsp;
   <span id="total" class="text-secondary"><%= $total %> tracks</span>
 </p>
