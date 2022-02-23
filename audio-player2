@@ -527,9 +527,10 @@ $(document).ready( function () {
     var current = $(this).children('option:selected').val();
     advance(1, current, 1, 0);
   });
+  // XXX Does this even do anything?
   $('#query').on('keypress', function (e) {
     if (e.which == 13) {
-      // ? = ?
+      // ? = ENTER
       advance();
     }
   });
@@ -574,6 +575,33 @@ $(document).ready( function () {
       else if (e.which >= 48 && e.which <= 53) {
         // Track rating = 0-5
         rate = e.which - 48;
+      }
+      else if (e.which == 97) {
+        // Advance = a
+        if ($('#autoadvance').is(':checked')) {
+          $('input[name=autoadvance]').attr('checked', false);
+        }
+        else {
+          $('input[name=autoadvance]').attr('checked', true);
+        }
+      }
+      else if (e.which == 121) {
+        // Play = y
+        if ($('#autoplay').is(':checked')) {
+          $('input[name=autoplay]').attr('checked', false);
+        }
+        else {
+          $('input[name=autoplay]').attr('checked', true);
+        }
+      }
+      else if (e.which == 101) {
+        // Shuffle = e
+        if ($('#shuffle').is(':checked')) {
+          $('input[name=shuffle]').attr('checked', false);
+        }
+        else {
+          $('input[name=shuffle]').attr('checked', true);
+        }
       }
       if (rate >= 0) {
           $('input[name=rating]:checked').attr('checked', false);
