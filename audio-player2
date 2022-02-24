@@ -538,7 +538,7 @@ $(document).ready( function () {
     var x = $('#query').is(':focus');
     if (!x) {
       var rate = -1; // For rating below
-      if (e.which == 112) {
+      if (e.which == 112 || e.which == 32) {
         // Pause-Play = p
         var audio = document.getElementById('myAudio');
         if (audio.paused) {
