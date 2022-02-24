@@ -331,7 +331,7 @@ __DATA__
   <input type="checkbox" id="autoadvance" name="autoadvance" title="Automatically advance to the next track (a)" <%= $autoadvance ? 'checked' : '' %> />
   &nbsp;
   <label for="autoplay"><b>Play:</b></label>
-  <input type="checkbox" id="autoplay" name="autoplay" title="Automatically start playing the current track (y)" <%= $autoplay ? 'checked' : '' %> />
+  <input type="checkbox" id="autoplay" name="autoplay" title="Automatically start playing the current track (p)" <%= $autoplay ? 'checked' : '' %> />
   &nbsp;
   <label for="shuffle"><b>Shuffle:</b></label>
   <input type="checkbox" id="shuffle" name="shuffle" title="Select a random track (e)" <%= $shuffle ? 'checked' : '' %> />
@@ -585,8 +585,8 @@ $(document).ready( function () {
           $('input[name=autoadvance]').attr('checked', true);
         }
       }
-      else if (e.which == 121) {
-        // Play = y
+      else if (e.which == 112) {
+        // Play = p
         if ($('#autoplay').is(':checked')) {
           $('input[name=autoplay]').attr('checked', false);
         }
