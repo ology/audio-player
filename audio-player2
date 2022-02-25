@@ -538,8 +538,8 @@ $(document).ready( function () {
     var x = $('#query').is(':focus');
     if (!x) {
       var rate = -1; // For rating below
-      if (e.which == 32) {
-        // Pause-Play = space
+      if (e.which == 117) {
+        // Pause-Play = u
         var audio = document.getElementById('myAudio');
         if (audio.paused) {
           audio.play();
