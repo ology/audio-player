@@ -18,7 +18,7 @@ For windows, as the Administrator do:
 
 Then to run the app:
 
-    audio-player $ morbo audio-player
+    audio-player $ morbo audio-player2
 
 And browse to http://127.0.0.1:3000/refresh
 
