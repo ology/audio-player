@@ -20,7 +20,7 @@ Then to run the app:
 
     audio-player $ morbo audio-player2
 
-And browse to http://127.0.0.1:3000/refresh
+And first browse to http://127.0.0.1:3000/refresh to index your audio.  Thereafter, http://127.0.0.1:3000/
 
 ~
 
