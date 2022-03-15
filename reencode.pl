@@ -31,6 +31,7 @@ for my $n (sort { $a <=> $b } keys %$audio) {
       warn "\tERROR: Can't set reencoded track!\n";
       next;
     }
+    $outfile =~ s/\/media\/gene\/New Volume//;
     $audio->{$n}{track} = $outfile;
     print "\tSet reencoded track to $outfile\n";
     $track->remove;
