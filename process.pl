@@ -24,28 +24,28 @@ for my $n (sort { $a <=> $b } keys %$audio) {
   next unless -e $track;
   $i++;
   my $rating = $audio->{$n}{rating};
-  if (!defined($rating) || $rating < 1) {
-    print "$i. REENCODE: $n $track\n";
-    my $outfile = reencode($track);
-    unless ($outfile && -e $outfile) {
-      warn "\tERROR: Can't set reencoded track!\n";
-      next;
-    }
-    $outfile =~ s/\/media\/gene\/New Volume//;
-    $audio->{$n}{track} = $outfile;
-    print "\tSet reencoded track to $outfile\n";
-    $track->remove;
-    print "\tRemoved original track\n";
-  }
-  elsif ($rating && $rating > 0 && $rating < 3) {
+#  if (!defined($rating) || $rating < 1) {
+#    print "$i. REENCODE: $n $track\n";
+#    my $outfile = reencode($track);
+#    unless ($outfile && -e $outfile) {
+#      warn "\tERROR: Can't set reencoded track!\n";
+#      next;
+#    }
+#    $outfile =~ s/\/media\/gene\/New Volume//;
+#    $audio->{$n}{track} = $outfile;
+#    print "\tSet reencoded track to $outfile\n";
+#    $track->remove;
+#    print "\tRemoved original track\n";
+#  }
+  if ($rating && $rating > 0 && $rating < 3) {
     print "$i. DELETE: $n $track\n";
     $track->remove or warn "Can't unlink $track: $!\n";
     delete $audio->{$n};
     print "\tRemoved track\n";
   }
-  elsif ($rating && $rating >= 3) {
-    print "$i. KEEP: $n $track\n";
-  }
+#  elsif ($rating && $rating >= 3) {
+#    print "$i. KEEP: $n $track\n";
+#  }
 }
 
 # Save the tracks to disk
