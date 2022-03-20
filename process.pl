@@ -20,7 +20,7 @@ else {
 my $i = 0;
 
 for my $n (sort { $a <=> $b } keys %$audio) {
-  my $track = Mojo::File->new('public', $audio->{$n}{track});
+  my $track = Mojo::File->new("public$audio->{$n}{track}");
   next unless -e $track;
   $i++;
   my $rating = $audio->{$n}{rating};
