@@ -27,7 +27,7 @@ for my $n (keys %$audio) {
     my $outfile = reencode($track);
     unless ($outfile && -e $outfile) {
       warn "\tERROR: Can't set reencoded track!\n";
-      next;
+      last;
     }
     $outfile =~ s/\/media\/gene\/New Volume//;
     $audio->{$n}{track} = $outfile;
