@@ -88,11 +88,11 @@ get '/' => sub ($c) {
       push @$match, $key if lc($audio->{$key}{track}) =~ /$query/i;
     }
 
-    my %tracks;
-    for my $n (@$match) {
-      $tracks{ $audio->{$n}{track} } = $n;
-    }
-    $match = [ map { $tracks{$_} } sort { $a cmp $b } keys %tracks ];
+#    my %tracks;
+#    for my $n (@$match) {
+#      $tracks{ $audio->{$n}{track} } = $n;
+#    }
+#    $match = [ map { $tracks{$_} } sort { $a cmp $b } keys %tracks ];
 
     $current = _get_current($match, $current, $shuffle, $noinc);
   }
@@ -419,6 +419,11 @@ __DATA__
 <p></p>
 <p><b>Matches:</b> <%= $matches %></p>
 <ol>
+%   my %tracks;
+%   for my $n (@$match) {
+%     $tracks{ $audio->{$n}{track} } = $n;
+%   }
+%   $match = [ map { $tracks{$_} } sort { $a cmp $b } keys %tracks ];
 %   for my $n (@$match) {
   <li>
 %     if ($track eq $audio->{$n}{track}) {
