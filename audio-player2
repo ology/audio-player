@@ -88,11 +88,11 @@ get '/' => sub ($c) {
       push @$match, $key if lc($audio->{$key}{track}) =~ /$query/i;
     }
 
-#    my %tracks;
-#    for my $n (@$match) {
-#      $tracks{ $audio->{$n}{track} } = $n;
-#    }
-#    $match = [ map { $tracks{$_} } sort { $a cmp $b } keys %tracks ];
+    my %tracks;
+    for my $n (@$match) {
+      $tracks{ $audio->{$n}{track} } = $n;
+    }
+    $match = [ map { $tracks{$_} } sort { $a cmp $b } keys %tracks ];
 
     $current = _get_current($match, $current, $shuffle, $noinc);
   }
@@ -153,8 +153,8 @@ sub _get_current ($match, $current, $shuffle, $noinc) {
   }
   else {
     # Find the index of the current item in the search results
-    my $idx = first_index { $_ >= $current } @$match;
-    $idx = 0 unless $idx;
+    my $idx = first_index { $_ == $current } @$match;
+    $idx = 0 if $idx == -1;
 
     # To increment, or not to increment...
     if ($noinc) {
@@ -419,11 +419,6 @@ __DATA__
 <p></p>
 <p><b>Matches:</b> <%= $matches %></p>
 <ol>
-%   my %tracks;
-%   for my $n (@$match) {
-%     $tracks{ $audio->{$n}{track} } = $n;
-%   }
-%   $match = [ map { $tracks{$_} } sort { $a cmp $b } keys %tracks ];
 %   for my $n (@$match) {
   <li>
 %     if ($track eq $audio->{$n}{track}) {
