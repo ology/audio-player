@@ -528,7 +528,7 @@ $(document).ready( function () {
     j++;
   }
 
-% # Miscelaneous jQuery on events
+% # Miscellaneous jQuery on events
   $('#playlist').on('change', function () {
     var current = $(this).children('option:selected').val();
     advance(1, current, 1, 0);
