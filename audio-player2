@@ -544,7 +544,11 @@ $(document).ready( function () {
     var x = $('#query').is(':focus');
     if (!x) {
       var rate = -1; // For rating below
-      if (e.which == 121) {
+      if (e.which == 99) {
+        // Audio controls = c
+        $('#myAudio').focus();
+      }
+      else if (e.which == 121) {
         // Pause-Play = y
         var audio = document.getElementById('myAudio');
         if (audio.paused) {
