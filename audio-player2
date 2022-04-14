@@ -653,6 +653,7 @@ $('input[name=rating]').attr('disabled', true);
   $('#myAudio').on('error', function() {
     if ("<%= $track %>") {
       console.log('Playback error!');
+      rating(-1);
       $('#warning').show();
       advance();
     }
