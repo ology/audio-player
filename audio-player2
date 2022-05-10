@@ -691,7 +691,7 @@ $('input[name=rating]').attr('disabled', true);
 <p><b>Total:</b> <%= $total %></p>
 <p><b>Rated:</b> <%= $rated %> (<%= sprintf '%.2f', $rated / $total * 100 %>%)</p>
 <hr>
-% for my $i (0 .. $#$rate) {
+% for my $i (-1 .. $#$rate) {
 <p><b><%= $i %> rating:</b> <%= $rate->[$i] %> (<%= sprintf '%.2f', $rate->[$i] / $total * 100 %>%)</p>
 % }
 <hr>
