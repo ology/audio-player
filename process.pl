@@ -24,7 +24,7 @@ for my $n (sort { $a <=> $b } keys %$audio) {
   next unless -e $track;
   $i++;
   my $rating = $audio->{$n}{rating};
-#  if (!defined($rating) || $rating < 1) {
+#  if (!defined($rating) || $rating < 0) {
 #    print "$i. REENCODE: $n $track\n";
 #    my $outfile = reencode($track);
 #    unless ($outfile && -e $outfile) {
