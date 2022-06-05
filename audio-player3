@@ -150,7 +150,7 @@ get '/' => sub ($c) {
       my @parts = split /\//, $track;
       my $name = $parts[-1]; # track name
       #   album = -2
-      my $artist = $parts[-3];
+      my $artist = $parts[-3]; # but not always
 
       # Handle cases like:
       # 01 Tom Sawyer-1647382734.mp3
