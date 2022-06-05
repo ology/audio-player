@@ -163,6 +163,7 @@ get '/' => sub ($c) {
       $name =~ s/(.*?)-\d+\.mp3$/$1/;
       $name =~ s/(.*?)\.mp3$/$1/;
       $name =~ s/(.*?)-[\w-]+\.m4a$/$1/;
+      $name =~ s/(.*?)\.m4a$/$1/;
       $name =~ s/(.*?) \(Remastered \d+\)/$1/;
 
 #      $track_info = "|$artist| - |$name|";
