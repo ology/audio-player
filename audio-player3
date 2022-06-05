@@ -158,6 +158,7 @@ get '/' => sub ($c) {
       # 05 Let Me Tell You About My Boat.m4a
       # New Day-6SumbNBSEo8.m4a
       # Revolution 1 (Remastered 2009)-OmsXsIv2Ppw.m4a
+      # A Reminiscent Drive - Ambrosia-rP89haLVP4k.m4a
 
       $name =~ s/^(?:\d+-)?\d+\s+(.*?)/$1/;
       $name =~ s/(.*?)-\d+\.mp3$/$1/;
@@ -165,6 +166,12 @@ get '/' => sub ($c) {
       $name =~ s/(.*?)-[\w-]+\.m4a$/$1/;
       $name =~ s/(.*?)\.m4a$/$1/;
       $name =~ s/(.*?) \(Remastered \d+\)/$1/;
+
+      if ($track =~ /Hôtel Costes/) {
+        my ($who, $what) = split /\s*-\s*/, $name;
+        ($artist, $name) = ($who, $what)
+          if $who && $what;
+      }
 
 #      $track_info = "|$artist| - |$name|";
       my $w = WebService::LastFM::TrackInfo->new(api_key => $API_KEY);
