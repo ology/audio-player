@@ -52,7 +52,7 @@ use constant EXTS   => ('*.mp3', '*.m4a', '*.ogg', '*.flac'); # The tracks of in
 use constant PATH   => 'public/Audio/';       # Where the audio files live
 use constant TRACKS => app->moniker . '.dat'; # The tracks file
 
-# config.yml:
+# ./config.yml:
 # api_key: 'abcdef123456'
 my $config = LoadFile 'config.yml';
 my $API_KEY = $config->{api_key};
