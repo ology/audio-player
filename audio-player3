@@ -9,6 +9,10 @@ audio-player3
 This program is the evolution of audioplayer2, and is a lightweight,
 simple audio server.
 
+* This version has logic customized to recognize the artist and track
+name for my audio files.  Change this in the source below for your
+filenames.
+
 Write-up: https://ology.github.io/2021/06/04/mojolicious-music-player/
 
 =head1 SYNOPSIS
