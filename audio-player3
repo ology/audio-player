@@ -178,12 +178,12 @@ get '/' => sub ($c) {
           if $who && $what;
       }
 
-#      $track_info = "|$artist| - |$name|";
       my $w = WebService::LastFM::TrackInfo->new(api_key => $API_KEY);
       $track_info = $w->fetch(
           artist => $artist,
           track  => $name,
       );
+      $track_info->{computed_title} = "|$artist| - |$name|";
       $audio->{$current}{info} = $track_info;
       store $audio, TRACKS;
 #    }
