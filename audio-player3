@@ -155,6 +155,8 @@ get '/' => sub ($c) {
       # Handle cases like:
       # 01 Tom Sawyer-1647382734.mp3
       # 1-02 Mingulay Boat Song-1647389909.mp3
+      # 05 Let Me Tell You About My Boat.m4a
+      # New Day-6SumbNBSEo8.m4a
       # Revolution 1 (Remastered 2009)-OmsXsIv2Ppw.m4a
 
       $name =~ s/^(?:\d+-)?\d+\s+(.*?)/$1/;
