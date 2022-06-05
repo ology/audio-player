@@ -172,7 +172,8 @@ get '/' => sub ($c) {
       $name =~ s/(.*?) \(Remastered \d+\)/$1/;
 
       if ($track =~ /Hôtel Costes/) {
-        my ($who, $what) = split /\s*-\s*/, $name;
+        $name =~ s/Hotel Costes \d+ - (.*)$/$1/;
+        my ($who, $what) = split /\s*-\s*/, $name, 2;
         ($artist, $name) = ($who, $what)
           if $who && $what;
       }
