@@ -170,7 +170,7 @@ get '/' => sub ($c) {
       $name =~ s/(.*?)-[\w-]+\.m4a$/$1/;
       $name =~ s/(.*?)\.m4a$/$1/;
       $name =~ s/(.*?) \(Remastered \d+\)/$1/;
-      $name =~ s/(.*?) \(Official Video\)/$1/;
+      $name =~ s/(.*?) \(Official\s*(?:Lyric)?\s*Video\)/$1/;
 
       if ($track =~ /Hôtel Costes/) {
         $name =~ s/Hotel Costes \d+ - (.*)$/$1/;
