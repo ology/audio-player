@@ -178,12 +178,12 @@ get '/' => sub ($c) {
         if $who && $what;
     }
 
+    # get an image
     my $w = WebService::LastFM::TrackInfo->new(api_key => $API_KEY);
     $track_info = $w->fetch(
         artist => $artist,
         track  => $name,
     );
-
     if (@{ $track_info->{track}{album}{image} }) {
       for my $item (@{ $track_info->{track}{album}{image} }) {
         $track_image = $item->{'#text'}
