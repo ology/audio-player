@@ -185,8 +185,8 @@ get '/' => sub ($c) {
     );
     $track_info->{computed_title} = "|$artist| - |$name|";
 
-    if (defined $audio->{$current}{info}{track}{album}{image}[-1]) {
-      $track_image = $audio->{$current}{info}{track}{album}{image}[-1]{'#text'};
+    if (defined $track_info->{track}{album}{image}[-1]) {
+      $track_image = $track_info->{track}{album}{image}[-1]{'#text'};
     }
     else {
       $w = WebService::LastFM::TrackInfo->new(
