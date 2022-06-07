@@ -184,9 +184,7 @@ get '/' => sub ($c) {
         artist => $artist,
         track  => $name,
     );
-    if ($track_info->{track}{album}{image} && @{ $track_info->{track}{album}{image} }) {
-      $track_image = _get_image($track_info->{track});
-    }
+    $track_image = _get_image($track_info->{track});
     unless ($track_image) {
       $w = WebService::LastFM::TrackInfo->new(
         api_key => $API_KEY,
@@ -196,9 +194,7 @@ get '/' => sub ($c) {
         artist => $artist,
         album  => $album,
       );
-      if ($track_info->{album}{image} && @{ $track_info->{album}{image} }) {
-        $track_image = _get_image($track_info);
-      }
+      $track_image = _get_image($track_info);
     }
 
     $track_info->{computed_title} = "|$artist| - |$album| - |$name|";
@@ -229,10 +225,12 @@ sub _get_image {
 
   my $image;
 
-  for my $item (@{ $data->{album}{image} }) {
-    if ($item->{size} eq 'extralarge' && $item->{'#text'}) {
-      $image = $item->{'#text'};
-      last;
+  if ($data->{album}{image} && @{ $data->{album}{image} }) {
+    for my $item (@{ $data->{album}{image} }) {
+      if ($item->{size} eq 'extralarge' && $item->{'#text'}) {
+        $image = $item->{'#text'};
+        last;
+      }
     }
   }
 
