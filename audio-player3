@@ -187,9 +187,6 @@ get '/' => sub ($c) {
           artist => $artist,
           track  => $name,
       );
-    }
-    catch {
-      $c->flash(message => "Oops: $_");
     };
     $track_image = _get_image($track_info->{track});
     unless ($track_image) {
@@ -202,9 +199,6 @@ get '/' => sub ($c) {
           artist => $artist,
           album  => $album,
         );
-      }
-      catch {
-        $c->flash(message => "Oops: $_");
       };
       $track_image = _get_image($track_info);
     }
