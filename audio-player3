@@ -186,8 +186,10 @@ get '/' => sub ($c) {
     );
     if ($track_info->{track}{album}{image} && @{ $track_info->{track}{album}{image} }) {
       for my $item (@{ $track_info->{track}{album}{image} }) {
-        $track_image = $item->{'#text'}
-          if $item->{size} eq 'extralarge' && $item->{'#text'};
+        if ($item->{size} eq 'extralarge' && $item->{'#text'}) {
+          $track_image = $item->{'#text'};
+          last;
+        }
       }
     }
     unless ($track_image) {
@@ -201,8 +203,10 @@ get '/' => sub ($c) {
       );
       if ($track_info->{album}{image} && @{ $track_info->{album}{image} }) {
         for my $item (@{ $track_info->{album}{image} }) {
-          $track_image = $item->{'#text'}
-            if $item->{size} eq 'extralarge' && $item->{'#text'};
+          if ($item->{size} eq 'extralarge' && $item->{'#text'}) {
+            $track_image = $item->{'#text'};
+            last;
+          }
         }
       }
     }
