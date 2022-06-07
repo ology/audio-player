@@ -148,49 +148,43 @@ get '/' => sub ($c) {
   my $track_info;
   my $track_image;
   if ($track) {
-#    if ($audio->{$current}{info} && !exists $audio->{$current}{info}{error}) {
-#      $track_info = $audio->{$current}{info};
-#    }
-#    else {
-      my @parts = split /\//, $track;
-      my $name = $parts[-1]; # track name
-      my $album = $parts[-2]; # album name
-      my $artist = $parts[-3]; # but not always
+    my @parts = split /\//, $track;
+    my $name = $parts[-1]; # track name
+    my $album = $parts[-2]; # album name
+    my $artist = $parts[-3]; # but not always
 
-      # Handle cases like:
-      # 01 Tom Sawyer-1647382734.mp3
-      # 1-02 Mingulay Boat Song-1647389909.mp3
-      # 05 Let Me Tell You About My Boat.m4a
-      # New Day-6SumbNBSEo8.m4a
-      # Revolution 1 (Remastered 2009)-OmsXsIv2Ppw.m4a
-      # A Reminiscent Drive - Ambrosia-rP89haLVP4k.m4a
+    # Handle cases like:
+    # 01 Tom Sawyer-1647382734.mp3
+    # 1-02 Mingulay Boat Song-1647389909.mp3
+    # 05 Let Me Tell You About My Boat.m4a
+    # New Day-6SumbNBSEo8.m4a
+    # Revolution 1 (Remastered 2009)-OmsXsIv2Ppw.m4a
+    # A Reminiscent Drive - Ambrosia-rP89haLVP4k.m4a
 
-      $name =~ s/^(?:\d+-)?\d+\s+(.*?)/$1/;
-      $name =~ s/(.*?)-\d+\.mp3$/$1/;
-      $name =~ s/(.*?)\.mp3$/$1/;
-      $name =~ s/(.*?)-[\w-]+\.m4a$/$1/;
-      $name =~ s/(.*?)\.m4a$/$1/;
-      $name =~ s/(.*?) \(Remastered \d+\)/$1/;
-      $name =~ s/(.*?) \(\d+ Remaster\)/$1/;
-      $name =~ s/(.*?) \(Official\s*(?:Lyric|Music)?\s*Video\)/$1/;
-      $name =~ s/$artist\s*-\s*(.*?)$/$1/;
+    $name =~ s/^(?:\d+-)?\d+\s+(.*?)/$1/;
+    $name =~ s/(.*?)-\d+\.mp3$/$1/;
+    $name =~ s/(.*?)\.mp3$/$1/;
+    $name =~ s/(.*?)-[\w-]+\.m4a$/$1/;
+    $name =~ s/(.*?)\.m4a$/$1/;
+    $name =~ s/(.*?) \(Remastered \d+\)/$1/;
+    $name =~ s/(.*?) \(\d+ Remaster\)/$1/;
+    $name =~ s/(.*?) \(Official\s*(?:Lyric|Music)?\s*Video\)/$1/;
+    $name =~ s/$artist\s*-\s*(.*?)$/$1/;
 
-      if ($track =~ /Hôtel Costes/) {
-        $name =~ s/Hotel Costes \d+ - (.*)$/$1/;
-        my ($who, $what) = split /\s*-\s*/, $name, 2;
-        ($artist, $name) = ($who, $what)
-          if $who && $what;
-      }
+    if ($track =~ /Hôtel Costes/) {
+      $name =~ s/Hotel Costes \d+ - (.*)$/$1/;
+      my ($who, $what) = split /\s*-\s*/, $name, 2;
+      ($artist, $name) = ($who, $what)
+        if $who && $what;
+    }
 
-      my $w = WebService::LastFM::TrackInfo->new(api_key => $API_KEY);
-      $track_info = $w->fetch(
-          artist => $artist,
-          track  => $name,
-      );
-      $track_info->{computed_title} = "|$artist| - |$name|";
-      $audio->{$current}{info} = $track_info;
-      store $audio, TRACKS;
-#    }
+    my $w = WebService::LastFM::TrackInfo->new(api_key => $API_KEY);
+    $track_info = $w->fetch(
+        artist => $artist,
+        track  => $name,
+    );
+    $track_info->{computed_title} = "|$artist| - |$name|";
+
     if (defined $audio->{$current}{info}{track}{album}{image}[-1]) {
       $track_image = $audio->{$current}{info}{track}{album}{image}[-1]{'#text'};
     }
@@ -206,7 +200,7 @@ get '/' => sub ($c) {
       if (@{ $track_info->{album}{image} }) {
         for my $item (@{ $track_info->{album}{image} }) {
           $track_image = $item->{'#text'}
-            if $item->{size} eq 'extralarge';
+            if $item->{size} eq 'extralarge' && $item->{'#text'};
         }
       }
     }
