@@ -160,6 +160,7 @@ get '/' => sub ($c) {
     # New Day-6SumbNBSEo8.m4a
     # Revolution 1 (Remastered 2009)-OmsXsIv2Ppw.m4a
     # A Reminiscent Drive - Ambrosia-rP89haLVP4k.m4a
+    # Van Halen - Hot For Teacher (Official Music Video)-6M4_Ommfvv0.m4a
 
     $name =~ s/^(?:\d+-)?\d+\s+(.*?)/$1/;
     $name =~ s/(.*?)-\d+\.mp3$/$1/;
