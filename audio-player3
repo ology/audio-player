@@ -184,7 +184,7 @@ get '/' => sub ($c) {
         artist => $artist,
         track  => $name,
     );
-    if (@{ $track_info->{track}{album}{image} }) {
+    if ($track_info->{track}{album}{image} && @{ $track_info->{track}{album}{image} }) {
       for my $item (@{ $track_info->{track}{album}{image} }) {
         $track_image = $item->{'#text'}
           if $item->{size} eq 'extralarge' && $item->{'#text'};
