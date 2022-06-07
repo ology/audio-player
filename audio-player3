@@ -185,12 +185,7 @@ get '/' => sub ($c) {
         track  => $name,
     );
     if ($track_info->{track}{album}{image} && @{ $track_info->{track}{album}{image} }) {
-      for my $item (@{ $track_info->{track}{album}{image} }) {
-        if ($item->{size} eq 'extralarge' && $item->{'#text'}) {
-          $track_image = $item->{'#text'};
-          last;
-        }
-      }
+      $track_image = _get_image($track_info->{track});
     }
     unless ($track_image) {
       $w = WebService::LastFM::TrackInfo->new(
@@ -202,12 +197,7 @@ get '/' => sub ($c) {
         album  => $album,
       );
       if ($track_info->{album}{image} && @{ $track_info->{album}{image} }) {
-        for my $item (@{ $track_info->{album}{image} }) {
-          if ($item->{size} eq 'extralarge' && $item->{'#text'}) {
-            $track_image = $item->{'#text'};
-            last;
-          }
-        }
+        $track_image = _get_image($track_info);
       }
     }
 
@@ -233,6 +223,21 @@ get '/' => sub ($c) {
     ratings     => [RATES],
   );
 } => 'index';
+
+sub _get_image {
+  my ($data) = @_;
+
+  my $image;
+
+  for my $item (@{ $data->{album}{image} }) {
+    if ($item->{size} eq 'extralarge' && $item->{'#text'}) {
+      $image = $item->{'#text'};
+      last;
+    }
+  }
+
+  return $image;
+}
 
 sub _get_current ($match, $current, $shuffle, $noinc) {
   # If shuffling, get a random member of the matches,
