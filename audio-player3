@@ -44,6 +44,7 @@ use Mojolicious::Lite -signatures;
 use Mojo::Util qw(url_unescape);
 use Number::Format ();
 use Storable qw(retrieve store);
+use Try::Tiny;
 use lib map { "$ENV{HOME}/sandbox/$_/lib" } qw(WebService-LastFM-TrackInfo);
 use WebService::LastFM::TrackInfo;
 use YAML::XS qw(LoadFile);
@@ -181,20 +182,30 @@ get '/' => sub ($c) {
 
     # get an image
     my $w = WebService::LastFM::TrackInfo->new(api_key => $API_KEY);
-    $track_info = $w->fetch(
-        artist => $artist,
-        track  => $name,
-    );
+    try {
+      $track_info = $w->fetch(
+          artist => $artist,
+          track  => $name,
+      );
+    }
+    catch {
+      $c->flash(message => "Oops: $_");
+    };
     $track_image = _get_image($track_info->{track});
     unless ($track_image) {
       $w = WebService::LastFM::TrackInfo->new(
         api_key => $API_KEY,
         method  => 'album',
       );
-      $track_info = $w->fetch(
-        artist => $artist,
-        album  => $album,
-      );
+      try {
+        $track_info = $w->fetch(
+          artist => $artist,
+          album  => $album,
+        );
+      }
+      catch {
+        $c->flash(message => "Oops: $_");
+      };
       $track_image = _get_image($track_info);
     }
 
