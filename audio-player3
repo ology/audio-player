@@ -44,6 +44,7 @@ use Mojolicious::Lite -signatures;
 use Mojo::Util qw(url_unescape);
 use Number::Format ();
 use Storable qw(retrieve store);
+use lib map { "$ENV{HOME}/sandbox/$_/lib" } qw(WebService-LastFM-TrackInfo);
 use WebService::LastFM::TrackInfo;
 use YAML::XS qw(LoadFile);
 
@@ -153,7 +154,7 @@ get '/' => sub ($c) {
 #    else {
       my @parts = split /\//, $track;
       my $name = $parts[-1]; # track name
-      #   album = -2
+      my $album = $parts[-2]; # album name
       my $artist = $parts[-3]; # but not always
 
       # Handle cases like:
@@ -170,7 +171,8 @@ get '/' => sub ($c) {
       $name =~ s/(.*?)-[\w-]+\.m4a$/$1/;
       $name =~ s/(.*?)\.m4a$/$1/;
       $name =~ s/(.*?) \(Remastered \d+\)/$1/;
-      $name =~ s/(.*?) \(Official\s*(?:Lyric)?\s*Video\)/$1/;
+      $name =~ s/(.*?) \(\d+ Remaster\)/$1/;
+      $name =~ s/(.*?) \(Official\s*(?:Lyric|Music)?\s*Video\)/$1/;
       $name =~ s/$artist\s*-\s*(.*?)$/$1/;
 
       if ($track =~ /Hôtel Costes/) {
@@ -191,6 +193,22 @@ get '/' => sub ($c) {
 #    }
     if (defined $audio->{$current}{info}{track}{album}{image}[-1]) {
       $track_image = $audio->{$current}{info}{track}{album}{image}[-1]{'#text'};
+    }
+    else {
+      $w = WebService::LastFM::TrackInfo->new(
+        api_key => $API_KEY,
+        method  => 'album',
+      );
+      $track_info = $w->fetch(
+        artist => $artist,
+        album  => $album,
+      );
+      if (@{ $track_info->{album}{image} }) {
+        for my $item (@{ $track_info->{album}{image} }) {
+          $track_image = $item->{'#text'}
+            if $item->{size} eq 'extralarge';
+        }
+      }
     }
   }
 
