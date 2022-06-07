@@ -184,7 +184,7 @@ get '/' => sub ($c) {
         track  => $name,
     );
 
-    if (defined $track_info->{track}{album}{image}[-1]) {
+    if (defined $track_info->{track}{album}{image}[-1] && $track_info->{track}{album}{image}[-1]{'#text'}) {
       $track_image = $track_info->{track}{album}{image}[-1]{'#text'};
     }
     else {
