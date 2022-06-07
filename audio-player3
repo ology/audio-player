@@ -183,7 +183,6 @@ get '/' => sub ($c) {
         artist => $artist,
         track  => $name,
     );
-    $track_info->{computed_title} = "|$artist| - |$name|";
 
     if (defined $track_info->{track}{album}{image}[-1]) {
       $track_image = $track_info->{track}{album}{image}[-1]{'#text'};
@@ -204,6 +203,8 @@ get '/' => sub ($c) {
         }
       }
     }
+
+    $track_info->{computed_title} = "|$artist| - |$album| - |$name|";
   }
 
   $c->render(
