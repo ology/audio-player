@@ -33,3 +33,7 @@ Hidden interface features:  Clicking the word "Rating" will take you to the /sta
 This app has built-in playback error detection.  So for example, if **advance** is on and an error is detected, the app will attempt to load to the next track. And the same goes for **shuffle** mode.  Now if none of the selected tracks (e.g. search results) can be loaded, the app will try each and fail.  If **shuffle** is on and this happens, an infinite loop will occur.  In order to stop this, just click the "Clear Search" button - the bold **x** button on the right of the search box or press the `x` key.
 
 ![audio-player2](audio-player2.png)
+
+~
+
+audio-player3 is the evolution of #2 and displays album cover art for the currently playing track.
