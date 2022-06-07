@@ -304,7 +304,7 @@ get '/refresh' => sub ($c) {
       if exists $by_name{$file};
 
     # Add an entry to the audio list
-    $audio->{$n} = { track => $file, rating => $rate, info => undef };
+    $audio->{$n} = { track => $file, rating => $rate };
 
     $n++;
   }
