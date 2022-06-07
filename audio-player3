@@ -184,10 +184,13 @@ get '/' => sub ($c) {
         track  => $name,
     );
 
-    if (defined $track_info->{track}{album}{image}[-1] && $track_info->{track}{album}{image}[-1]{'#text'}) {
-      $track_image = $track_info->{track}{album}{image}[-1]{'#text'};
+    if (@{ $track_info->{track}{album}{image} }) {
+      for my $item (@{ $track_info->{track}{album}{image} }) {
+        $track_image = $item->{'#text'}
+          if $item->{size} eq 'extralarge' && $item->{'#text'};
+      }
     }
-    else {
+    unless ($track_image) {
       $w = WebService::LastFM::TrackInfo->new(
         api_key => $API_KEY,
         method  => 'album',
