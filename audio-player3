@@ -394,10 +394,7 @@ get '/stats' => sub ($c) {
   );
 } => 'stats';
 
-
-
 app->start;
-
 
 =head1 AUTHOR
 
@@ -412,7 +409,6 @@ This is free software, licensed under:
   The Artistic License 2.0 (GPL Compatible)
 
 =cut
-
 
 __DATA__
 
