@@ -168,6 +168,7 @@ get '/' => sub ($c) {
     $name =~ s/(.*?)\.mp3$/$1/;
     $name =~ s/(.*?)-[\w-]+\.m4a$/$1/;
     $name =~ s/(.*?)\.m4a$/$1/;
+    $name =~ s/(.*?) \(Audio\)/$1/;
     $name =~ s/(.*?) \(Remastered \d+\)/$1/;
     $name =~ s/(.*?) \(\d+ Remaster\)/$1/;
     $name =~ s/(.*?) \(Official\s*(?:Lyric|Music)?\s*Video\)/$1/;
