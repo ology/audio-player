@@ -227,9 +227,7 @@ get '/' => sub ($c) {
   );
 } => 'index';
 
-sub _get_image {
-  my ($data) = @_;
-
+sub _get_image ($data) {
   return undef unless $data->{image} && @{ $data->{image} };
 
   my $image;
