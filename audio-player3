@@ -35,7 +35,6 @@ And browse to:
 
 =cut
 
-
 use Data::Dumper::Compact qw(ddc);
 use Encoding::FixLatin qw(fix_latin);
 use File::Find::Rule ();
