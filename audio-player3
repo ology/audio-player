@@ -230,14 +230,14 @@ get '/' => sub ($c) {
 sub _get_image {
   my ($data) = @_;
 
+  return undef unless $data->{image} && @{ $data->{image} };
+
   my $image;
 
-  if ($data->{image} && @{ $data->{image} }) {
-    for my $item (@{ $data->{image} }) {
-      if ($item->{size} eq 'extralarge' && $item->{'#text'}) {
-        $image = $item->{'#text'};
-        last;
-      }
+  for my $item (@{ $data->{image} }) {
+    if ($item->{size} eq 'extralarge' && $item->{'#text'}) {
+      $image = $item->{'#text'};
+      last;
     }
   }
 
