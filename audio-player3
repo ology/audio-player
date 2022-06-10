@@ -76,6 +76,7 @@ get '/' => sub ($c) {
   my $shuffle     = $c->param('shuffle') || 0;     # Select a random track to play next
   my $query       = $c->param('query') || '';      # The (url_escaped) search query
   my $showrate    = $c->param('showrate') || '';   # Filter by the requested rate
+  my $darkmode    = $c->param('darkmode') || 0;    # Use dark mode
 
   my ($op, $rate) = split / /, $showrate;
 
@@ -223,6 +224,7 @@ get '/' => sub ($c) {
     matches     => $matches,
     showrate    => $showrate,
     ratings     => [RATES],
+    darkmode    => $darkmode,
   );
 } => 'index';
 
@@ -440,6 +442,10 @@ __DATA__
   &nbsp;
   <label for="shuffle"><b>Shuffle:</b></label>
   <input type="checkbox" id="shuffle" name="shuffle" title="Select a random track (e)" <%= $shuffle ? 'checked' : '' %> />
+  &nbsp;
+  <label for="darkmode"><b>Dark:</b></label>
+  <input type="checkbox" id="darkmode" name="darkmode" title="Toggle dark/light mode (d)" <%= $darkmode ? 'checked' : '' %> />
+  &nbsp;
 <!--
   &nbsp;
   <a href="<%= url_for('index')->query(noinc => 1) %>"><img src="<%= url_for('index') %>logo.png" class="logo" /></a>
@@ -545,12 +551,13 @@ __DATA__
 $(document).ready( function () {
 
 % # Replace classes when in dark mode
-  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+  if (<%= $darkmode %> || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
     $('#clearsearch').attr('class', 'btn btn-outline-white rounded-right');
     $('#submitsearch').attr('class', 'btn btn-outline-light');
     $('#firsttrack').attr('class', 'btn btn-outline-light');
     $('#nexttrack').attr('class', 'btn btn-outline-light');
     $('[class="text-secondary"]').attr('class', 'text-medium');
+    $('body').toggleClass('dark');
   }
 
 % # Rate track function
@@ -589,6 +596,10 @@ $(document).ready( function () {
     if ($('#autoadvance').is(':checked')) {
       autoadvance = 1;
     }
+    darkmode = 0;
+    if ($('#darkmode').is(':checked')) {
+      darkmode = 1;
+    }
     if (force == 1 || autoadvance == 1) {
       var link = "<%= url_for('index') %>?current=" + current
         + '&noinc=' + noinc
@@ -596,7 +607,8 @@ $(document).ready( function () {
         + '&shuffle=' + shuffle
         + '&autoplay=' + autoplay
         + '&autoadvance=' + autoadvance
-        + '&showrate=' + showrate;
+        + '&showrate=' + showrate
+        + '&darkmode=' + darkmode;
       window.location = link;
     }
   }
@@ -718,6 +730,15 @@ $(document).ready( function () {
           $('input[name=shuffle]').attr('checked', true);
         }
       }
+      else if (e.which == 100) {
+        // Dark mode = d
+        if ($('#darkmode').is(':checked')) {
+          $('input[name=darkmode]').attr('checked', false);
+        }
+        else {
+          $('input[name=darkmode]').attr('checked', true);
+        }
+      }
       if (rate >= 0) {
           $('input[name=rating]:checked').attr('checked', false);
           $('input[name=rating][value=' + rate + ']').attr('checked', 'checked');
@@ -816,6 +837,23 @@ $('input[name=rating]').attr('disabled', true);
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="/style.css">
     <title><%= title %></title>
+    <style>
+      body {
+        padding: 10px;
+        color: #414A4C;
+        text-align: left;
+      }
+      a:link, a:visited, a:hover, a:active, a:focus {
+        color: #414A4C;
+      }
+      .dark {
+        background-color: #414A4C;
+        color: #DDD;
+      }
+      .dark a {
+        color: #DDD;
+      }
+    </style>
   </head>
   <body>
     <%= content %>
