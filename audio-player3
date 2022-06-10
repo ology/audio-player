@@ -446,10 +446,6 @@ __DATA__
   <label for="darkmode"><b>Dark:</b></label>
   <input type="checkbox" id="darkmode" name="darkmode" title="Toggle dark/light mode (d)" <%= $darkmode ? 'checked' : '' %> />
   &nbsp;
-<!--
-  &nbsp;
-  <a href="<%= url_for('index')->query(noinc => 1) %>"><img src="<%= url_for('index') %>logo.png" class="logo" /></a>
--->
 </div>
 
 % # Current track name
