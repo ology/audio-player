@@ -152,6 +152,7 @@ get '/' => sub ($c) {
   my $total = $nf->format_number(scalar keys %$audio);
   my $matches = $nf->format_number(scalar @$match);
 
+  # Parse the track name and find an image
   my $track_info;
   my $track_image;
   if ($track) {
