@@ -835,9 +835,7 @@ $('input[name=rating]').attr('disabled', true);
     <title><%= title %></title>
     <style>
       body {
-        padding: 10px;
         color: #414A4C;
-        text-align: left;
       }
       a:link, a:visited, a:hover, a:active, a:focus {
         color: #414A4C;
