@@ -856,7 +856,7 @@ $('input[name=rating]').attr('disabled', true);
     <p></p>
     <div id="footer" class="text-secondary">
       <hr>
-      audio-player3
+      <a href="https://github.com/ology/audio-player">audio-player3</a>
       built by <a href="http://gene.ology.net/">Gene</a>
       with <a href="https://www.perl.org/">Perl</a>,
       <a href="https://mojolicious.org/">Mojolicious</a>
