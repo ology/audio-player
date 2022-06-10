@@ -102,6 +102,7 @@ get '/' => sub ($c) {
         push @$match, $key if lc($audio->{$key}{track}) =~ /$query/i;
       }
 
+      # Accumulate the matches
       my %tracks;
       for my $n (@$match) {
         $tracks{ $audio->{$n}{track} } = $n;
