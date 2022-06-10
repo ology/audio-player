@@ -181,6 +181,7 @@ get '/' => sub ($c) {
     $name =~ s/(.*?) \(Official\s*(?:Lyric|Music)?\s*Video\)/$1/;
     $name =~ s/$artist\s*-\s*(.*?)$/$1/;
 
+    # Special case
     if ($track =~ /Hôtel Costes/) {
       $name =~ s/Hotel Costes \d+ - (.*)$/$1/;
       my ($who, $what) = split /\s*-\s*/, $name, 2;
