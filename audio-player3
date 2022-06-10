@@ -822,7 +822,7 @@ $('input[name=rating]').attr('disabled', true);
     <p></p>
     <div id="footer" class="text-secondary">
       <hr>
-      audioplayer3
+      audio-player3
       built by <a href="http://gene.ology.net/">Gene</a>
       with <a href="https://www.perl.org/">Perl</a>,
       <a href="https://mojolicious.org/">Mojolicious</a>
