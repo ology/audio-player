@@ -56,7 +56,7 @@ use constant TRACKS => app->moniker . '.dat'; # The tracks file
 # ./config.yml:
 # api_key: 'abcdef123456'
 my $config = LoadFile 'config.yml';
-my $API_KEY = $config->{api_key}; # for LastFM
+my $API_KEY = $config->{api_key}; # for last.fm
 
 =head1 ROUTES
 
