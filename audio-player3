@@ -212,7 +212,7 @@ get '/' => sub ($c) {
       $track_image = _get_image($track_info->{album});
     }
 
-    $track_info->{computed_title} = "|$artist| - |$album| - |$name|";
+    $track_info->{computed_title} = "|$artist| |$album| |$name|";
   }
 
   $c->render(
