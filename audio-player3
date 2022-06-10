@@ -115,7 +115,7 @@ get '/' => sub ($c) {
     elsif ($showrate && !$noinc) {
       my $filtered = [];
 
-      # Gather the filtered tracks
+      # Gather the rated tracks
       for my $trk (sort { $a <=> $b } keys %$audio) {
         next if !_in_rate_range($op, $rate, $audio->{$trk}{rating});
         push @$filtered, $trk;
