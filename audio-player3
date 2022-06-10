@@ -123,7 +123,7 @@ get '/' => sub ($c) {
       $current = _get_current($filtered, $current, $shuffle, $noinc);
     }
     else {
-      # If shuffling, get a random audio track index, otherwise increment...
+      # If shuffling, get a random audio track index, otherwise increment... or don't.
       $current = $shuffle && !$noinc
         ? int(rand keys %$audio)
         : $noinc
