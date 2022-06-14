@@ -855,7 +855,7 @@ $('input[name=rating]').attr('disabled', true);
       .dark a {
         color: #DDD;
       }
-      @media all and (max-width: 800px) {
+      @media screen and (max-width: 800px) {
         body {
           display: block;
           width: 100%;
