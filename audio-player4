@@ -707,7 +707,6 @@ $(document).ready( function () {
           + "&autoadvance=<%= $autoadvance %>"
           + "&showrate=<%= $showrate %>"
           + "&darkmode=<%= $darkmode %>"
-alert(link);
         window.location = link;
       }
       else if (e.which == 102) {
