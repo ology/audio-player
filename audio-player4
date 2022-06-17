@@ -697,6 +697,19 @@ $(document).ready( function () {
           audio.pause();
         }
       }
+      else if (e.which == 122) {
+        // space-music = z
+        var link = "<%= url_for('index') %>?current=0"
+          + '&noinc=0'
+          + '&query=space-music'
+          + "&shuffle=<%= $shuffle %>"
+          + "&autoplay=<%= $autoplay %>"
+          + "&autoadvance=<%= $autoadvance %>"
+          + "&showrate=<%= $showrate %>"
+          + "&darkmode=<%= $darkmode %>"
+alert(link);
+        window.location = link;
+      }
       else if (e.which == 102) {
         // First track = f
         advance(1, 0, 1, 0);
