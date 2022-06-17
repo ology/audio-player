@@ -92,7 +92,7 @@ get '/' => sub ($c) {
     $audio = retrieve(TRACKS);
   }
   else {
-    $c->flash(message => 'Cannot read track list file. Please <a href="/refresh">refresh</a>');
+    $c->flash(error => 'Cannot read track list file. Please <a href="/refresh">refresh</a>');
   }
 
   if (keys %$audio) {
