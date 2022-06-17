@@ -78,11 +78,9 @@ get '/' => sub ($c) {
   my $current     = $c->param('current') || 0;     # The last and next played track
   my $noinc       = $c->param('noinc') || 0;       # Do not increment to the next track
   my $shuffle     = $c->param('shuffle') || 0;     # Select a random track to play next
-  my $query       = $c->param('query') || '';      # The (url_escaped) search query
+  my $query       = $c->param('query') || '';      # The url encoded search query
   my $showrate    = $c->param('showrate') || '';   # Filter by the requested rate
   my $darkmode    = $c->param('darkmode') || 0;    # Use dark mode
-#  my $cover_art   = $c->param('coverart') || 0;    # Show cover art
-#  my $frequency   = $c->param('frequency') || 1;   # Show frequency analysis
 
   my ($op, $rate) = split / /, $showrate;
 
