@@ -82,6 +82,7 @@ get '/' => sub ($c) {
   my $showrate    = $c->param('showrate') || '';   # Filter by the requested rate
   my $darkmode    = $c->param('darkmode') || 0;    # Use dark mode
 
+  my $analyzing  = 1; # Flag to analyze mp3s
   my $manage_vol = 1; # Flag to trigger amixer action
 
   my ($op, $rate) = split / /, $showrate;
@@ -161,7 +162,7 @@ get '/' => sub ($c) {
   # Parse the track name and find an image
   my $track_info;
   my $track_image;
-  if ($track && $track =~ /\.mp3$/) {
+  if ($analyzing && $track && $track =~ /\.mp3$/) {
     my $file = 'public/frequency.png';
     my $tune = "public$track";
     my ($w, $h) = (1600, 300);
