@@ -176,14 +176,14 @@ get '/' => sub ($c) {
     my ($w, $h) = (WIDTH, HEIGHT);
     my $R = Statistics::R->new;
     $R->run(q`library(tuneR)`);
-    $R->run(qq`mpt <- readMP3("$tune")`)  if $track =~ /\.mp3$/i;
-    $R->run(qq`mpt <- readWave("$tune")`) if $track =~ /\.wav$/i;
-    #$R->run(q`mpt <- mono(mpt, which=c("both"))`);
-    #$R->run(q`mpt <- normalize(mpt, unit=c("1"))`);
+    $R->run(qq`tune <- readMP3("$tune")`)  if $track =~ /\.mp3$/i;
+    $R->run(qq`tune <- readWave("$tune")`) if $track =~ /\.wav$/i;
+    #$R->run(q`tune <- mono(tune, which=c("both"))`);
+    #$R->run(q`tune <- normalize(tune, unit=c("1"))`);
     $R->run(qq`png("$file", width=$w, height=$h, units="px", pointsize=12, bg="white", res=NA)`);
-    $R->run(q`plot(mpt)`);
+    $R->run(q`plot(tune)`);
     $R->run(q`dev.off()`);
-    $track_info->{frequency} = $R->get('summary(mpt)');
+    $track_info->{frequency} = $R->get('summary(tune)');
     $R->stop;
 
     ($track_image = $file) =~ s/^public(.*)$/$1/ if -e $file;
