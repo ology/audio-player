@@ -47,7 +47,7 @@ use Mojo::Util qw(url_unescape);
 use Number::Format ();
 use Statistics::R ();
 use Storable qw(retrieve store);
-use Try::Tiny;
+use Try::Tiny qw(try catch);
 use lib map { "$ENV{HOME}/sandbox/$_/lib" } qw(WebService-LastFM-TrackInfo);
 use WebService::LastFM::TrackInfo;
 use YAML::XS qw(LoadFile);
