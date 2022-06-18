@@ -192,13 +192,13 @@ get '/' => sub ($c) {
         warn "SET VOL HIGH\n";
         push @cmd, HIGH_VOL . '%';
         system(@cmd) == 0
-          or die "system @cmd failed: $?";
+          or die "system(@cmd) failed: $?";
       }
       elsif ($max > HIGH_MAX) {
         warn "SET VOL LOW\n";
         push @cmd, LOW_VOL . '%';
         system(@cmd) == 0
-          or die "system @cmd failed: $?";
+          or die "system(@cmd) failed: $?";
       }
       else {
         _even_volume($manage_vol);
