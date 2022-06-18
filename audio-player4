@@ -415,7 +415,7 @@ get '/refresh' => sub ($c) {
   my @files = File::Find::Rule->file()->name(EXTS)->in(PATH);
   my $n = 0;
   for my $file (@files) {
-    # Remove "public" from the name
+    # Make the name relative to /
     $file =~ s/^public//;
     # Make sure the name is properly displayable
     $file = fix_latin($file);
