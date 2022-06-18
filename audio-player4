@@ -293,7 +293,7 @@ sub _even_volume {
     $current =~ s/^.+?\[(\d+)%\].+$/$1/s;
 
     # only turn the sound down, not up
-    if ($current > 72) {
+    if ($current > 72) { # NB: for some reason, 72% is 50% volume
       warn "VOL EVEN\n";
       my @cmd = qw(amixer set Master 72%);
       system(@cmd) == 0
