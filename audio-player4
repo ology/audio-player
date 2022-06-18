@@ -177,14 +177,15 @@ get '/' => sub ($c) {
     $R->stop;
 
     if ($manage_vol) {
+      my $max = $track_info->{frequency}[-2];
       my @cmd;
-      if ($track_info->{frequency}[-2] < 20_000) {
+      if ($max < 20_000) {
         @cmd = qw(amixer set Master 80%);
         system(@cmd) == 0
           or die "system @cmd failed: $?";
         warn __PACKAGE__,' L',__LINE__,' ',,"VOL HIGH\n";
       }
-      elsif ($track_info->{frequency}[-2] > 30_000) {
+      elsif ($max > 30_000) {
         @cmd = qw(amixer set Master 60%);
         system(@cmd) == 0
           or die "system @cmd failed: $?";
