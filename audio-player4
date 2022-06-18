@@ -74,6 +74,7 @@ use constant EVEN_VOL   => 72;     # NB: for some reason, 72 is 50% volume
 my $config  = -e CONFIG ? LoadFile(CONFIG) : {};
 my $API_KEY = $config->{api_key};
 
+
 =head1 ROUTES
 
 =head2 GET /
@@ -492,7 +493,9 @@ get '/stats' => sub ($c) {
   );
 } => 'stats';
 
+
 app->start;
+
 
 =head1 AUTHOR
 
