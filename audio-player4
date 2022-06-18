@@ -176,7 +176,8 @@ get '/' => sub ($c) {
     my ($w, $h) = (WIDTH, HEIGHT);
     my $R = Statistics::R->new;
     $R->run(q`library(tuneR)`);
-    $R->run(qq`mpt <- readMP3("$tune")`);
+    $R->run(qq`mpt <- readMP3("$tune")`)  if $track =~ /\.mp3$/i;
+    $R->run(qq`mpt <- readWave("$tune")`) if $track =~ /\.wav$/i;
     #$R->run(q`mpt <- mono(mpt, which=c("both"))`);
     #$R->run(q`mpt <- normalize(mpt, unit=c("1"))`);
     $R->run(qq`png("$file", width=$w, height=$h, units="px", pointsize=12, bg="white", res=NA)`);
