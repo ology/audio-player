@@ -157,9 +157,9 @@ get '/' => sub ($c) {
   my $rating = 0;
 
   # Ok get the track and rating
-  if (keys %$audio) {
-    $track  = $current >= 0 ? $audio->{$current}{track} : '';
-    $rating = $current >= 0 ? $audio->{$current}{rating} : 0;
+  if (keys %$audio && $current >= 0) {
+    $track  = $audio->{$current}{track};
+    $rating = $audio->{$current}{rating};
   }
 #  app->log->debug("Current: $current, Track: $track");
 
