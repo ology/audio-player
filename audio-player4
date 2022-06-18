@@ -57,6 +57,7 @@ use constant EXTS   => qw(*.mp3 *.m4a *.ogg *.flac *.wav);  # Tracks of interest
 use constant PATH   => 'public/Audio/';        # Where the audio lives
 use constant TRACKS => app->moniker . '.dat';  # The tracks file
 use constant CONFIG => 'config.yml';           # The configuration file with your API key
+                                               # api_key: 'abcdef123456'
 
 # volume management
 use constant MANAGE_VOL => 1;
