@@ -57,16 +57,18 @@ use constant EXTS   => qw(*.mp3 *.m4a *.ogg *.flac *.wav);  # The tracks of inte
 use constant PATH   => 'public/Audio/';        # Where the audio files live
 use constant TRACKS => app->moniker . '.dat';  # The tracks file
 
-# volume management bounds
-use constant LOW_MAX  => 20_000;
-use constant HIGH_MAX => 30_000;
-use constant LOW_VOL  => 59;
-use constant HIGH_VOL => 80;
-use constant EVEN_VOL => 72; # NB: for some reason, 72 is 50% volume
+# volume management
+use constant MANAGE_VOL => 1;
+use constant LOW_MAX    => 20_000;
+use constant HIGH_MAX   => 30_000;
+use constant LOW_VOL    => 59;
+use constant HIGH_VOL   => 80;
+use constant EVEN_VOL   => 72; # NB: for some reason, 72 is 50% volume
 
-# frequency analysis image dimensions
-use constant WIDTH  => 1600;
-use constant HEIGHT => 300;
+# frequency analysis
+use constant ANALYZE => 1;
+use constant WIDTH   => 1600;
+use constant HEIGHT  => 300;
 
 # ./config.yml file:
 # api_key: 'abcdef123456'
@@ -92,9 +94,6 @@ get '/' => sub ($c) {
   my $query       = $c->param('query') || '';      # The url encoded search query
   my $showrate    = $c->param('showrate') || '';   # Filter by the requested rate
   my $darkmode    = $c->param('darkmode') || 0;    # Use dark mode
-
-  my $analyze    = 1; # Flag to analyze mp3s
-  my $manage_vol = 1; # Flag to trigger volume changes
 
   my ($op, $rate) = split / /, $showrate;
 
@@ -173,7 +172,7 @@ get '/' => sub ($c) {
   my $track_info;
   my $track_image;
   # analyze the mp3 track if requested
-  if ($analyze && $track && ($track =~ /\.mp3$/i || $track =~ /\.wav$/i)) {
+  if (ANALYZE && $track && ($track =~ /\.mp3$/i || $track =~ /\.wav$/i)) {
     my $file = 'public/frequency.png';
     my $tune = "public$track";
     my ($w, $h) = (WIDTH, HEIGHT);
@@ -190,7 +189,7 @@ get '/' => sub ($c) {
 
     ($track_image = $file) =~ s/^public(.*)$/$1/ if -e $file;
 
-    if ($manage_vol) {
+    if (MANAGE_VOL) {
       my $max = $track_info->{frequency}[-2];
       my @cmd = qw(amixer set Master);
       if ($max < LOW_MAX) {
@@ -206,7 +205,7 @@ get '/' => sub ($c) {
           or die "system(@cmd) failed: $?";
       }
       else {
-        _even_volume($manage_vol);
+        _even_volume();
       }
     }
 
@@ -288,7 +287,7 @@ get '/' => sub ($c) {
 
     $track_info->{computed_title} = "|$artist| |$album| |$name|";
 
-    _even_volume($manage_vol);
+    _even_volume();
   }
 
   $c->render(
@@ -313,8 +312,7 @@ get '/' => sub ($c) {
 } => 'index';
 
 sub _even_volume {
-  my ($manage_vol) = @_;
-  if ($manage_vol) {
+  if (MANAGE_VOL) {
     my $current = qx{ amixer get Master };
     $current =~ s/^.+?\[(\d+)%\].+$/$1/s;
 
