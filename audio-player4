@@ -82,6 +82,8 @@ get '/' => sub ($c) {
   my $showrate    = $c->param('showrate') || '';   # Filter by the requested rate
   my $darkmode    = $c->param('darkmode') || 0;    # Use dark mode
 
+  my $manage_vol = 1; # Flag to trigger amixer action
+
   my ($op, $rate) = split / /, $showrate;
 
   my $audio = {}; # Bucket for all tracks
@@ -173,6 +175,28 @@ get '/' => sub ($c) {
     $track_info->{frequency} = $R->get('summary(mpt)');
     ($track_image = $file) =~ s/^public(.*)$/$1/ if -e $file;
     $R->stop;
+
+    if ($manage_vol) {
+      my @cmd;
+      if ($track_info->{frequency}[-2] < 20_000) {
+        @cmd = qw(amixer set Master 80%);
+        system(@cmd) == 0
+          or die "system @cmd failed: $?";
+  warn __PACKAGE__,' L',__LINE__,' ',,"VOL HIGH\n";
+      }
+      elsif ($track_info->{frequency}[-2] > 30_000) {
+        @cmd = qw(amixer set Master 60%);
+        system(@cmd) == 0
+          or die "system @cmd failed: $?";
+  warn __PACKAGE__,' L',__LINE__,' ',,"VOL LOW\n";
+      }
+      else {
+        @cmd = qw(amixer set Master 72%);
+        system(@cmd) == 0
+          or die "system @cmd failed: $?";
+  warn __PACKAGE__,' L',__LINE__,' ',,"VOL EVEN\n";
+      }
+    }
   }
   elsif ($track) {
     my @parts = split /\//, $track;
