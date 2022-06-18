@@ -206,6 +206,26 @@ get '/' => sub ($c) {
         _even_volume($manage_vol);
       }
     }
+
+    $track_info->{frequency} = join ' ', @{ $track_info->{frequency} };
+    my @parts = $track_info->{frequency} =~ /
+      ^
+      ([A-Za-z\s]+?:\s\d+)
+      \s
+      ([A-Za-z\s\(\)]+?:\s[\d.]+)
+      \s
+      ([A-Za-z\s\(\)]+?:\s\d+)
+      \s
+      ([A-Za-z\s\(\)\/]+?:\s(?:Mono|Stereo))
+      \s
+      ([A-Za-z\s\(\)]+?:\s(?:TRUE|FALSE))
+      \s
+      ([0-9A-Za-z\s\(\)\/]+?:\s\d+)
+      \s
+      (.*)
+      $
+    /gx;
+    $track_info->{frequency} = \@parts;
   }
 
   # Parse the track name and find an image
