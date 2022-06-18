@@ -487,7 +487,7 @@ $(document).ready( function () {
     if (force == 1 || autoadvance == 1) {
       var link = "<%= url_for('index') %>?current=" + current
         + '&noinc=' + noinc
-        + '&query=' + encodeURI(query)
+        + '&query=' + encodeURIComponent(query)
         + '&shuffle=' + shuffle
         + '&autoplay=' + autoplay
         + '&autoadvance=' + autoadvance
