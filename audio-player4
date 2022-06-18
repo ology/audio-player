@@ -169,7 +169,7 @@ get '/' => sub ($c) {
   my $track_info;
   my $track_image;
   # analyze the mp3 track if requested
-  if ($track && $track =~ /\.mp3$/) {
+  if ($track && ($track =~ /\.mp3$/ || $track =~ /\.wav$/)) {
     if ($analyze) {
       my $file = 'public/frequency.png';
       my $tune = "public$track";
