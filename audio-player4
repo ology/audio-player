@@ -159,9 +159,9 @@ get '/' => sub ($c) {
   my $total = $nf->format_number(scalar keys %$audio);
   my $matches = $nf->format_number(scalar @$match);
 
-  # Parse the track name and find an image
   my $track_info;
   my $track_image;
+  # analyze an mp3 if requested
   if ($analyze && $track && $track =~ /\.mp3$/) {
     my $file = 'public/frequency.png';
     my $tune = "public$track";
@@ -197,6 +197,7 @@ get '/' => sub ($c) {
         or die "system @cmd failed: $?";
     }
   }
+  # Parse the track name and find an image
   elsif ($track) {
     my @parts = split /\//, $track;
     my $name = $parts[-1]; # track name
