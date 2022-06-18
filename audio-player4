@@ -222,6 +222,7 @@ get '/' => sub ($c) {
     $track_info->{frequency} = join ' ', @{ $track_info->{frequency} };
     my @parts = $track_info->{frequency} =~ m|
       ^
+      ( \w+ Object             ) \s
       ( [\w\s()/]+?: \s [\d.]+ ) \s
       ( [\w\s()/]+?: \s [\d.]+ ) \s
       ( [\w\s()/]+?: \s [\d.]+ ) \s
