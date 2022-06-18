@@ -182,19 +182,28 @@ get '/' => sub ($c) {
       my $max = $track_info->{frequency}[-2];
       my @cmd = qw(amixer set Master);
       if ($max < 20_000) {
-        push @cmd, '80%';
         warn "VOL HIGH\n";
+        push @cmd, '80%';
+        system(@cmd) == 0
+          or die "system @cmd failed: $?";
       }
       elsif ($max > 30_000) {
-        push @cmd, '59%';
         warn "VOL LOW\n";
+        push @cmd, '59%';
+        system(@cmd) == 0
+          or die "system @cmd failed: $?";
       }
       else {
-        push @cmd, '72%'; # This is actually 50% on my system
-        warn "VOL EVEN\n";
+        my $current = qx{ amixer get Master };
+        $current =~ s/^.+?\[(\d+)%\].+$/$1/s;
+        # only turn the sound down, not up
+        if ($current > 72) {
+          warn "VOL EVEN\n";
+          push @cmd, '72%'; # This is actually 50% on my system
+          system(@cmd) == 0
+            or die "system @cmd failed: $?";
+        }
       }
-      system(@cmd) == 0
-        or die "system @cmd failed: $?";
     }
   }
   # Parse the track name and find an image
