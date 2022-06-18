@@ -228,7 +228,7 @@ get '/' => sub ($c) {
   }
 
   # Parse the track name and find an image
-  if ($track && !$track_image) {
+  if ($API_KEY && $track && !$track_image) {
     my @parts = split /\//, $track;
     my $name = $parts[-1]; # track name
     my $album = $parts[-2]; # album name
