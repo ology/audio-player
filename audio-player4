@@ -192,7 +192,7 @@ get '/' => sub ($c) {
         warn __PACKAGE__,' L',__LINE__,' ',,"VOL LOW\n";
       }
       else {
-        @cmd = qw(amixer set Master 72%);
+        @cmd = qw(amixer set Master 72%); # This is actually 50% on my system
         system(@cmd) == 0
           or die "system @cmd failed: $?";
         warn __PACKAGE__,' L',__LINE__,' ',,"VOL EVEN\n";
