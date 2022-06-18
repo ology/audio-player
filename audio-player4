@@ -186,7 +186,7 @@ get '/' => sub ($c) {
         warn "VOL HIGH\n";
       }
       elsif ($max > 30_000) {
-        push @cmd, '60%';
+        push @cmd, '59%';
         warn "VOL LOW\n";
       }
       else {
