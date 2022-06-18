@@ -162,21 +162,23 @@ get '/' => sub ($c) {
   my $track_info;
   my $track_image;
   # analyze the mp3 track if requested
-  if ($analyze && $track && $track =~ /\.mp3$/) {
-    my $file = 'public/frequency.png';
-    my $tune = "public$track";
-    my ($w, $h) = (1600, 300);
-    my $R = Statistics::R->new;
-    $R->run(q`library(tuneR)`);
-    $R->run(qq`mpt <- readMP3("$tune")`);
-#    $R->run(q`mpt <- mono(mpt, which=c("both"))`);
-#    $R->run(q`mpt <- normalize(mpt, unit=c("1"))`);
-    $R->run(qq`png("$file", width=$w, height=$h, units="px", pointsize=12, bg="white", res=NA)`);
-    $R->run(q`plot(mpt)`);
-    $R->run(q`dev.off()`);
-    $track_info->{frequency} = $R->get('summary(mpt)');
-    ($track_image = $file) =~ s/^public(.*)$/$1/ if -e $file;
-    $R->stop;
+  if ($track && $track =~ /\.mp3$/) {
+    if ($analyze) {
+      my $file = 'public/frequency.png';
+      my $tune = "public$track";
+      my ($w, $h) = (1600, 300);
+      my $R = Statistics::R->new;
+      $R->run(q`library(tuneR)`);
+      $R->run(qq`mpt <- readMP3("$tune")`);
+  #    $R->run(q`mpt <- mono(mpt, which=c("both"))`);
+  #    $R->run(q`mpt <- normalize(mpt, unit=c("1"))`);
+      $R->run(qq`png("$file", width=$w, height=$h, units="px", pointsize=12, bg="white", res=NA)`);
+      $R->run(q`plot(mpt)`);
+      $R->run(q`dev.off()`);
+      $track_info->{frequency} = $R->get('summary(mpt)');
+      ($track_image = $file) =~ s/^public(.*)$/$1/ if -e $file;
+      $R->stop;
+    }
 
     if ($manage_vol) {
       my $max = $track_info->{frequency}[-2];
@@ -206,8 +208,9 @@ get '/' => sub ($c) {
       }
     }
   }
+
   # Parse the track name and find an image
-  elsif ($track) {
+  if ($track && !$track_image) {
     my @parts = split /\//, $track;
     my $name = $parts[-1]; # track name
     my $album = $parts[-2]; # album name
