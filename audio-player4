@@ -57,6 +57,13 @@ use constant EXTS   => qw(*.mp3 *.m4a *.ogg *.flac);  # The tracks of interest
 use constant PATH   => 'public/Audio/';               # Where the audio files live
 use constant TRACKS => app->moniker . '.dat';         # The tracks file
 
+# volume management bounds
+use constant LOW_MAX  => 20_000;
+use constant HIGH_MAX => 30_000;
+use constant LOW_VOL  => 59;
+use constant HIGH_VOL => 80;
+use constant EVEN_VOL => 72; # NB: for some reason, 72% is 50% volume
+
 # ./config.yml file:
 # api_key: 'abcdef123456'
 my $config = LoadFile 'config.yml';
@@ -170,8 +177,8 @@ get '/' => sub ($c) {
       my $R = Statistics::R->new;
       $R->run(q`library(tuneR)`);
       $R->run(qq`mpt <- readMP3("$tune")`);
-  #    $R->run(q`mpt <- mono(mpt, which=c("both"))`);
-  #    $R->run(q`mpt <- normalize(mpt, unit=c("1"))`);
+      #$R->run(q`mpt <- mono(mpt, which=c("both"))`);
+      #$R->run(q`mpt <- normalize(mpt, unit=c("1"))`);
       $R->run(qq`png("$file", width=$w, height=$h, units="px", pointsize=12, bg="white", res=NA)`);
       $R->run(q`plot(mpt)`);
       $R->run(q`dev.off()`);
@@ -183,15 +190,15 @@ get '/' => sub ($c) {
     if ($manage_vol) {
       my $max = $track_info->{frequency}[-2];
       my @cmd = qw(amixer set Master);
-      if ($max < 20_000) {
-        warn "VOL HIGH\n";
-        push @cmd, '80%';
+      if ($max < LOW_MAX) {
+        warn "SET VOL HIGH\n";
+        push @cmd, HIGH_VOL . '%';
         system(@cmd) == 0
           or die "system @cmd failed: $?";
       }
-      elsif ($max > 30_000) {
-        warn "VOL LOW\n";
-        push @cmd, '59%';
+      elsif ($max > HIGH_MAX) {
+        warn "SET VOL LOW\n";
+        push @cmd, LOW_VOL . '%';
         system(@cmd) == 0
           or die "system @cmd failed: $?";
       }
@@ -292,9 +299,9 @@ sub _even_volume {
     $current =~ s/^.+?\[(\d+)%\].+$/$1/s;
 
     # only turn the sound down, not up
-    if ($current > 72) { # NB: for some reason, 72% is 50% volume
-      warn "VOL EVEN\n";
-      my @cmd = qw(amixer set Master 72%);
+    if ($current > EVEN_VOL) {
+      warn "SET VOL EVEN\n";
+      my @cmd = (qw(amixer set Master), EVEN_VOL . '%');
       system(@cmd) == 0
         or die "system(@cmd) failed: $?";
     }
