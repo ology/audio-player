@@ -299,7 +299,7 @@ get '/' => sub ($c) {
 
     $track_info = { %$info, %$track_info };
 
-    _even_volume();
+    _even_volume() if MANAGE_VOL;
   }
 
   $c->render(
@@ -325,17 +325,15 @@ get '/' => sub ($c) {
 } => 'index';
 
 sub _even_volume {
-  if (MANAGE_VOL) {
-    my $current = qx{ amixer get Master };
-    $current =~ s/^.+?\[(\d+)%\].+$/$1/s;
+  my $current = qx{ amixer get Master };
+  $current =~ s/^.+?\[(\d+)%\].+$/$1/s;
 
-    # only turn the sound down, not up
-    if ($current > EVEN_VOL) {
-      warn "SET VOL EVEN\n";
-      my @cmd = (qw(amixer set Master), EVEN_VOL . '%');
-      system(@cmd) == 0
-        or die "system(@cmd) failed: $?";
-    }
+  # only turn the sound down, not up
+  if ($current > EVEN_VOL) {
+    warn "SET VOL EVEN\n";
+    my @cmd = (qw(amixer set Master), EVEN_VOL . '%');
+    system(@cmd) == 0
+      or die "system(@cmd) failed: $?";
   }
 }
 
