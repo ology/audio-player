@@ -100,6 +100,9 @@ get '/' => sub ($c) {
   my $audio = {}; # Bucket for all tracks
   my $match = []; # Bucket for all query matches
 
+  my $track_info;  # discovered track details
+  my $track_image; # cover art or frequency analysis
+
   # Load the track list or flash an error
   if (-e TRACKS) {
     $audio = retrieve(TRACKS);
@@ -167,8 +170,6 @@ get '/' => sub ($c) {
   my $total = $nf->format_number(scalar keys %$audio);
   my $matches = $nf->format_number(scalar @$match);
 
-  my $track_info;
-  my $track_image;
   # analyze the mp3 track if requested
   if (ANALYZE && $track && ($track =~ /\.mp3$/i || $track =~ /\.wav$/i)) {
     my $file = 'public/frequency.png';
