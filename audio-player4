@@ -62,6 +62,7 @@ use constant CONFIG => 'config.yml';           # The config file with your last.
 use constant ANALYZE => 1;
 use constant WIDTH   => 1600;
 use constant HEIGHT  => 300;
+use constant FREQ    => 'frequency.png';
 
 # volume management
 use constant MANAGE_VOL => 1;
@@ -174,7 +175,7 @@ get '/' => sub ($c) {
 
   # analyze the mp3 track if requested
   if (ANALYZE && $track && ($track =~ /\.mp3$/i || $track =~ /\.wav$/i)) {
-    my $file = 'public/frequency.png';
+    my $file = 'public/' . FREQ;
     my $tune = "public$track";
     my ($w, $h) = (WIDTH, HEIGHT);
     my $R = Statistics::R->new;
