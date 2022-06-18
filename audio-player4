@@ -169,23 +169,21 @@ get '/' => sub ($c) {
   my $track_info;
   my $track_image;
   # analyze the mp3 track if requested
-  if ($track && ($track =~ /\.mp3$/ || $track =~ /\.wav$/)) {
-    if ($analyze) {
-      my $file = 'public/frequency.png';
-      my $tune = "public$track";
-      my ($w, $h) = (1600, 300);
-      my $R = Statistics::R->new;
-      $R->run(q`library(tuneR)`);
-      $R->run(qq`mpt <- readMP3("$tune")`);
-      #$R->run(q`mpt <- mono(mpt, which=c("both"))`);
-      #$R->run(q`mpt <- normalize(mpt, unit=c("1"))`);
-      $R->run(qq`png("$file", width=$w, height=$h, units="px", pointsize=12, bg="white", res=NA)`);
-      $R->run(q`plot(mpt)`);
-      $R->run(q`dev.off()`);
-      $track_info->{frequency} = $R->get('summary(mpt)');
-      ($track_image = $file) =~ s/^public(.*)$/$1/ if -e $file;
-      $R->stop;
-    }
+  if ($analyze && $track && ($track =~ /\.mp3$/ || $track =~ /\.wav$/)) {
+    my $file = 'public/frequency.png';
+    my $tune = "public$track";
+    my ($w, $h) = (1600, 300);
+    my $R = Statistics::R->new;
+    $R->run(q`library(tuneR)`);
+    $R->run(qq`mpt <- readMP3("$tune")`);
+    #$R->run(q`mpt <- mono(mpt, which=c("both"))`);
+    #$R->run(q`mpt <- normalize(mpt, unit=c("1"))`);
+    $R->run(qq`png("$file", width=$w, height=$h, units="px", pointsize=12, bg="white", res=NA)`);
+    $R->run(q`plot(mpt)`);
+    $R->run(q`dev.off()`);
+    $track_info->{frequency} = $R->get('summary(mpt)');
+    ($track_image = $file) =~ s/^public(.*)$/$1/ if -e $file;
+    $R->stop;
 
     if ($manage_vol) {
       my $max = $track_info->{frequency}[-2];
@@ -207,24 +205,22 @@ get '/' => sub ($c) {
       }
     }
 
-    if ($analyze) {
-      # perform these regex gymnastics in order to make the info nicer
-      $track_info->{frequency} = join ' ', @{ $track_info->{frequency} };
-      my @parts = $track_info->{frequency} =~ m|
-        ^
-        ( [\w\s()/]+?: \s [\d.]+ ) \s
-        ( [\w\s()/]+?: \s [\d.]+ ) \s
-        ( [\w\s()/]+?: \s [\d.]+ ) \s
-        ( [\w\s()/]+?: \s \w+    ) \s
-        ( [\w\s()/]+?: \s \w+    ) \s
-        ( [\w\s()/]+?: \s [\d.]+ ) \s
-        ( [\w\s()/]+?: \s .+?    ) \s
-        ( left         \s .+?    ) \s
-        ( right        \s .+     )
-        $
-      |gx;
-      $track_info->{frequency} = \@parts;
-    }
+    # perform these regex gymnastics in order to make the info nicer
+    $track_info->{frequency} = join ' ', @{ $track_info->{frequency} };
+    my @parts = $track_info->{frequency} =~ m|
+      ^
+      ( [\w\s()/]+?: \s [\d.]+ ) \s
+      ( [\w\s()/]+?: \s [\d.]+ ) \s
+      ( [\w\s()/]+?: \s [\d.]+ ) \s
+      ( [\w\s()/]+?: \s \w+    ) \s
+      ( [\w\s()/]+?: \s \w+    ) \s
+      ( [\w\s()/]+?: \s [\d.]+ ) \s
+      ( [\w\s()/]+?: \s .+?    ) \s
+      ( left         \s .+?    ) \s
+      ( right        \s .+     )
+      $
+    |gx;
+    $track_info->{frequency} = \@parts;
   }
 
   # Parse the track name and find an image
