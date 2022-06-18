@@ -178,17 +178,17 @@ get '/' => sub ($c) {
 
     if ($manage_vol) {
       my $max = $track_info->{frequency}[-2];
-      my @cmd;
+      my @cmd = qw(amixer set Master);
       if ($max < 20_000) {
-        @cmd = qw(amixer set Master 80%);
+        push @cmd, '80%';
         warn "VOL HIGH\n";
       }
       elsif ($max > 30_000) {
-        @cmd = qw(amixer set Master 60%);
+        push @cmd, '60%';
         warn "VOL LOW\n";
       }
       else {
-        @cmd = qw(amixer set Master 72%); # This is actually 50% on my system
+        push @cmd, '72%'; # This is actually 50% on my system
         warn "VOL EVEN\n";
       }
       system(@cmd) == 0
