@@ -56,7 +56,7 @@ use constant RATES  => (0 .. 5); #qw(None Bad Poor Fair Good Best);
 use constant EXTS   => qw(*.mp3 *.m4a *.ogg *.flac *.wav);  # Tracks of interest
 use constant PATH   => 'public/Audio/';        # Where the audio lives
 use constant TRACKS => app->moniker . '.dat';  # The tracks file
-use constant CONFIG => 'config.yml';           # The configuration file
+use constant CONFIG => 'config.yml';           # The configuration file with your API key
 
 # volume management
 use constant MANAGE_VOL => 1;
@@ -71,8 +71,6 @@ use constant ANALYZE => 1;
 use constant WIDTH   => 1600;
 use constant HEIGHT  => 300;
 
-# ./config.yml file:
-# api_key: 'abcdef123456'
 my $config  = -e CONFIG ? LoadFile(CONFIG) : {};
 my $API_KEY = $config->{api_key}; # for last.fm
 
