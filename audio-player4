@@ -164,12 +164,13 @@ get '/' => sub ($c) {
   if ($track && $track =~ /\.mp3$/) {
     my $file = 'public/frequency.png';
     my $tune = "public$track";
+    my ($w, $h) = (1600, 300);
     my $R = Statistics::R->new;
     $R->run(q`library(tuneR)`);
     $R->run(qq`mpt <- readMP3("$tune")`);
 #    $R->run(q`mpt <- mono(mpt, which=c("both"))`);
 #    $R->run(q`mpt <- normalize(mpt, unit=c("1"))`);
-    $R->run(qq`png("$file")`);
+    $R->run(qq`png("$file", width=$w, height=$h, units="px", pointsize=12, bg="white", res=NA)`);
     $R->run(q`plot(mpt)`);
     $R->run(q`dev.off()`);
     $track_info->{frequency} = $R->get('summary(mpt)');
