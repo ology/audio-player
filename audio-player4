@@ -71,6 +71,7 @@ use constant LOW_VOL    => 59;     # percent
 use constant HIGH_VOL   => 80;     # "
 use constant EVEN_VOL   => 72;     # NB: for some reason, 72 is 50% volume
 
+# load the api key from a configuration file
 my $config  = -e CONFIG ? LoadFile(CONFIG) : {};
 my $API_KEY = $config->{api_key};
 
