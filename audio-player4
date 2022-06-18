@@ -83,7 +83,7 @@ get '/' => sub ($c) {
   my $darkmode    = $c->param('darkmode') || 0;    # Use dark mode
 
   my $analyze    = 1; # Flag to analyze mp3s
-  my $manage_vol = 1; # Flag to trigger amixer action
+  my $manage_vol = 1; # Flag to trigger volume changes
 
   my ($op, $rate) = split / /, $showrate;
 
