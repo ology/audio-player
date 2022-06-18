@@ -165,11 +165,12 @@ get '/' => sub ($c) {
     my $R = Statistics::R->new;
     $R->run(q`library(tuneR)`);
     $R->run(qq`mpt <- readMP3("$tune")`);
+#    $R->run(q`mpt <- mono(mpt, which=c("both"))`);
     $R->run(qq`png("$file")`);
     $R->run(q`plot(mpt)`);
     $R->run(q`dev.off()`);
-    $track_info->{frequency} = join ' ', @{ $R->get('summary(mpt)') };
-    $track_image = '/frequency.png' if -e $file;
+    $track_info->{frequency} = $R->get('summary(mpt)');
+    ($track_image = $file) =~ s/^public(.*)$/$1/ if -e $file;
     $R->stop;
   }
   elsif ($track) {
