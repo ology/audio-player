@@ -64,6 +64,7 @@ use constant LOW_VOL  => 59;
 use constant HIGH_VOL => 80;
 use constant EVEN_VOL => 72; # NB: for some reason, 72 is 50% volume
 
+# frequency analysis image dimensions
 use constant WIDTH  => 1600;
 use constant HEIGHT => 300;
 
