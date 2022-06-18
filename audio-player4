@@ -53,8 +53,8 @@ use WebService::LastFM::TrackInfo;
 use YAML::XS qw(LoadFile);
 
 use constant RATES  => (0 .. 5); #qw(None Bad Poor Fair Good Best);
-use constant EXTS   => qw(*.mp3 *.m4a *.ogg *.flac *.wav);  # The tracks of interest
-use constant PATH   => 'public/Audio/';        # Where the audio files live
+use constant EXTS   => qw(*.mp3 *.m4a *.ogg *.flac *.wav);  # Tracks of interest
+use constant PATH   => 'public/Audio/';        # Where the audio lives
 use constant TRACKS => app->moniker . '.dat';  # The tracks file
 
 # volume management
