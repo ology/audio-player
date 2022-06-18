@@ -207,6 +207,7 @@ get '/' => sub ($c) {
       }
     }
 
+    # perform these regex gymnastics in order to make the info nicer
     $track_info->{frequency} = join ' ', @{ $track_info->{frequency} };
     my @parts = $track_info->{frequency} =~ /
       ^
