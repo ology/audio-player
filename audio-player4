@@ -181,15 +181,15 @@ get '/' => sub ($c) {
       my @cmd;
       if ($max < 20_000) {
         @cmd = qw(amixer set Master 80%);
-        warn ' L',__LINE__,' ',,"VOL HIGH\n";
+        warn "VOL HIGH\n";
       }
       elsif ($max > 30_000) {
         @cmd = qw(amixer set Master 60%);
-        warn 'L',__LINE__,' ',,"VOL LOW\n";
+        warn "VOL LOW\n";
       }
       else {
         @cmd = qw(amixer set Master 72%); # This is actually 50% on my system
-        warn 'L',__LINE__,' ',,"VOL EVEN\n";
+        warn "VOL EVEN\n";
       }
       system(@cmd) == 0
         or die "system @cmd failed: $?";
