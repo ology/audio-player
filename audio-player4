@@ -496,7 +496,7 @@ get '/stats' => sub ($c) {
 } => 'stats';
 
 
-app->secrets(['I am the walrus.']);
+app->secrets($config->{secrets});
 app->start;
 
 
