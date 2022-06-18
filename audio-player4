@@ -265,7 +265,7 @@ get '/' => sub ($c) {
         warn "VOL EVEN\n";
         my @cmd = qw(amixer set Master 72%);
         system(@cmd) == 0
-          or die "system @cmd failed: $?";
+          or die "system(@cmd) failed: $?";
       }
     }
   }
