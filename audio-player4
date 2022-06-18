@@ -112,7 +112,7 @@ get '/' => sub ($c) {
 
   if (keys %$audio) {
     if ($query) {
-      # Convert encoded things like &amp; back into &
+      # Convert encoded things like %26 back into &
       $query = url_unescape($query);
 
       # Brute force through every track, looking for matches
