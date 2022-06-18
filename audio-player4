@@ -182,19 +182,19 @@ get '/' => sub ($c) {
         @cmd = qw(amixer set Master 80%);
         system(@cmd) == 0
           or die "system @cmd failed: $?";
-  warn __PACKAGE__,' L',__LINE__,' ',,"VOL HIGH\n";
+        warn __PACKAGE__,' L',__LINE__,' ',,"VOL HIGH\n";
       }
       elsif ($track_info->{frequency}[-2] > 30_000) {
         @cmd = qw(amixer set Master 60%);
         system(@cmd) == 0
           or die "system @cmd failed: $?";
-  warn __PACKAGE__,' L',__LINE__,' ',,"VOL LOW\n";
+        warn __PACKAGE__,' L',__LINE__,' ',,"VOL LOW\n";
       }
       else {
         @cmd = qw(amixer set Master 72%);
         system(@cmd) == 0
           or die "system @cmd failed: $?";
-  warn __PACKAGE__,' L',__LINE__,' ',,"VOL EVEN\n";
+        warn __PACKAGE__,' L',__LINE__,' ',,"VOL EVEN\n";
       }
     }
   }
