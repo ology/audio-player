@@ -495,7 +495,7 @@ get '/stats' => sub ($c) {
   );
 } => 'stats';
 
-
+app->secrets(['I am the walrus.']);
 app->start;
 
 
