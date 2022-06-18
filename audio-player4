@@ -71,7 +71,7 @@ use constant LOW_VOL    => 59;     # percent
 use constant HIGH_VOL   => 80;     # "
 use constant EVEN_VOL   => 72;     # NB: for some reason, 72 is 50% volume
 
-# load the last.fm api key from a configuration file
+# load the configuration file and get the API key
 my $config  = -e CONFIG ? LoadFile(CONFIG) : {};
 my $API_KEY = $config->{api_key};
 
