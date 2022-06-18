@@ -9,9 +9,10 @@ audio-player3
 This program is the evolution of audioplayer2, and is a lightweight,
 simple audio server.
 
-* This version has logic customized to recognize the artist, track and
-album names for my audio files.  Change this in the source below for
-your filenames.
+This app has logic to fetch cover art from the L<last.fm> API.  In
+order to do this, the artist, track and album names are divined (with
+regular expressions).  Change this in the source below for your
+filenames.
 
 Write-up: https://ology.github.io/2021/06/04/mojolicious-music-player/
 
