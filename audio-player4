@@ -196,15 +196,7 @@ get '/' => sub ($c) {
           or die "system @cmd failed: $?";
       }
       else {
-        my $current = qx{ amixer get Master };
-        $current =~ s/^.+?\[(\d+)%\].+$/$1/s;
-        # only turn the sound down, not up
-        if ($current > 72) {
-          warn "VOL EVEN\n";
-          push @cmd, '72%'; # This is actually 50% on my system
-          system(@cmd) == 0
-            or die "system @cmd failed: $?";
-        }
+        _even_volume($manage_vol);
       }
     }
   }
@@ -269,17 +261,7 @@ get '/' => sub ($c) {
 
     $track_info->{computed_title} = "|$artist| |$album| |$name|";
 
-    if ($manage_vol) {
-      my $current = qx{ amixer get Master };
-      $current =~ s/^.+?\[(\d+)%\].+$/$1/s;
-      # only turn the sound down, not up
-      if ($current > 72) {
-        warn "VOL EVEN\n";
-        my @cmd = qw(amixer set Master 72%);
-        system(@cmd) == 0
-          or die "system(@cmd) failed: $?";
-      }
-    }
+    _even_volume($manage_vol);
   }
 
   $c->render(
@@ -302,6 +284,23 @@ get '/' => sub ($c) {
     darkmode    => $darkmode,
   );
 } => 'index';
+
+sub _even_volume {
+  my ($manage_vol) = @_;
+
+  if ($manage_vol) {
+    my $current = qx{ amixer get Master };
+    $current =~ s/^.+?\[(\d+)%\].+$/$1/s;
+
+    # only turn the sound down, not up
+    if ($current > 72) {
+      warn "VOL EVEN\n";
+      my @cmd = qw(amixer set Master 72%);
+      system(@cmd) == 0
+        or die "system(@cmd) failed: $?";
+    }
+  }
+}
 
 sub _get_image ($data) {
   return undef unless $data->{image} && @{ $data->{image} };
