@@ -72,7 +72,7 @@ use constant FREQ    => 'frequency.png';
 
 # volume management
 use constant MANAGE_VOL => 1;
-use constant LOW_MAX    => 20_000; # frequency amplitude
+use constant LOW_MAX    => 20_000; # frequency amplitude threshold
 use constant HIGH_MAX   => 30_000; # "
 use constant LOW_VOL    => 59;     # percent
 use constant HIGH_VOL   => 80;     # "
