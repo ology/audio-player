@@ -7,13 +7,14 @@ audio-player4
 =head1 DESCRIPTION
 
 This program is the evolution of audioplayer3, and is a lightweight,
-simple audio server.
+simple audio server.  It has been havily customized for my use.  For
+a generic player, see the previous incarnation, C<audio-player3>.
 
-* This version has logic customized to recognize the artist, track and
+This version has logic customized to recognize the artist, track and
 album names for my audio files.  Change this in the source below for
 your filenames.
 
-* This version also has optional waveform analysis, which is currently
+This version also has optional waveform analysis, which is currently
 in development!
 
 Write-up: https://ology.github.io/2021/06/04/mojolicious-music-player/
