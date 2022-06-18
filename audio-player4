@@ -64,6 +64,9 @@ use constant LOW_VOL  => 59;
 use constant HIGH_VOL => 80;
 use constant EVEN_VOL => 72; # NB: for some reason, 72 is 50% volume
 
+use constant WIDTH  => 1600;
+use constant HEIGHT => 300;
+
 # ./config.yml file:
 # api_key: 'abcdef123456'
 my $config = LoadFile 'config.yml';
@@ -172,7 +175,7 @@ get '/' => sub ($c) {
   if ($analyze && $track && ($track =~ /\.mp3$/i || $track =~ /\.wav$/i)) {
     my $file = 'public/frequency.png';
     my $tune = "public$track";
-    my ($w, $h) = (1600, 300);
+    my ($w, $h) = (WIDTH, HEIGHT);
     my $R = Statistics::R->new;
     $R->run(q`library(tuneR)`);
     $R->run(qq`mpt <- readMP3("$tune")`);
