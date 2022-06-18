@@ -25,7 +25,7 @@ Write-up: https://ology.github.io/2021/06/04/mojolicious-music-player/
 This app depends on a directory (or symbolic link) called C<Audio> in
 the C<public> directory.
 
-Symlink your audio source in the public subdirectory:
+On unix-like systems, symlink your audio source:
 
   audio-player/public $ ln -s /media/you/external_drive/Music/ Audio
 
