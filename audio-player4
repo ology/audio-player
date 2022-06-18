@@ -62,7 +62,7 @@ use constant LOW_MAX  => 20_000;
 use constant HIGH_MAX => 30_000;
 use constant LOW_VOL  => 59;
 use constant HIGH_VOL => 80;
-use constant EVEN_VOL => 72; # NB: for some reason, 72% is 50% volume
+use constant EVEN_VOL => 72; # NB: for some reason, 72 is 50% volume
 
 # ./config.yml file:
 # api_key: 'abcdef123456'
