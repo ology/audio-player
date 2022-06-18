@@ -100,8 +100,9 @@ get '/' => sub ($c) {
   my $audio = {}; # Bucket for all tracks
   my $match = []; # Bucket for all query matches
 
-  my $track_info;  # discovered track details
-  my $track_image; # cover art or frequency analysis
+  my $track_info = {}; # discovered track details
+  my $track_image;     # cover art
+  my $freq_image;      # frequency analysis
 
   # Load the track list or flash an error
   if (-e TRACKS) {
@@ -187,7 +188,7 @@ get '/' => sub ($c) {
     $track_info->{frequency} = $R->get('summary(tune)');
     $R->stop;
 
-    ($track_image = $file) =~ s/^public(.*)$/$1/ if -e $file;
+    ($freq_image = $file) =~ s/^public(.*)$/$1/ if -e $file;
 
     if (MANAGE_VOL) {
       my $max = $track_info->{frequency}[-2];
@@ -228,7 +229,7 @@ get '/' => sub ($c) {
   }
 
   # Parse the track name and find an image
-  if ($API_KEY && $track && !$track_image) {
+  if ($API_KEY && $track) {
     my @parts = split /\//, $track;
     my $name = $parts[-1]; # track name
     my $album = $parts[-2]; # album name
@@ -263,29 +264,32 @@ get '/' => sub ($c) {
     }
 
     # Find an image
+    my $info;
     my $w = WebService::LastFM::TrackInfo->new(api_key => $API_KEY);
     try {
-      $track_info = $w->fetch(
+      $info = $w->fetch(
           artist => $artist,
           track  => $name,
       );
     };
-    $track_image = _get_image($track_info->{track}{album});
+    $track_image = _get_image($info->{track}{album});
     unless ($track_image) {
       $w = WebService::LastFM::TrackInfo->new(
         api_key => $API_KEY,
         method  => 'album',
       );
       try {
-        $track_info = $w->fetch(
+        $info = $w->fetch(
           artist => $artist,
           album  => $album,
         );
       };
-      $track_image = _get_image($track_info->{album});
+      $track_image = _get_image($info->{album});
     }
 
     $track_info->{computed_title} = "|$artist| |$album| |$name|";
+
+    $track_info = { %$info, %$track_info };
 
     _even_volume();
   }
@@ -297,6 +301,7 @@ get '/' => sub ($c) {
     track       => $track,
     track_info  => ddc($track_info, {max_width => 128}),
     track_image => $track_image,
+    freq_image  => $freq_image,
     rating      => $rating,
     autoplay    => $autoplay,
     autoadvance => $autoadvance,
@@ -636,6 +641,13 @@ __DATA__
 <p></p>
 <p id="no_matches">No matches</p>
 %   }
+% }
+
+% if ($freq_image) {
+<div>
+  <img src="<%= $freq_image %>"/>
+  <p></p>
+</div>
 % }
 
 % # Track info
