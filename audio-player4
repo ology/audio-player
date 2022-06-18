@@ -10,10 +10,12 @@ This program is the evolution of audioplayer3, and is a lightweight,
 simple audio server.  It has been heavily customized for my use.  For
 a generic player, see the previous incarnation, C<audio-player3>.
 
-This version has logic to fetch cover art from the L<last.fm> API.  In
+This app has logic to fetch cover art from the L<last.fm> API.  In
 order to do this, the artist, track and album names are divined (with
 regular expressions).  Change this in the source below for your
-filenames.  Also this version also can do waveform analysis with C<R>,
+filenames.
+
+New to this version is that it can do waveform analysis with C<R>,
 and system volume management (on my linux machine).
 
 Write-up: https://ology.github.io/2021/06/04/mojolicious-music-player/
