@@ -182,8 +182,9 @@ get '/' => sub ($c) {
     $R->run(q`plot(mpt)`);
     $R->run(q`dev.off()`);
     $track_info->{frequency} = $R->get('summary(mpt)');
-    ($track_image = $file) =~ s/^public(.*)$/$1/ if -e $file;
     $R->stop;
+
+    ($track_image = $file) =~ s/^public(.*)$/$1/ if -e $file;
 
     if ($manage_vol) {
       my $max = $track_info->{frequency}[-2];
