@@ -153,10 +153,9 @@ get '/' => sub ($c) {
   # Handle the undef case that makes bad things happen
   $current = -1 unless defined $current;
 
+  # get the track and rating
   my $track  = '';
   my $rating = 0;
-
-  # Ok get the track and rating
   if (keys %$audio && $current >= 0) {
     $track  = $audio->{$current}{track};
     $rating = $audio->{$current}{rating};
