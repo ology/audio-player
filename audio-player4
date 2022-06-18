@@ -287,7 +287,6 @@ get '/' => sub ($c) {
 
 sub _even_volume {
   my ($manage_vol) = @_;
-
   if ($manage_vol) {
     my $current = qx{ amixer get Master };
     $current =~ s/^.+?\[(\d+)%\].+$/$1/s;
