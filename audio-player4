@@ -58,6 +58,11 @@ use constant PATH   => 'public/Audio/';        # Where the audio lives
 use constant TRACKS => app->moniker . '.dat';  # The tracks file
 use constant CONFIG => 'config.yml';           # The configuration file with your API key
                                                # api_key: 'abcdef123456'
+# frequency analysis
+use constant ANALYZE => 1;
+use constant WIDTH   => 1600;
+use constant HEIGHT  => 300;
+
 # volume management
 use constant MANAGE_VOL => 1;
 use constant LOW_MAX    => 20_000; # frequency amplitude
@@ -65,11 +70,6 @@ use constant HIGH_MAX   => 30_000; # "
 use constant LOW_VOL    => 59;     # percent
 use constant HIGH_VOL   => 80;     # "
 use constant EVEN_VOL   => 72;     # NB: for some reason, 72 is 50% volume
-
-# frequency analysis
-use constant ANALYZE => 1;
-use constant WIDTH   => 1600;
-use constant HEIGHT  => 300;
 
 my $config  = -e CONFIG ? LoadFile(CONFIG) : {};
 my $API_KEY = $config->{api_key}; # for last.fm
