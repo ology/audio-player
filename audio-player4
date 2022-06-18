@@ -211,15 +211,15 @@ get '/' => sub ($c) {
     $track_info->{frequency} = join ' ', @{ $track_info->{frequency} };
     my @parts = $track_info->{frequency} =~ /
       ^
-      ([A-Za-z\s\(\)]+?:\s[\d.]+) \s
-      ([A-Za-z\s\(\)]+?:\s[\d.]+) \s
-      ([A-Za-z\s\(\)]+?:\s[\d.]+) \s
-      ([A-Za-z\s\(\)\/]+?:\s[A-Za-z]+) \s
-      ([A-Za-z\s\(\)\/]+?:\s[A-Za-z]+) \s
-      ([0-9A-Za-z\s\(\)\/]+?:\s\d+) \s
-      ([A-Za-z\s\(\)]+?:\sMin\.\s.+?) \s
-      (left\s.+?) \s
-      (right\s.+)
+      ( [A-Za-z\s\(\)]+?: \s [\d.]+ ) \s
+      ( [A-Za-z\s\(\)]+?: \s [\d.]+ ) \s
+      ( [A-Za-z\s\(\)]+?: \s [\d.]+ ) \s
+      ( [A-Za-z\s\(\)\/]+?: \s [A-Za-z]+ ) \s
+      ( [A-Za-z\s\(\)\/]+?: \s [A-Za-z]+ ) \s
+      ( [0-9A-Za-z\s\(\)\/]+?: \s \d+ ) \s
+      ( [A-Za-z\s\(\)]+?: \s .+? ) \s
+      ( left \s .+? ) \s
+      ( right \s .+ )
       $
     /gx;
     $track_info->{frequency} = \@parts;
