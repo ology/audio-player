@@ -495,8 +495,8 @@ get '/stats' => sub ($c) {
     $rate->{$r}++;
     $total++;
 
-    (my $genre = $audio->{$key}{track}) =~ s|^/Audio/(.+?)/.+$|$1|;
-    $by_genre->{$genre}++ if $audio->{$key}{rating};
+    my @parts = split /\//, $audio->{$key}{track};
+    $by_genre->{ $parts[2] }++ if $audio->{$key}{rating};
   }
 
   $c->render(
