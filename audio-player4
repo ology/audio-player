@@ -192,7 +192,7 @@ get '/' => sub ($c) {
     #$R->run(q`tune <- mono(tune, which=c("both"))`);
     #$R->run(q`tune <- normalize(tune, unit=c("1"))`);
     $R->run(qq`png("$file", width=$w, height=$h)`);
-    $R->run(q`par(bg="#A9A9A9")`);
+    $R->run(q`par(bg="#DADADA")`);
     $R->run(q`plot(tune, xaxt="n", xlab="seconds")`);
     $R->run(q`axis(1, at=seq(0, length(tune) / tune@samp.rate, 10))`);
     $R->run(q`dev.off()`);
