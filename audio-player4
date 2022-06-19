@@ -36,7 +36,7 @@ Or on windows, as the Administrator:
 
 Then:
 
-  audio-player $ morbo audio-player4
+  audio-player> morbo audio-player4
 
 And browse to:
 
