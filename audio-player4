@@ -235,7 +235,7 @@ get '/' => sub ($c) {
     |gx;
     $track_info->{frequency} = \@parts if @parts;
 
-    $track_info->{frequency}{max} = $max;
+    push $track_info->{frequency}->@*, "Max: $max";
   }
 
   # Parse the track name and find an image
