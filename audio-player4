@@ -430,9 +430,7 @@ get '/refresh' => sub ($c) {
     $file = fix_latin($file);
 
     # Determine the track rating
-    my $rate = 0;
-    $rate = $by_name{$file}
-      if exists $by_name{$file};
+    my $rate = exists $by_name{$file} ? $by_name{$file} : 0;
 
     # Add an entry to the audio list
     $audio->{$n} = { track => $file, rating => $rate };
