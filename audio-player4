@@ -299,7 +299,7 @@ get '/' => sub ($c) {
 
     $track_info = { %$info, %$track_info };
 
-    _even_volume() if MANAGE_VOL;
+#    _even_volume() if MANAGE_VOL;
   }
 
   $c->render(
