@@ -254,8 +254,8 @@ get '/' => sub ($c) {
     # Van Halen - Hot For Teacher (Official Music Video)-6M4_Ommfvv0.m4a
 
     $name =~ s/^(?:\d+-)?\d+\s+(.*?)/$1/;
-    $name =~ s/(.*?)-\d+\.mp3$/$1/;
-    $name =~ s/(.*?)\.mp3$/$1/;
+    $name =~ s/(.*?)-\d+\.(?:mp3|wav)$/$1/;
+    $name =~ s/(.*?)\.(?:mp3|wav)$/$1/;
     $name =~ s/(.*?)-[\w-]+\.m4a$/$1/;
     $name =~ s/(.*?)\.m4a$/$1/;
     $name =~ s/(.*?) \((?:Official )?Audio\)/$1/;
