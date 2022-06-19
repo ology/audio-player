@@ -267,8 +267,8 @@ get '/' => sub ($c) {
 
     # Special case
     if ($track =~ /Hôtel Costes/) {
-      $name =~ s/Hotel Costes \d+ - (.*)$/$1/;
-      my ($who, $what) = split /\s*-\s*/, $name, 2;
+      $name =~ s/Hotel Costes \d+ - (.*)$/$1/;      # album in track
+      my ($who, $what) = split /\s*-\s*/, $name, 2; # artist in track
       ($artist, $name) = ($who, $what)
         if $who && $what;
     }
