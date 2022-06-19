@@ -56,7 +56,7 @@ use Statistics::R ();
 use Storable qw(retrieve store);
 use Try::Tiny qw(try catch);
 use lib map { "$ENV{HOME}/sandbox/$_/lib" } qw(WebService-LastFM-TrackInfo);
-use WebService::LastFM::TrackInfo;
+use WebService::LastFM::TrackInfo ();
 use YAML::XS qw(LoadFile);
 
 use constant RATES  => (0 .. 5); #qw(None Bad Poor Fair Good Best);
