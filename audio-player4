@@ -190,7 +190,7 @@ get '/' => sub ($c) {
     $R->run(qq`tune <- readWave("$tune")`) if $track =~ /\.wav$/i;
     #$R->run(q`tune <- mono(tune, which=c("both"))`);
     #$R->run(q`tune <- normalize(tune, unit=c("1"))`);
-    $R->run(qq`png("$file", width=$w, height=$h, units="px", pointsize=12, bg="white", res=NA)`);
+    $R->run(qq`png("$file", width=$w, height=$h)`);
     $R->run(q`plot(tune)`);
     $R->run(q`dev.off()`);
     $track_info->{frequency} = $R->get('summary(tune)');
