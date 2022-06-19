@@ -15,8 +15,9 @@ order to do this, the artist, track and album names are divined (with
 regular expressions).  Change this in the source below for your
 filenames.
 
-New to this version is that it can do waveform analysis with C<R>,
-and system volume management (on my linux machine).
+New to this version is that it can do waveform analysis with C<R>
+and the C<tuneR> package.  Also new is system volume management (on my
+linux machine).
 
 Write-up: https://ology.github.io/2021/06/04/mojolicious-music-player/
 
