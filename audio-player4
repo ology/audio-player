@@ -257,9 +257,8 @@ get '/' => sub ($c) {
 
     $name =~ s/^(?:\d+-)?\d+\s+(.*?)/$1/;                         # disc-track number
     $name =~ s/(.*?)-\d+\.mp3$/$1/;                               # mp3 with epoch
-    $name =~ s/(.*?)\.(?:mp3|wav)$/$1/;                           # mp3 or wav
     $name =~ s/(.*?)-[\w-]+\.m4a$/$1/;                            # from youtube
-    $name =~ s/(.*?)\.m4a$/$1/;                                   # m4a file
+    $name =~ s/(.*?)\.(?:m4a|mp3|wav)$/$1/;                       # mp3 or wav
     $name =~ s/(.*?) \((?:Official )?Audio\)/$1/;                 # paren extras
     $name =~ s/(.*?) \(Remastered(?: \d+)?\)/$1/;                 # "
     $name =~ s/(.*?) \(\d+ Remaster(?:ed)?\)/$1/;                 # "
