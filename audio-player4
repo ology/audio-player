@@ -195,7 +195,7 @@ get '/' => sub ($c) {
     $R->run(q`plot(tune)`);
     $R->run(q`dev.off()`);
     $track_info->{frequency} = $R->get('summary(tune)');
-    my $max = $R->get('max(tune@left,tune@right)');
+    my $max = $R->get('max(tune@left, tune@right, abs(min(tune@left, tune@right)))');
     $R->stop;
 
     ($freq_image = $file) =~ s/^public(.*)$/$1/ if -e $file;
