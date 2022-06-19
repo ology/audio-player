@@ -201,7 +201,6 @@ get '/' => sub ($c) {
     ($freq_image = $file) =~ s/^public(.*)$/$1/ if -e $file;
 
     if (MANAGE_VOL) {
-      $max //= _get_current_vol();
       my @cmd = qw(amixer set Master);
       if ($max < LOW_MAX) {
         warn "SET VOL HIGH\n";
