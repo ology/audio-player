@@ -233,7 +233,7 @@ get '/' => sub ($c) {
       ( [\w.-]+ \s .+ )
       $
     |gx;
-    $track_info->{frequency} = \@parts;
+    $track_info->{frequency} = \@parts if @parts;
   }
 
   # Parse the track name and find an image
