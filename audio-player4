@@ -109,9 +109,9 @@ get '/' => sub ($c) {
   my $audio = {}; # Bucket for all tracks
   my $match = []; # Bucket for all query matches
 
-  my $track_info = {}; # discovered track details
-  my $track_image;     # cover art
-  my $freq_image;      # frequency analysis
+  my $track_info;  # discovered track details
+  my $track_image; # cover art
+  my $freq_image;  # frequency analysis
 
   # Load the track list or flash an error
   if (-e TRACKS) {
