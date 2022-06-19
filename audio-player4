@@ -28,7 +28,7 @@ the C<public> directory.
 
 On unix-like systems, symlink your audio source:
 
-  audio-player/public $ ln -s /media/you/external_drive/Music/ Audio
+  audio-player/public> ln -s /media/you/external_drive/Music/ Audio
 
 Or on windows, as the Administrator:
 
