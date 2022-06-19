@@ -254,16 +254,16 @@ get '/' => sub ($c) {
     # A Reminiscent Drive - Ambrosia-rP89haLVP4k.m4a
     # Van Halen - Hot For Teacher (Official Music Video)-6M4_Ommfvv0.m4a
 
-    $name =~ s/^(?:\d+-)?\d+\s+(.*?)/$1/;
-    $name =~ s/(.*?)-\d+\.(?:mp3|wav)$/$1/;
-    $name =~ s/(.*?)\.(?:mp3|wav)$/$1/;
-    $name =~ s/(.*?)-[\w-]+\.m4a$/$1/;
-    $name =~ s/(.*?)\.m4a$/$1/;
-    $name =~ s/(.*?) \((?:Official )?Audio\)/$1/;
-    $name =~ s/(.*?) \(Remastered(?: \d+)?\)/$1/;
-    $name =~ s/(.*?) \(\d+ Remaster\)/$1/;
-    $name =~ s/(.*?) \(Official\s*(?:Lyric|Music)?\s*Video\)/$1/;
-    $name =~ s/$artist\s*-\s*(.*?)$/$1/;
+    $name =~ s/^(?:\d+-)?\d+\s+(.*?)/$1/;                         # disc-track number
+    $name =~ s/(.*?)-\d+\.mp3$/$1/;                               # mp3 with epoch
+    $name =~ s/(.*?)\.(?:mp3|wav)$/$1/;                           # mp3 or wav
+    $name =~ s/(.*?)-[\w-]+\.m4a$/$1/;                            # from youtube
+    $name =~ s/(.*?)\.m4a$/$1/;                                   # m4a file
+    $name =~ s/(.*?) \((?:Official )?Audio\)/$1/;                 # paren extras
+    $name =~ s/(.*?) \(Remastered(?: \d+)?\)/$1/;                 # "
+    $name =~ s/(.*?) \(\d+ Remaster\)/$1/;                        # "
+    $name =~ s/(.*?) \(Official\s*(?:Lyric|Music)?\s*Video\)/$1/; # "
+    $name =~ s/$artist\s*-\s*(.*?)$/$1/;                          # artist in track
 
     # Special case
     if ($track =~ /Hôtel Costes/) {
