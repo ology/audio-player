@@ -220,7 +220,7 @@ get '/' => sub ($c) {
     }
 
     # perform these regex gymnastics in order to make the info nicer
-    $track_info->{frequency} = join ' ', @{ $track_info->{frequency} };
+    $track_info->{frequency} = join ' ', $track_info->{frequency}->@*;
     my @parts = $track_info->{frequency} =~ m|
       ^
       ( [\w\s()/]+: \s [\d.-]+   ) \s
@@ -343,11 +343,11 @@ sub _get_current_vol {
 }
 
 sub _get_image ($data) {
-  return undef unless $data->{image} && @{ $data->{image} };
+  return undef unless $data->{image} && $data->{image}->@*;
 
   my $image;
 
-  for my $item (@{ $data->{image} }) {
+  for my $item ($data->{image}->@*) {
     if ($item->{size} eq 'extralarge' && $item->{'#text'}) {
       $image = $item->{'#text'};
       last;
