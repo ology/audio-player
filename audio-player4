@@ -416,7 +416,8 @@ get '/refresh' => sub ($c) {
   # Assume there are no duplicate tracks
   my %by_name;
   for my $i (keys %$old) {
-    $by_name{ $old->{$i}{track} } = $old->{$i}{rating};
+    $by_name{ $old->{$i}{track} } = $old->{$i}{rating}
+        if defined $old->{$i}{rating};
   }
 
   # Process the filenames
