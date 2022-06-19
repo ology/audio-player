@@ -175,7 +175,7 @@ get '/' => sub ($c) {
   }
   app->log->info("Track: $current $track");
 
-  # Add a number separator comma
+  # Add a number separator (comma)
   my $nf = Number::Format->new;
   my $total = $nf->format_number(scalar keys %$audio);
   my $matches = $nf->format_number(scalar @$match);
