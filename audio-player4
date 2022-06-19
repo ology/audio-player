@@ -251,6 +251,7 @@ get '/' => sub ($c) {
     # 05 Let Me Tell You About My Boat.m4a
     # New Day-6SumbNBSEo8.m4a
     # Revolution 1 (Remastered 2009)-OmsXsIv2Ppw.m4a
+    # Goodbye Stranger (2010 Remastered)-u8pVZ5hTGJQ.m4a
     # A Reminiscent Drive - Ambrosia-rP89haLVP4k.m4a
     # Van Halen - Hot For Teacher (Official Music Video)-6M4_Ommfvv0.m4a
 
