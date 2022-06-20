@@ -211,7 +211,7 @@ get '/' => sub ($c) {
       my $loudness = 20 * _log10($peak / MAX_AMPL);
       my ($volume) = uniform_scaling(DB_RANGE, VOL_RANGE, $loudness);
       $volume = int $volume;
-      app->log->info("Set volume to $volume %");
+      app->log->info("loudness=$loudness ∴ set volume=$volume %");
       my @cmd = (qw(amixer set Master), $volume . '%');
       system(@cmd) == 0
         or die "system(@cmd) failed: $?";
