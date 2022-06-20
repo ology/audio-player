@@ -260,7 +260,6 @@ get '/' => sub ($c) {
     # Goodbye Stranger (2010 Remastered)-u8pVZ5hTGJQ.m4a
     # A Reminiscent Drive - Ambrosia-rP89haLVP4k.m4a
     # Van Halen - Hot For Teacher (Official Music Video)-6M4_Ommfvv0.m4a
-
     $name =~ s/^(?:\d+-)?\d+\s+(.*?)/$1/;                         # disc-track number
     $name =~ s/(.*?)-\d+\.mp3$/$1/;                               # mp3 with epoch
     $name =~ s/(.*?)-[\w-]+\.m4a$/$1/;                            # from youtube
