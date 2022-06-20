@@ -49,6 +49,7 @@ use Data::Dumper::Compact qw(ddc);
 use Encoding::FixLatin qw(fix_latin);
 use File::Find::Rule ();
 use List::SomeUtils qw(first_index);
+use Math::Utils qw(uniform_scaling);
 use Mojolicious::Lite -signatures;
 use Mojo::Util qw(url_unescape);
 use Number::Format ();
@@ -76,12 +77,10 @@ use constant HEIGHT  => 300;
 use constant FREQ    => 'frequency.png';
 
 # volume management
-use constant MANAGE_VOL => 0;
-use constant LOW_MAX    => 20_000; # frequency amplitude threshold
-use constant HIGH_MAX   => 30_000; # "
-use constant LOW_VOL    => 59;     # percent
-use constant HIGH_VOL   => 80;     # "
-use constant EVEN_VOL   => 72;     # NB: for some reason, 72 is 50% volume
+use constant MANAGE_VOL => 1;
+use constant MAX_AMPL   => 32768; # for 16 bit audio
+use constant DB_RANGE   => [-15, 0];
+use constant VOL_RANGE  => [60, 30];
 
 # load the configuration file and get the API key
 my $config  = -e CONFIG ? LoadFile(CONFIG) : {};
@@ -207,22 +206,14 @@ get '/' => sub ($c) {
     ($freq_image = $file) =~ s/^public(.*)$/$1/ if -e $file;
 
     if (MANAGE_VOL && defined $max) {
+      my $loudness = 20 * _log10($max / MAX_AMPL);
+      my ($volume) = uniform_scaling(DB_RANGE, VOL_RANGE, $loudness);
+      $volume = int $volume;
+      warn "SET VOL to $volume %\n";
       my @cmd = qw(amixer set Master);
-      if ($max < LOW_MAX) {
-        warn "SET VOL HIGH\n";
-        push @cmd, HIGH_VOL . '%';
-        system(@cmd) == 0
-          or die "system(@cmd) failed: $?";
-      }
-      elsif ($max > HIGH_MAX) {
-        warn "SET VOL LOW\n";
-        push @cmd, LOW_VOL . '%';
-        system(@cmd) == 0
-          or die "system(@cmd) failed: $?";
-      }
-      else {
-        _even_volume();
-      }
+      push @cmd, $volume . '%';
+      system(@cmd) == 0
+        or die "system(@cmd) failed: $?";
     }
 
     # perform these regex gymnastics in order to make the info nicer
@@ -329,21 +320,7 @@ get '/' => sub ($c) {
   );
 } => 'index';
 
-sub _even_volume {
-  # only turn the sound down, not up
-  if (EVEN_VOL < _get_current_vol()) {
-    warn "SET VOL EVEN\n";
-    my @cmd = (qw(amixer set Master), EVEN_VOL . '%');
-    system(@cmd) == 0
-      or die "system(@cmd) failed: $?";
-  }
-}
-
-sub _get_current_vol {
-  my $current = qx{ amixer get Master };
-  $current =~ s/^.+?\[(\d+)%\].+$/$1/s;
-  return $current;
-}
+sub _log10 { return log(shift)/log(10) }
 
 sub _get_image ($data) {
   return undef unless $data->{image} && $data->{image}->@*;
