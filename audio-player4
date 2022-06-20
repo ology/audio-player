@@ -61,7 +61,7 @@ use WebService::LastFM::TrackInfo ();
 use YAML::XS qw(LoadFile);
 
 use constant RATES  => (0 .. 5); #qw(None Bad Poor Fair Good Best);
-use constant EXTS   => qr/\.(?:flac|m4a|mp3|ogg|wav)$/i;  # Tracks of interest
+use constant TYPES  => qr/\.(?:flac|m4a|mp3|ogg|wav)$/i;  # Tracks of interest
 use constant PATH   => 'public/Audio/';                   # Where the audio lives
 use constant TRACKS => app->moniker . '.dat';             # The tracks file
 use constant CONFIG => 'config.yml';                      # The configuration file
@@ -242,7 +242,7 @@ get '/' => sub ($c) {
     my $name   = $parts[-1]; # track name
     my $album  = $parts[-2]; # album name
     my $artist = $parts[-3]; # but not always
-    my $types  = EXTS;
+    my $types  = TYPES;
 
     # Handle cases like:
     # 01 Tom Sawyer-1647382734.mp3
@@ -404,7 +404,7 @@ get '/refresh' => sub ($c) {
   my $rule = File::Find::Rule->new;
   my @files = $rule->file()
     ->not($rule->new->name(qr/^\./)) # no dot files please
-    ->name(EXTS)->in(PATH);
+    ->name(TYPES)->in(PATH);
   my $n = 0;
   for my $file (@files) {
     # Make the name relative to /
