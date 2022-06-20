@@ -65,6 +65,9 @@ use constant PATH   => 'public/Audio/';                 # Where the audio lives
 use constant TRACKS => app->moniker . '.dat';           # The tracks file
 use constant CONFIG => 'config.yml';                    # The config file with your last.fm API key
                                                           # api_key: 'abcdef123456'
+# track name info
+use constant TRACK_INFO => 1;
+
 # frequency analysis
 use constant ANALYZE => 1;
 use constant WIDTH   => 1600;
@@ -310,7 +313,7 @@ get '/' => sub ($c) {
     total       => $total,
     current     => $current,
     track       => $track,
-    track_info  => ddc($track_info, {max_width => 128}),
+    track_info  => TRACK_INFO ? ddc($track_info, {max_width => 128}) : '',
     track_image => $track_image,
     freq_image  => $freq_image,
     rating      => $rating,
