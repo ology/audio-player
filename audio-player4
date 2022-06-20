@@ -67,6 +67,7 @@ use constant CONFIG => 'config.yml';                    # The configuration file
 
 # track name info
 use constant TRACK_INFO => 1;
+use constant DUMPOPTS   => { max_width => 128 };
 
 # frequency analysis
 use constant ANALYZE => 1;
@@ -313,7 +314,7 @@ get '/' => sub ($c) {
     total       => $total,
     current     => $current,
     track       => $track,
-    track_info  => TRACK_INFO ? ddc($track_info, {max_width => 128}) : '',
+    track_info  => TRACK_INFO ? ddc($track_info, DUMPOPTS) : '',
     track_image => $track_image,
     freq_image  => $freq_image,
     rating      => $rating,
