@@ -200,13 +200,13 @@ get '/' => sub ($c) {
     $R->run(q`axis(1, at=seq(0, length(tune) / tune@samp.rate, 10))`);
     $R->run(q`dev.off()`);
     $track_info->{frequency} = $R->get('summary(tune)');
-    my $max = $R->get('max(tune@left, tune@right, abs(min(tune@left, tune@right)))');
+    my $peak = $R->get('max(tune@left, tune@right, abs(min(tune@left, tune@right)))');
     $R->stop;
 
     ($freq_image = $file) =~ s/^public(.*)$/$1/ if -e $file;
 
-    if (MANAGE_VOL && defined $max) {
-      my $loudness = 20 * _log10($max / MAX_AMPL);
+    if (MANAGE_VOL && defined $peak) {
+      my $loudness = 20 * _log10($peak / MAX_AMPL);
       my ($volume) = uniform_scaling(DB_RANGE, VOL_RANGE, $loudness);
       $volume = int $volume;
       warn "SET VOL to $volume %\n";
@@ -232,7 +232,7 @@ get '/' => sub ($c) {
     |gx;
     $track_info->{frequency} = \@parts if @parts;
 
-    push $track_info->{frequency}->@*, "Max: $max";
+    push $track_info->{frequency}->@*, "Max: $peak";
   }
 
   # Parse the track name and find an image
