@@ -201,7 +201,7 @@ get '/' => sub ($c) {
     $R->run(q`axis(1, at=seq(0, seconds, 10), labels=FALSE)`);
     $R->run(q`axis(1, at=seq(0, seconds, 30))`); # label every 30 seconds
     $R->run(q`dev.off()`);
-    my $summary = $R->get('summary(tune)');
+    my $summary = $R->get('summary(tune)'); # R returns a space separated arrayref!
     my $peak = $R->get('max(tune@left, tune@right, abs(min(tune@left, tune@right)))');
     $R->stop;
 
