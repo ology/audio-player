@@ -401,7 +401,10 @@ get '/refresh' => sub ($c) {
 
   # Process the filenames
   my $audio = {};
-  my @files = File::Find::Rule->file()->name(EXTS)->in(PATH);
+  my $rule = File::Find::Rule->new;
+  my @files = $rule->file()
+    ->not($rule->new->name(qr/^\./))
+    ->name(EXTS)->in(PATH);
   my $n = 0;
   for my $file (@files) {
     # Make the name relative to /
