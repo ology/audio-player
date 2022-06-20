@@ -64,7 +64,7 @@ use constant EXTS   => qr/\.(flac|m4a|mp3|ogg|wav)$/i;  # Tracks of interest
 use constant PATH   => 'public/Audio/';                 # Where the audio lives
 use constant TRACKS => app->moniker . '.dat';           # The tracks file
 use constant CONFIG => 'config.yml';                    # The config file with your last.fm API key
-                                                          # api_key: 'abcdef123456'
+                                                        #       api_key: 'abcdef123456'
 # track name info
 use constant TRACK_INFO => 1;
 
