@@ -61,7 +61,7 @@ use WebService::LastFM::TrackInfo ();
 use YAML::XS qw(LoadFile);
 
 use constant RATES  => (0 .. 5); #qw(None Bad Poor Fair Good Best);
-use constant EXTS   => qr/\.(flac|m4a|mp3|ogg|wav)$/i;  # Tracks of interest
+use constant EXTS   => qr/\.(?:flac|m4a|mp3|ogg|wav)$/i;  # Tracks of interest
 use constant PATH   => 'public/Audio/';                 # Where the audio lives
 use constant TRACKS => app->moniker . '.dat';           # The tracks file
 use constant CONFIG => 'config.yml';                    # The configuration file
@@ -242,6 +242,7 @@ get '/' => sub ($c) {
     my $name   = $parts[-1]; # track name
     my $album  = $parts[-2]; # album name
     my $artist = $parts[-3]; # but not always
+    my $types  = EXTS;
 
     # Handle cases like:
     # 01 Tom Sawyer-1647382734.mp3
@@ -255,7 +256,7 @@ get '/' => sub ($c) {
     $name =~ s/^(?:\d+-)?\d+\s+(.*?)/$1/;                         # disc-track number
     $name =~ s/(.*?)-\d+\.mp3$/$1/;                               # mp3 with epoch
     $name =~ s/(.*?)-[\w-]+\.m4a$/$1/;                            # from youtube
-    $name =~ s/(.*?)\.(?:flac|m4a|mp3|ogg|wav)$/$1/i;             # audio file
+    $name =~ s/(.*?)$types/$1/i;                                  # audio file
     $name =~ s/(.*?) \((?:Official )?Audio\)/$1/;                 # paren extras
     $name =~ s/(.*?) \(Remastered(?: \d+)?\)/$1/;                 # "
     $name =~ s/(.*?) \(\d+ Remaster(?:ed)?\)/$1/;                 # "
