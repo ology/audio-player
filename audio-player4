@@ -201,7 +201,7 @@ get '/' => sub ($c) {
     $R->run(q`axis(1, at=seq(0, seconds, 10), labels=FALSE)`);
     $R->run(q`axis(1, at=seq(0, seconds, 30))`); # label every 30 seconds
     $R->run(q`dev.off()`);
-    $track_info->{frequency} = $R->get('summary(tune)');
+    my $summary = $R->get('summary(tune)');
     my $peak = $R->get('max(tune@left, tune@right, abs(min(tune@left, tune@right)))');
     $R->stop;
 
@@ -218,8 +218,8 @@ get '/' => sub ($c) {
     }
 
     # perform these regex gymnastics in order to make the info nicer
-    $track_info->{frequency} = join ' ', $track_info->{frequency}->@*;
-    my @parts = $track_info->{frequency} =~ m|
+    $summary = join ' ', $summary->@*;
+    my @parts = $summary =~ m|
       ^
       ( [\w\s()/]+: \s [\d.-]+   ) \s
       ( [\w\s()/]+: \s [\d.-]+   ) \s
