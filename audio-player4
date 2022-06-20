@@ -331,10 +331,8 @@ get '/' => sub ($c) {
 } => 'index';
 
 sub _even_volume {
-  my $current = _get_current_vol();
-
   # only turn the sound down, not up
-  if ($current > EVEN_VOL) {
+  if (EVEN_VOL < _get_current_vol()) {
     warn "SET VOL EVEN\n";
     my @cmd = (qw(amixer set Master), EVEN_VOL . '%');
     system(@cmd) == 0
