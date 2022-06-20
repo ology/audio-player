@@ -26,6 +26,7 @@ TRACK: for my $n (sort { $a <=> $b } keys %$audio) {
   $i++;
   my $rating = $audio->{$n}{rating};
   if ($rating < 0) {
+    print '-' x 70, "\n";
     print "$i. REENCODE: $n $track\n";
     my $response = prompt 'Enter=skip q=quit r=reencode: ';
     if ($response eq 'q') {
