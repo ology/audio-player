@@ -210,8 +210,7 @@ get '/' => sub ($c) {
       my ($volume) = uniform_scaling(DB_RANGE, VOL_RANGE, $loudness);
       $volume = int $volume;
       warn "SET VOL to $volume %\n";
-      my @cmd = qw(amixer set Master);
-      push @cmd, $volume . '%';
+      my @cmd = (qw(amixer set Master), $volume . '%');
       system(@cmd) == 0
         or die "system(@cmd) failed: $?";
     }
