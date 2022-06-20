@@ -254,7 +254,7 @@ get '/' => sub ($c) {
     # A Reminiscent Drive - Ambrosia-rP89haLVP4k.m4a
     # Van Halen - Hot For Teacher (Official Music Video)-6M4_Ommfvv0.m4a
     $name =~ s/^(?:\d+-)?\d+\s+(.*?)/$1/;                         # disc-track number
-    $name =~ s/(.*?)-\d+\.mp3$/$1/;                               # mp3 with epoch
+    $name =~ s/(.*?)-\d+\.mp3$/$1/;                               # reencoded mp3
     $name =~ s/(.*?)-[\w-]+\.m4a$/$1/;                            # from youtube
     $name =~ s/(.*?)$types/$1/i;                                  # audio file
     $name =~ s/(.*?) \((?:Official )?Audio\)/$1/;                 # paren extras
