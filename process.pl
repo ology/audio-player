@@ -2,6 +2,7 @@
 use strict;
 use warnings;
 
+use IO::Prompt qw(prompt);
 use Mojo::File;
 use Storable qw(retrieve store);
 
@@ -19,25 +20,31 @@ else {
 
 my $i = 0;
 
-for my $n (sort { $a <=> $b } keys %$audio) {
+TRACK: for my $n (sort { $a <=> $b } keys %$audio) {
   my $track = Mojo::File->new("public$audio->{$n}{track}");
   next unless -e $track;
   $i++;
   my $rating = $audio->{$n}{rating};
-#  if (!defined($rating) || $rating < 0) {
-#    print "$i. REENCODE: $n $track\n";
-#    my $outfile = reencode($track);
-#    unless ($outfile && -e $outfile) {
-#      warn "\tERROR: Can't set reencoded track!\n";
-#      next;
-#    }
-#    $outfile =~ s/\/media\/gene\/New Volume//;
-#    $audio->{$n}{track} = $outfile;
-#    print "\tSet reencoded track to $outfile\n";
-#    $track->remove;
-#    print "\tRemoved original track\n";
-#  }
-  if ($rating && $rating > 0 && $rating < 3) {
+  if ($rating < 0) {
+    print "$i. REENCODE: $n $track\n";
+    my $response = prompt 'Enter=skip q=quit r=reencode: ';
+    if ($response eq 'q') {
+      last TRACK;
+    }
+    elsif ($response eq 'r') {
+      my $outfile = reencode($track);
+      unless ($outfile && -e $outfile) {
+        warn "\tERROR: Can't reencode track\n";
+        next TRACK;
+      }
+      $outfile =~ s/\/media\/gene\/New Volume//;
+      $audio->{$n}{track} = $outfile;
+      print "\tSet reencoded track to $outfile\n";
+      $track->remove;
+      print "\tRemoved original track\n";
+    }
+  }
+  elsif ($rating && $rating > 0 && $rating < 3) {
     print "$i. DELETE: $n $track\n";
     $track->remove or warn "Can't unlink $track: $!\n";
     delete $audio->{$n};
