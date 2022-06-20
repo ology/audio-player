@@ -74,7 +74,7 @@ use constant DUMPOPTS   => { max_width => 128 };
 use constant ANALYZE => 1;
 use constant WIDTH   => 1600;
 use constant HEIGHT  => 300;
-use constant FREQ    => 'frequency.png';
+use constant FREQ    => 'frequency.png'; # relative to the root
 
 # volume management
 use constant MANAGE_VOL => 1;
@@ -205,7 +205,7 @@ get '/' => sub ($c) {
     my $peak = $R->get('max(tune@left, tune@right, abs(min(tune@left, tune@right)))');
     $R->stop;
 
-    ($freq_image = $file) =~ s/^public(.*)$/$1/ if -e $file;
+    $freq_image = '/' . FREQ if -e $file;
 
     if (MANAGE_VOL && defined $peak) {
       my $loudness = 20 * _log10($peak / MAX_AMPL);
