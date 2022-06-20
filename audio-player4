@@ -298,6 +298,8 @@ get '/' => sub ($c) {
     $track_info->{computed_title} = "|$artist| |$album| |$name|";
 
     $track_info = { %$info, %$track_info };
+
+    app->log->info("Found cover art for $track_info->{computed_title}");
   }
 
   $c->render(
