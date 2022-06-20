@@ -275,10 +275,7 @@ get '/' => sub ($c) {
     my $info;
     my $w = WebService::LastFM::TrackInfo->new(api_key => $API_KEY);
     try {
-      $info = $w->fetch(
-          artist => $artist,
-          track  => $name,
-      );
+      $info = $w->fetch(artist => $artist, track => $name);
     };
     $track_image = _get_image($info->{track}{album});
     unless ($track_image) {
@@ -287,10 +284,7 @@ get '/' => sub ($c) {
         method  => 'album',
       );
       try {
-        $info = $w->fetch(
-          artist => $artist,
-          album  => $album,
-        );
+        $info = $w->fetch(artist => $artist, album => $album);
       };
       $track_image = _get_image($info->{album});
     }
