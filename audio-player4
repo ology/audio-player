@@ -197,7 +197,9 @@ get '/' => sub ($c) {
     $R->run(qq`png("$file", width=$w, height=$h)`);
     $R->run(q`par(bg="#DADADA")`);
     $R->run(qq`plot(tune, xaxt="n", main="$track", xlab="seconds")`);
-    $R->run(q`axis(1, at=seq(0, length(tune) / tune@samp.rate, 10))`);
+    $R->run(q`seconds <- length(tune) / tune@samp.rate`);
+    $R->run(q`axis(1, at=seq(0, seconds, 10), labels=FALSE)`);
+    $R->run(q`axis(1, at=seq(0, seconds, 30))`); # label every 30 seconds
     $R->run(q`dev.off()`);
     $track_info->{frequency} = $R->get('summary(tune)');
     my $peak = $R->get('max(tune@left, tune@right, abs(min(tune@left, tune@right)))');
