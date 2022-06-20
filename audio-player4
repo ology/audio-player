@@ -403,7 +403,7 @@ get '/refresh' => sub ($c) {
   my $audio = {};
   my $rule = File::Find::Rule->new;
   my @files = $rule->file()
-    ->not($rule->new->name(qr/^\./))
+    ->not($rule->new->name(qr/^\./)) # no dot files please
     ->name(EXTS)->in(PATH);
   my $n = 0;
   for my $file (@files) {
