@@ -80,7 +80,7 @@ use constant FREQ    => 'frequency.png';
 use constant MANAGE_VOL => 1;
 use constant MAX_AMPL   => 32768; # for 16 bit audio
 use constant DB_RANGE   => [-14,  0];
-use constant VOL_RANGE  => [ 85, 68];
+use constant VOL_RANGE  => [ 85, 66];
 
 # load the configuration file and get the API key
 my $config  = -e CONFIG ? LoadFile(CONFIG) : {};
