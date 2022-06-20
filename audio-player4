@@ -68,7 +68,7 @@ use constant CONFIG => 'config.yml';                      # The configuration fi
 
 # track name info
 use constant TRACK_INFO => 1;
-use constant DUMPOPTS   => { max_width => 128 };
+use constant DUMPOPTS   => { max_width => 128 }; # for ddc()
 
 # frequency analysis
 use constant ANALYZE => 1;
