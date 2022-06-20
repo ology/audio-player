@@ -192,12 +192,12 @@ get '/' => sub ($c) {
     $R->run(q`library(tuneR)`);
     $R->run(qq`tune <- readMP3("$tune")`)  if $track =~ /\.mp3$/i;
     $R->run(qq`tune <- readWave("$tune")`) if $track =~ /\.wav$/i;
+    $R->run(q`seconds <- length(tune) / tune@samp.rate`);
     #$R->run(q`tune <- mono(tune, which=c("both"))`);
     #$R->run(q`tune <- normalize(tune, unit=c("1"))`);
     $R->run(qq`png("$file", width=$w, height=$h)`);
     $R->run(q`par(bg="#DADADA")`);
     $R->run(qq`plot(tune, xaxt="n", main="$track", xlab="seconds")`);
-    $R->run(q`seconds <- length(tune) / tune@samp.rate`);
     $R->run(q`axis(1, at=seq(0, seconds, 10), labels=FALSE)`);
     $R->run(q`axis(1, at=seq(0, seconds, 30))`); # label every 30 seconds
     $R->run(q`dev.off()`);
