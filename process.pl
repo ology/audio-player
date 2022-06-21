@@ -41,13 +41,13 @@ TRACK: for my $n (sort { $a <=> $b } keys %$audio) {
       $outfile =~ s/\/media\/gene\/New Volume//;
       $audio->{$n}{track} = $outfile;
       print "\tSet reencoded track to $outfile\n";
-      $track->remove;
+      $track->remove or warn "ERROR: Can't remove $track: $!\n";
       print "\tRemoved original track\n";
     }
   }
   elsif ($rating && $rating > 0 && $rating < 3) {
     print "$i. DELETE: $n $track\n";
-    $track->remove or warn "Can't unlink $track: $!\n";
+    $track->remove or warn "ERROR: Can't remove $track: $!\n";
     delete $audio->{$n};
     print "\tRemoved track\n";
   }
@@ -75,3 +75,6 @@ sub reencode {
     return undef;
   }
 }
+
+# Convert:
+# ffmpeg -v 5 -y -i *.m4a -acodec libmp3lame -ac 2 -ab 192k *.mp3
