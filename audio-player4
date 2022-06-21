@@ -381,6 +381,8 @@ sub _in_rate_range ($op, $rate, $track_rating) {
 Track file initialize and refresh endpoint that redirects back to the
 C<index>.
 
+* This resets all track ratings to zero!
+
 Name: C<refresh>
 
 =cut
@@ -390,13 +392,6 @@ get '/refresh' => sub ($c) {
   my $old = {};
   if (-e TRACKS) {
     $old = retrieve(TRACKS);
-  }
-
-  # Assume there are no duplicate tracks
-  my %by_name;
-  for my $i (keys %$old) {
-    $by_name{ $old->{$i}{track} } = $old->{$i}{rating}
-        if defined $old->{$i}{rating};
   }
 
   # Process the filenames
@@ -412,11 +407,8 @@ get '/refresh' => sub ($c) {
     # Make sure the name is properly displayable
     $file = fix_latin($file);
 
-    # Determine the track rating
-    my $rate = exists $by_name{$file} ? $by_name{$file} : 0;
-
     # Add an entry to the audio list
-    $audio->{$n} = { track => $file, rating => $rate };
+    $audio->{$n} = { track => $file, rating => 0 };
 
     $n++;
   }
