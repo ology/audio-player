@@ -27,25 +27,25 @@ TRACK: for my $n (sort { $a <=> $b } keys %$audio) {
   $i++;
   my $rating = $audio->{$n}{rating};
   if ($rating < 0) {
-    print '-' x 70, "\n";
-    print "$i. REENCODE: $n $track\n";
-    my $response = prompt 'Enter=skip q=quit r=reencode: ';
-    if ($response eq 'q') {
-      last TRACK;
-    }
-    elsif ($response eq 'r') {
-      my $outfile = reencode($track);
-      unless ($outfile && -e $outfile) {
-        warn "\tERROR: Can't reencode track\n";
-        next TRACK;
-      }
-      my $match = EXTERN;
-      $outfile =~ s/^$match//;
-      $audio->{$n}{track} = $outfile;
-      print "\tSet reencoded track to $outfile\n";
-      $track->remove or warn "ERROR: Can't remove $track: $!\n";
-      print "\tRemoved original track\n";
-    }
+#    print '-' x 70, "\n";
+#    print "$i. REENCODE: $n $track\n";
+#    my $response = prompt 'Enter=skip q=quit r=reencode: ';
+#    if ($response eq 'q') {
+#      last TRACK;
+#    }
+#    elsif ($response eq 'r') {
+#      my $outfile = reencode($track);
+#      unless ($outfile && -e $outfile) {
+#        warn "\tERROR: Can't reencode track\n";
+#        next TRACK;
+#      }
+#      my $match = EXTERN;
+#      $outfile =~ s/^$match//;
+#      $audio->{$n}{track} = $outfile;
+#      print "\tSet reencoded track to $outfile\n";
+#      $track->remove or warn "ERROR: Can't remove $track: $!\n";
+#      print "\tRemoved original track\n";
+#    }
   }
   elsif ($rating && $rating == 1) {
     print "$i. DELETE: $n $track\n";
