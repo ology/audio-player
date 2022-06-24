@@ -488,6 +488,7 @@ get '/stats' => sub ($c) {
 } => 'stats';
 
 
+app->log->with_roles('+Color');
 app->secrets($config->{secrets});
 app->start;
 
