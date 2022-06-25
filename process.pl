@@ -25,7 +25,7 @@ TRACK: for my $n (sort { $a <=> $b } keys %$audio) {
   my $track = Mojo::File->new("public$audio->{$n}{track}");
   next unless -e $track;
   $i++;
-  print "Processing $track...\n";
+#  print "Processing $track...\n";
   my $rating = $audio->{$n}{rating};
   if ($rating < 0) {
 #    print '-' x 70, "\n";
