@@ -203,7 +203,7 @@ get '/' => sub ($c) {
         $R->run(q`mtune <- mono(tune, which=c("both"))`);
     }
     else {
-        $R->run(q`mtune <- tune`);
+        $R->run(q`mtune <- mono(tune, which=c("left"))`);
     }
     #$R->run(q`mtune <- normalize(mtune, unit=c("1"))`);
     $R->run(qq`png("$freq_file", width=$w, height=$h)`);
