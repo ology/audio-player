@@ -219,7 +219,8 @@ get '/' => sub ($c) {
             if (!all { $_ == 255 } $r, $g, $b) {
 #warn __PACKAGE__,' L',__LINE__,' ',,"$i,$j: ($r, $g, $b)\n";
                 # weighted method - https://www.dynamsoft.com/blog/insights/image-processing/image-processing-101-color-space-conversion/
-                $density += 0.299 * $r + 0.587 * $g + 0.114 * $b;
+#                $density += 0.299 * $r + 0.587 * $g + 0.114 * $b;
+                $density++;
             }
         }
     }
