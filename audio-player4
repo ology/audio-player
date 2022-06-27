@@ -205,9 +205,9 @@ get '/' => sub ($c) {
     else {
         $R->run(q`mtune <- mono(tune, which=c("left"))`);
     }
-    #$R->run(q`mtune <- normalize(mtune, unit=c("1"))`);
+    $R->run(q`mtune <- normalize(mtune, unit=c("1"))`);
     $R->run(qq`png("$freq_file", width=$w, height=$h)`);
-    $R->run(qq`plot(mtune, axes=FALSE, xlab="", ylab="", ylim=c(-40000,40000))`);
+    $R->run(qq`plot(mtune, axes=FALSE, xlab="", ylab="")`);
     $R->run(q`dev.off()`);
     # Perform b/w density analysis
     my $img = Imager->new(file => $freq_file);
