@@ -790,6 +790,8 @@ $(document).ready( function () {
   $('#query').on('keypress', function (e) {
     if (e.which == 13) {
       // Submit = ENTER
+      var audio = document.getElementById('myAudio');
+      audio.pause();
       advance();
     }
   });
