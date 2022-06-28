@@ -228,14 +228,14 @@ get '/' => sub ($c) {
 warn __PACKAGE__,' L',__LINE__,' ',,"D: $density\n";
 
     # Display
-#    ($w, $h) = (WIDTH, HEIGHT);
-#    $R->run(q`seconds <- length(tune) / tune@samp.rate`);
-#    $R->run(qq`png("$freq_file", width=$w, height=$h)`);
-#    $R->run(q`par(bg="#DADADA")`);
-#    $R->run(qq`plot(tune, xaxt="n", main="$track", xlab="seconds")`);
-#    $R->run(q`axis(1, at=seq(0, seconds, 10), labels=FALSE)`);
-#    $R->run(q`axis(1, at=seq(0, seconds, 30))`); # label every 30 seconds
-#    $R->run(q`dev.off()`);
+    ($w, $h) = (WIDTH, HEIGHT);
+    $R->run(q`seconds <- length(tune) / tune@samp.rate`);
+    $R->run(qq`png("$freq_file", width=$w, height=$h)`);
+    $R->run(q`par(bg="#DADADA")`);
+    $R->run(qq`plot(tune, xaxt="n", main="$track", xlab="seconds")`);
+    $R->run(q`axis(1, at=seq(0, seconds, 10), labels=FALSE)`);
+    $R->run(q`axis(1, at=seq(0, seconds, 30))`); # label every 30 seconds
+    $R->run(q`dev.off()`);
     my $summary = $R->get('summary(tune)'); # R returns a space separated arrayref!
     my $peak = $R->get('max(tune@left, tune@right, abs(min(tune@left, tune@right)))');
     $R->stop;
