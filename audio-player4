@@ -829,6 +829,8 @@ $(document).ready( function () {
       }
       else if (e.which == 110) {
         // Next track = n
+        var audio = document.getElementById('myAudio');
+        audio.pause();
         advance(1);
       }
       else if (e.which == 114) {
