@@ -225,7 +225,6 @@ get '/' => sub ($c) {
             }
         }
     }
-warn __PACKAGE__,' L',__LINE__,' ',,"D: $density\n";
 
     # Display
     ($w, $h) = (WIDTH, HEIGHT);
@@ -239,6 +238,7 @@ warn __PACKAGE__,' L',__LINE__,' ',,"D: $density\n";
     my $summary = $R->get('summary(tune)'); # R returns a space separated arrayref!
     my $peak = $R->get('max(tune@left, tune@right, abs(min(tune@left, tune@right)))');
     $R->stop;
+warn __PACKAGE__,' L',__LINE__,' ',,"P: $peak, D: $density\n";
 
     $freq_image = '/' . FREQ if -e $freq_file;
 
