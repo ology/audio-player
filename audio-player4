@@ -85,6 +85,8 @@ use constant MAX_AMPL   => 32768; # for 16 bit audio
 use constant DB_RANGE   => [-14,  0];
 use constant VOL_RANGE  => [ 83, 64];
 
+use constant LOCAL => '127.0.0.1';
+
 # load the configuration file and get the API key
 my $config  = -e CONFIG ? LoadFile(CONFIG) : {};
 my $API_KEY = $config->{api_key};
@@ -186,8 +188,11 @@ get '/' => sub ($c) {
   my $total = $nf->format_number(scalar keys %$audio);
   my $matches = $nf->format_number(scalar @$match);
 
-  # Analyze the mp3 track if requested
-  if (ANALYZE && $track && ($track =~ /\.mp3$/i || $track =~ /\.wav$/i)) {
+  if (
+    $c->remote_addr eq LOCAL
+    && ANALYZE && $track
+    && ($track =~ /\.mp3$/i || $track =~ /\.wav$/i)
+  ) {
     my $freq_file = 'public/' . FREQ;
     my $tune = "public$track";
 
@@ -338,13 +343,15 @@ warn __PACKAGE__,' L',__LINE__,' ',,"P: $peak, D: $density\n";
       if $track_image;
   }
 
+  $track_info = TRACK_INFO && $c->remote_addr eq LOCAL ? ddc($track_info, DUMPOPTS) : '';
+
   $c->render(
     template    => 'index',
     audio       => $audio,
     total       => $total,
     current     => $current,
     track       => $track,
-    track_info  => TRACK_INFO ? ddc($track_info, DUMPOPTS) : '',
+    track_info  => $track_info,
     track_image => $track_image,
     freq_image  => $freq_image,
     rating      => $rating,
@@ -523,6 +530,7 @@ get '/stats' => sub ($c) {
   );
 } => 'stats';
 
+plugin 'RemoteAddr';
 
 app->log->with_roles('+Color');
 app->secrets($config->{secrets});
