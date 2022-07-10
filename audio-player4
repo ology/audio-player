@@ -83,7 +83,7 @@ use constant DHEIGHT => 200;
 use constant MANAGE_VOL => 1;
 use constant MAX_AMPL   => 32768; # for 16 bit audio
 use constant DB_RANGE   => [-14,  0];
-use constant VOL_RANGE  => [ 83, 64];
+use constant VOL_RANGE  => [ 90, 73];
 
 use constant LOCAL => '127.0.0.1';
 
