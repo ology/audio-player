@@ -344,7 +344,7 @@ warn __PACKAGE__,' L',__LINE__,' ',,"P: $peak, D: $density\n";
       if $track_image;
   }
 
-  $track_info = TRACK_INFO && $c->remote_addr eq LOCAL ? ddc($track_info, DUMPOPTS) : '';
+  $track_info = TRACK_INFO && ($c->remote_addr eq LOCAL || $c->remote_addr eq NETWORK) ? ddc($track_info, DUMPOPTS) : '';
 
   $c->render(
     template    => 'index',
