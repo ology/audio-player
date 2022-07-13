@@ -67,6 +67,9 @@ use constant PATH   => 'public/Audio/';                   # Where the audio live
 use constant TRACKS => app->moniker . '.dat';             # The tracks file
 use constant CONFIG => 'config.yml';                      # The configuration file
 
+use constant LOCAL   => '127.0.0.1';
+use constant NETWORK => '192.168.100.115';
+
 # track name info
 use constant TRACK_INFO => 1;
 use constant DUMPOPTS   => { max_width => 128 }; # for ddc()
@@ -84,9 +87,6 @@ use constant MANAGE_VOL => 1;
 use constant MAX_AMPL   => 32768; # for 16 bit audio
 use constant DB_RANGE   => [-14,  0];
 use constant VOL_RANGE  => [ 90, 73];
-
-use constant LOCAL   => '127.0.0.1';
-use constant NETWORK => '192.168.100.115';
 
 # load the configuration file and get the API key
 my $config  = -e CONFIG ? LoadFile(CONFIG) : {};
