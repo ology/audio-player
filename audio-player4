@@ -590,7 +590,7 @@ __DATA__
 </div>
 
 % # Current track name
-<p id="track"><b><a href="<%= url_for('index')->query(current => $current, noinc => 1, shuffle => 0, autoplay => 1, autoadvance => 0, darkmode => 1) %>">Track</a>:</b> <%= $track %></p>
+<p id="track"><b><a href="<%= url_for('index')->query(current => $current, noinc => 1, shuffle => 0, autoplay => 1, autoadvance => 0, darkmode => $darkmode) %>">Track</a>:</b> <%= $track %></p>
 
 % # Audio widget
 <p>
