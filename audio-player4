@@ -85,7 +85,8 @@ use constant MAX_AMPL   => 32768; # for 16 bit audio
 use constant DB_RANGE   => [-14,  0];
 use constant VOL_RANGE  => [ 90, 73];
 
-use constant LOCAL => '127.0.0.1';
+use constant LOCAL   => '127.0.0.1';
+use constant NETWORK => '192.168.100.115';
 
 # load the configuration file and get the API key
 my $config  = -e CONFIG ? LoadFile(CONFIG) : {};
@@ -189,7 +190,7 @@ get '/' => sub ($c) {
   my $matches = $nf->format_number(scalar @$match);
 
   if (
-    $c->remote_addr eq LOCAL
+    ($c->remote_addr eq LOCAL || $c->remote_addr eq NETWORK)
     && ANALYZE && $track
     && ($track =~ /\.mp3$/i || $track =~ /\.wav$/i)
   ) {
