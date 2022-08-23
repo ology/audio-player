@@ -61,6 +61,10 @@ use lib map { "$ENV{HOME}/sandbox/$_/lib" } qw(WebService-LastFM-TrackInfo);
 use WebService::LastFM::TrackInfo ();
 use YAML::XS qw(LoadFile);
 
+#use Net::CoverArtArchive;
+#use WebService::MusicBrainz;
+#$ENV{MUSICBRAINZ_DEBUG} = 1;
+
 use constant RATES  => (0 .. 5); #qw(None Bad Poor Fair Good Best);
 use constant TYPES  => qr/\.(?:flac|m4a|mp3|ogg|wav)$/i;  # Tracks of interest
 use constant PATH   => 'public/Audio/';                   # Where the audio lives
@@ -204,33 +208,33 @@ get '/' => sub ($c) {
 
     # Compute density
     my ($w, $h) = (DWIDTH, DHEIGHT);
-    my $stereo = $R->get('tune@stereo'); # R returns TRUE or FALSE
-    if ($stereo eq 'TRUE') {
-        $R->run(q`mtune <- mono(tune, which=c("both"))`);
-    }
-    else {
-        $R->run(q`mtune <- mono(tune, which=c("left"))`);
-    }
-#    $R->run(q`mtune <- normalize(mtune, unit=c("1"))`);
-    $R->run(qq`png("$freq_file", width=$w, height=$h)`);
-#    $R->run(qq`plot(mtune, ylim=c(-40000,40000))`);
-    $R->run(qq`plot(mtune, axes=FALSE, xlab="", ylab="", ylim=c(-40000,40000))`);
-    $R->run(q`dev.off()`);
-    # Perform b/w density analysis
-    my $img = Imager->new(file => $freq_file);
-    my $density = 0;
-    for my $i (0 .. $w - 1) {
-        for my $j (0 .. $h - 1) {
-            my $color = $img->getpixel(x => $i, y => $j);
-            my ($r, $g, $b) = $color->rgba;
-            if (!all { $_ == 255 } $r, $g, $b) {
-#warn __PACKAGE__,' L',__LINE__,' ',,"$i,$j: ($r, $g, $b)\n";
-                # weighted method - https://www.dynamsoft.com/blog/insights/image-processing/image-processing-101-color-space-conversion/
-#                $density += 0.299 * $r + 0.587 * $g + 0.114 * $b;
-                $density++;
-            }
-        }
-    }
+#    my $stereo = $R->get('tune@stereo'); # R returns TRUE or FALSE
+#    if ($stereo eq 'TRUE') {
+#        $R->run(q`mtune <- mono(tune, which=c("both"))`);
+#    }
+#    else {
+#        $R->run(q`mtune <- mono(tune, which=c("left"))`);
+#    }
+##    $R->run(q`mtune <- normalize(mtune, unit=c("1"))`);
+#    $R->run(qq`png("$freq_file", width=$w, height=$h)`);
+##    $R->run(qq`plot(mtune, ylim=c(-40000,40000))`);
+#    $R->run(qq`plot(mtune, axes=FALSE, xlab="", ylab="", ylim=c(-40000,40000))`);
+#    $R->run(q`dev.off()`);
+#    # Perform b/w density analysis
+#    my $img = Imager->new(file => $freq_file);
+#    my $density = 0;
+#    for my $i (0 .. $w - 1) {
+#        for my $j (0 .. $h - 1) {
+#            my $color = $img->getpixel(x => $i, y => $j);
+#            my ($r, $g, $b) = $color->rgba;
+#            if (!all { $_ == 255 } $r, $g, $b) {
+##warn __PACKAGE__,' L',__LINE__,' ',,"$i,$j: ($r, $g, $b)\n";
+#                # weighted method - https://www.dynamsoft.com/blog/insights/image-processing/image-processing-101-color-space-conversion/
+##                $density += 0.299 * $r + 0.587 * $g + 0.114 * $b;
+#                $density++;
+#            }
+#        }
+#    }
 
     # Display
     ($w, $h) = (WIDTH, HEIGHT);
@@ -244,7 +248,8 @@ get '/' => sub ($c) {
     my $summary = $R->get('summary(tune)'); # R returns a space separated arrayref!
     my $peak = $R->get('max(tune@left, tune@right, abs(min(tune@left, tune@right)))');
     $R->stop;
-warn __PACKAGE__,' L',__LINE__,' ',,"P: $peak, D: $density\n";
+warn __PACKAGE__,' L',__LINE__,' ',,"P: $peak\n";
+#warn __PACKAGE__,' L',__LINE__,' ',,"P: $peak, D: $density\n";
 
     $freq_image = '/' . FREQ if -e $freq_file;
 
@@ -275,7 +280,7 @@ warn __PACKAGE__,' L',__LINE__,' ',,"P: $peak, D: $density\n";
     $track_info->{frequency} = \@parts if @parts;
 
     push $track_info->{frequency}->@*,
-        "Peak: $peak", "Density: $density";
+        "Peak: $peak";#, "Density: $density";
   }
 
   # Parse the track name and find an image
@@ -335,6 +340,51 @@ warn __PACKAGE__,' L',__LINE__,' ',,"P: $peak, D: $density\n";
       };
       $track_image = _get_image($info->{album});
     }
+#    unless ($track_image) {
+#      my $image;
+#
+#      my $caa = Net::CoverArtArchive->new;
+#      my $mb  = WebService::MusicBrainz->new;
+#
+#      my $result = $mb->search(artist => { artist => $artist });
+#
+#      my $artist_id = $result->{artists}[0]{id};
+#
+#      my $key = 'release-groups';
+#      $result = $mb->search(artist => { mbid => $artist_id, inc => [$key]});
+#      #warn ddc($result, {max_width=>128});exit;
+#
+#      print "$artist ($artist_id):\n";
+#
+#      my $i = 0;
+#
+#      GROUPS: for my $group (@{ $result->{$key} }) {
+#        my $condition = $album
+#           ? $group->{title} eq $album
+#           : !@{ $group->{'secondary-types'} }; # studio albums only?
+#        if ($condition) {
+#          $i++;
+#
+#          print "$i. $group->{title}:\n";
+#
+#          $key = 'releases';
+#          $result = $mb->search('release-group' => { mbid => $group->{id}, inc => [$key]});
+#          #warn ddc($result, {max_width=>128});
+#
+#          for my $release (@{ $result->{$key} }) {
+#            my $release_id = $release->{id};
+#            my $artwork = $caa->find_available_artwork($release_id);
+#            #warn ddc($artwork, {max_width=>128});
+#            if ($artwork->[0]{image}) {
+#              $track_image = $artwork->[0]{image};
+#              last GROUPS;
+#            }
+#          }
+#
+#          last if $album;
+#        }
+#      }
+#    }
 
     $track_info->{computed_title} = "|$artist| |$album| |$name|";
 
@@ -721,6 +771,8 @@ $(document).ready( function () {
 
 % # Advance track function
   function advance (force = 0, current = -1, noinc = 0, useq = 1) {
+    var audio = document.getElementById('myAudio');
+    audio.pause();
     var showrate = $('select[name=showrate] option').filter(':selected').val();
     var query = '';
     if (useq == 1) {
@@ -799,8 +851,6 @@ $(document).ready( function () {
   $('#query').on('keypress', function (e) {
     if (e.which == 13) {
       // Submit = ENTER
-      var audio = document.getElementById('myAudio');
-      audio.pause();
       advance();
     }
   });
@@ -840,8 +890,6 @@ $(document).ready( function () {
       }
       else if (e.which == 110) {
         // Next track = n
-        var audio = document.getElementById('myAudio');
-        audio.pause();
         advance(1);
       }
       else if (e.which == 114) {
