@@ -551,7 +551,7 @@ post '/rating' => sub ($c) {
 
 =head2 GET /purge
 
-Purge tracks who have a rating of C<1>.
+Purge tracks that have a rating of C<1>.
 
 Name: C<purge>
 
