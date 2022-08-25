@@ -52,6 +52,7 @@ use Imager ();
 use List::SomeUtils qw(all first_index);
 use Math::Utils qw(uniform_scaling);
 use Mojolicious::Lite -signatures;
+use Mojo::File;
 use Mojo::Util qw(url_unescape);
 use Number::Format ();
 use Statistics::R ();
@@ -546,6 +547,47 @@ post '/rating' => sub ($c) {
   }
 
   $c->render(text => $message);
+} => 'rating';
+
+=head2 GET /purge
+
+Purge tracks who have a rating of C<1>.
+
+Name: C<purge>
+
+=cut
+
+get '/purge' => sub ($c) {
+  my $audio = retrieve(TRACKS);
+
+  my $total = 0;
+  my $i = 0;
+
+  for my $n (sort { $a <=> $b } keys %$audio) {
+    $i++;
+    my $track = Mojo::File->new("public$audio->{$n}{track}");
+    unless (-e $track) {
+      app->log->info("$i. REMOVE INDEX: $n $track");
+      delete $audio->{$n};
+      $total++;
+      next;
+    }
+    #app->log->info("Processing $track...");
+    my $rating = $audio->{$n}{rating};
+    if ($rating && $rating == 1) {
+      app->log->info("$i. DELETE: $n $track");
+      $track->remove or warn "ERROR: Can't remove $track: $!\n";
+      delete $audio->{$n};
+      $total++;
+      app->log->info('Removed track');
+    }
+  }
+
+  store $audio, TRACKS;
+
+  $c->flash(message => "Purged $total tracks");
+
+  $c->redirect_to($c->url_for('index'));
 } => 'rating';
 
 
