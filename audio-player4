@@ -62,8 +62,8 @@ use lib map { "$ENV{HOME}/sandbox/$_/lib" } qw(WebService-LastFM-TrackInfo);
 use WebService::LastFM::TrackInfo ();
 use YAML::XS qw(LoadFile);
 
-#use Net::CoverArtArchive;
-#use WebService::MusicBrainz;
+use Net::CoverArtArchive;
+use WebService::MusicBrainz;
 #$ENV{MUSICBRAINZ_DEBUG} = 1;
 
 use constant RATES  => (0 .. 5); #qw(None Bad Poor Fair Good Best);
@@ -249,7 +249,7 @@ get '/' => sub ($c) {
     my $summary = $R->get('summary(tune)'); # R returns a space separated arrayref!
     my $peak = $R->get('max(tune@left, tune@right, abs(min(tune@left, tune@right)))');
     $R->stop;
-warn __PACKAGE__,' L',__LINE__,' ',,"P: $peak\n";
+warn __PACKAGE__,' L',__LINE__,' ',,"Peak: $peak\n";
 #warn __PACKAGE__,' L',__LINE__,' ',,"P: $peak, D: $density\n";
 
     $freq_image = '/' . FREQ if -e $freq_file;
@@ -355,34 +355,33 @@ warn __PACKAGE__,' L',__LINE__,' ',,"P: $peak\n";
 #      $result = $mb->search(artist => { mbid => $artist_id, inc => [$key]});
 #      #warn ddc($result, {max_width=>128});exit;
 #
-#      print "$artist ($artist_id):\n";
+#      warn "$artist ($artist_id):\n";
 #
 #      my $i = 0;
-#
-#      GROUPS: for my $group (@{ $result->{$key} }) {
-#        my $condition = $album
-#           ? $group->{title} eq $album
-#           : !@{ $group->{'secondary-types'} }; # studio albums only?
+#      for my $group ($result->{$key}->@*) {
+#        my $condition = $name
+#          ? $group->{title} eq $name
+#          : !$group->{'secondary-types'}->@*; # studio albums only
 #        if ($condition) {
 #          $i++;
 #
-#          print "$i. $group->{title}:\n";
+#          warn "$i. $group->{title} ($group->{id}):\n";
 #
 #          $key = 'releases';
 #          $result = $mb->search('release-group' => { mbid => $group->{id}, inc => [$key]});
 #          #warn ddc($result, {max_width=>128});
 #
-#          for my $release (@{ $result->{$key} }) {
+#          for my $release ($result->{$key}->@*) {
 #            my $release_id = $release->{id};
 #            my $artwork = $caa->find_available_artwork($release_id);
 #            #warn ddc($artwork, {max_width=>128});
 #            if ($artwork->[0]{image}) {
-#              $track_image = $artwork->[0]{image};
-#              last GROUPS;
+#              warn "\t", $artwork->[0]{image}, "\n";
+#              last;
 #            }
 #          }
 #
-#          last if $album;
+#          last if $name;
 #        }
 #      }
 #    }
