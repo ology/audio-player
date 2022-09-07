@@ -62,10 +62,6 @@ use lib map { "$ENV{HOME}/sandbox/$_/lib" } qw(WebService-LastFM-TrackInfo);
 use WebService::LastFM::TrackInfo ();
 use YAML::XS qw(LoadFile);
 
-use Net::CoverArtArchive;
-use WebService::MusicBrainz;
-#$ENV{MUSICBRAINZ_DEBUG} = 1;
-
 use constant RATES  => (0 .. 5); #qw(None Bad Poor Fair Good Best);
 use constant TYPES  => qr/\.(?:flac|m4a|mp3|ogg|wav)$/i;  # Tracks of interest
 use constant PATH   => 'public/Audio/';                   # Where the audio lives
@@ -325,7 +321,7 @@ warn __PACKAGE__,' L',__LINE__,' ',,"Peak: $peak\n";
     }
 
     # Find an image
-    my $info;
+    my $info = {};
     my $w = WebService::LastFM::TrackInfo->new(api_key => $API_KEY);
     try {
       $info = $w->fetch(artist => $artist, track => $name);
@@ -341,50 +337,6 @@ warn __PACKAGE__,' L',__LINE__,' ',,"Peak: $peak\n";
       };
       $track_image = _get_image($info->{album});
     }
-#    unless ($track_image) {
-#      my $image;
-#
-#      my $caa = Net::CoverArtArchive->new;
-#      my $mb  = WebService::MusicBrainz->new;
-#
-#      my $result = $mb->search(artist => { artist => $artist });
-#
-#      my $artist_id = $result->{artists}[0]{id};
-#
-#      my $key = 'release-groups';
-#      $result = $mb->search(artist => { mbid => $artist_id, inc => [$key]});
-#      #warn ddc($result, {max_width=>128});exit;
-#
-#      warn "$artist ($artist_id):\n";
-#
-#      my $i = 0;
-#      for my $group ($result->{$key}->@*) {
-#        my $condition = $name
-#          ? $group->{title} eq $name
-#          : !$group->{'secondary-types'}->@*; # studio albums only
-#        if ($condition) {
-#          $i++;
-#
-#          warn "$i. $group->{title} ($group->{id}):\n";
-#
-#          $key = 'releases';
-#          $result = $mb->search('release-group' => { mbid => $group->{id}, inc => [$key]});
-#          #warn ddc($result, {max_width=>128});
-#
-#          for my $release ($result->{$key}->@*) {
-#            my $release_id = $release->{id};
-#            my $artwork = $caa->find_available_artwork($release_id);
-#            #warn ddc($artwork, {max_width=>128});
-#            if ($artwork->[0]{image}) {
-#              warn "\t", $artwork->[0]{image}, "\n";
-#              last;
-#            }
-#          }
-#
-#          last if $name;
-#        }
-#      }
-#    }
 
     $track_info->{computed_title} = "|$artist| |$album| |$name|";
 
