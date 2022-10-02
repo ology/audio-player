@@ -683,9 +683,9 @@ __DATA__
     <button type="button" id="clearsearch" class="btn btn-outline-secondary" title="Clear the search query (x)">
       <i class="fa fa-times"></i>
     </button>
-  <button type="button" id="submitsearch" class="btn btn-outline-secondary rounded-right" title="Submit the search query">
-    <i class="fa fa-chevron-right"></i>
-  </button>
+    <button type="button" id="submitsearch" class="btn btn-outline-secondary rounded-right" title="Submit the search query">
+      <i class="fa fa-chevron-right"></i>
+    </button>
   </div>
 </div>
 
