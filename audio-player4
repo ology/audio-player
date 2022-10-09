@@ -865,6 +865,16 @@ $(document).ready( function () {
           audio.pause();
         }
       }
+      else if (e.which == 102) {
+        // refresh = f
+        var link = "<%= url_for('refresh') %>";
+        window.location = link;
+      }
+      else if (e.which == 103) {
+        // purge = g
+        var link = "<%= url_for('purge') %>";
+        window.location = link;
+      }
       else if (e.which == 122) {
         // space-music = z
         var link = "<%= url_for('index') %>?current=0"
