@@ -865,8 +865,8 @@ $(document).ready( function () {
           audio.pause();
         }
       }
-      else if (e.which == 102) {
-        // refresh = f
+      else if (e.which == 116) {
+        // refresh = t
         var link = "<%= url_for('refresh') %>";
         window.location = link;
       }
