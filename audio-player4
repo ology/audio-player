@@ -344,7 +344,7 @@ warn __PACKAGE__,' L',__LINE__,' ',,"Peak: $peak\n";
             if ($item->{name} eq $artist) {
 #warn __PACKAGE__,' L',__LINE__,' ',ddc($item, {max_width=>128});
                 $artist_genres = join ', ', $item->{genres}->@*;
-                $artist_image = $item->{images}[1]{url};
+                $artist_image  = $item->{images}[1]{url};
                 last BATCH;
             }
         }
