@@ -32,7 +32,7 @@ On unix-like systems, symlink your audio source:
 
 Or on windows, as the Administrator:
 
-  mklink /D C:\Users\you\wherever\audio-player\public\Audio "X:\My Music"
+  mklink /D C:\Users\you\repos\audio-player\public\Audio "X:\My Music"
 
 Then:
 
