@@ -48,7 +48,7 @@ And browse to:
 use Data::Dumper::Compact qw(ddc);
 use Encoding::FixLatin qw(fix_latin);
 use File::Find::Rule ();
-use Imager ();
+#use Imager (); # For computing density
 use List::SomeUtils qw(all first_index);
 use Math::Utils qw(uniform_scaling);
 use Mojolicious::Lite -signatures;
