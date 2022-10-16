@@ -372,6 +372,7 @@ warn __PACKAGE__,' L',__LINE__,' ',,"Peak: $peak\n";
     }
 
     $track_info->{genres} = $artist_genres;
+    $track_info->{artist_image} = $artist_image;
 
     $track_info->{computed_title} = "|$artist| |$album| |$name|";
 
