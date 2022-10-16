@@ -10,10 +10,10 @@ This program is the evolution of audioplayer3, and is a lightweight,
 simple audio server.  It has been heavily customized for my use.  For
 a generic player, see the previous incarnation, C<audio-player3>.
 
-This app has logic to fetch cover art from the L<last.fm> API.  In
-order to do this, the artist, track and album names are divined (with
-regular expressions).  Change this in the source below for your
-filenames.
+This app has logic to fetch cover art from the last.fm API, and the
+artist image and genres from Spotify.  In order to do this, the
+artist, track and album names are divined (with regular expressions).
+Change this in the source below for your filenames.
 
 New to this version is that it can do waveform analysis with C<R>
 and the C<tuneR> package.  Also new is optional system volume
