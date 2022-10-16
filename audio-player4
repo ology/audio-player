@@ -376,9 +376,6 @@ warn __PACKAGE__,' L',__LINE__,' ',,"Peak: $peak\n";
     $track_info->{computed_title} = "|$artist| |$album| |$name|";
 
     $track_info = { %$info, %$track_info };
-
-    app->log->info("Found cover art for $track_info->{computed_title}")
-      if $track_image;
   }
 
   $track_info = TRACK_INFO && ($c->remote_addr eq LOCAL || $c->remote_addr eq NETWORK) ? ddc($track_info, DUMPOPTS) : '';
