@@ -60,6 +60,7 @@ use Storable qw(retrieve store);
 use Try::Tiny qw(try catch);
 use lib map { "$ENV{HOME}/sandbox/$_/lib" } qw(WebService-LastFM-TrackInfo);
 use WebService::LastFM::TrackInfo ();
+use WWW::Spotify;
 use YAML::XS qw(LoadFile);
 
 use constant RATES  => (0 .. 5); #qw(None Bad Poor Fair Good Best);
@@ -120,7 +121,7 @@ get '/' => sub ($c) {
   my $match = []; # Bucket for all query matches
 
   my $track_info;  # discovered track details
-  my $track_image; # cover art
+  my $track_image; # track/album cover art
   my $freq_image;  # frequency analysis
 
   # Load the track list or flash an error
@@ -320,8 +321,37 @@ warn __PACKAGE__,' L',__LINE__,' ',,"Peak: $peak\n";
         if $who && $what;
     }
 
+    # Find the artist image and genres
+    my $artist_image;
+    my $artist_genres;
+    my $spotify = WWW::Spotify->new;
+    $spotify->oauth_client_id($config->{oauth_client_id});
+    $spotify->oauth_client_secret($config->{oauth_client_secret});
+    $spotify->force_client_auth(1);
+    $spotify->auto_json_decode(1);
+    my $limit = 10;
+    my $max   = 50;
+    BATCH: for (my $i = 0; $i <= $max; $i += $limit) {
+        my $step = $max - $i < $limit ? $max - $i + 1 : $limit;
+        warn "offset=$i, limit=$step\n";
+        my $result = $spotify->search(
+            $artist, 'artist',
+            { limit => $step, offset => $i }
+        );
+#warn __PACKAGE__,' L',__LINE__,' ',ddc($result, {max_width=>128});exit;
+#warn __PACKAGE__,' L',__LINE__,' Batch: ',scalar($result->{artists}{items}->@*),"\n";
+        for my $item ($result->{artists}{items}->@*) {
+            if ($item->{name} eq $artist) {
+#warn __PACKAGE__,' L',__LINE__,' ',ddc($item, {max_width=>128});
+                $artist_genres = join ', ', $item->{genres}->@*;
+                $artist_image = $item->{images}[1]{url};
+                last BATCH;
+            }
+        }
+    }
+
     # Find an image
-    my $info = {};
+    my $info = {}; # track information
     my $w = WebService::LastFM::TrackInfo->new(api_key => $API_KEY);
     try {
       $info = $w->fetch(artist => $artist, track => $name);
@@ -337,6 +367,11 @@ warn __PACKAGE__,' L',__LINE__,' ',,"Peak: $peak\n";
       };
       $track_image = _get_image($info->{album});
     }
+    if (!$track_image && $artist_image) {
+        $track_image = $artist_image;
+    }
+
+    $track_info->{genres} = $artist_genres;
 
     $track_info->{computed_title} = "|$artist| |$album| |$name|";
 
