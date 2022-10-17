@@ -21,6 +21,7 @@ get '/' => sub ($c) {
   $c->render(
     template => 'index',
     genre    => ddc($genre),
+    query    => $query,
     matches  => ddc(\@matches),
   );
 } => 'index';
@@ -37,8 +38,10 @@ __DATA__
   <input type="submit" value="Query"/>
 </form>
 <p></p>
+"<b><%= $query %></b>" :
+<br>
 <pre><%= $matches %></pre>
-<p></p>
+<hr>
 <pre><%= $genre %></pre>
 
 @@ layouts/default.html.ep
