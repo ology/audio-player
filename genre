@@ -9,9 +9,9 @@ use constant ARTIST => 'artists.dat';
 
 get '/' => sub ($c) {
   my $query = $c->param('q') || '';
-  my $genre = {};
   my @matches;
   my %all_genres;
+  my $genre = {};
   $genre = retrieve(ARTIST) if -e ARTIST;
   for my $artist (sort keys %$genre) {
     for my $g ($genre->{$artist}->@*) {
