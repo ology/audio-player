@@ -15,7 +15,7 @@ get '/' => sub ($c) {
   if (-e ARTIST) {
     $genre = retrieve(ARTIST);
   }
-  for my $artist (keys %$genre) {
+  for my $artist (sort keys %$genre) {
     push @matches, $artist
       if List::Util::any { $_ =~ /$query/ } $genre->{$artist}->@*;
     for my $g ($genre->{$artist}->@*) {
