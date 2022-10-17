@@ -12,9 +12,7 @@ get '/' => sub ($c) {
   my $genre = {};
   my @matches;
   my %all_genres;
-  if (-e ARTIST) {
-    $genre = retrieve(ARTIST);
-  }
+  $genre = retrieve(ARTIST) if -e ARTIST;
   for my $artist (sort keys %$genre) {
     for my $g ($genre->{$artist}->@*) {
       push @matches, $artist if $g =~ /$query/;
