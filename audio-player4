@@ -68,6 +68,7 @@ use constant TYPES  => qr/\.(?:flac|m4a|mp3|ogg|wav)$/i;  # Tracks of interest
 use constant PATH   => 'public/Audio/';                   # Where the audio lives
 use constant TRACKS => app->moniker . '.dat';             # The tracks file
 use constant CONFIG => 'config.yml';                      # The configuration file
+use constant ARTIST => 'artists.dat';                     # The artist genres file
 
 use constant LOCAL   => '127.0.0.1';
 use constant NETWORK => '192.168.100.115';
@@ -119,6 +120,7 @@ get '/' => sub ($c) {
 
   my $audio = {}; # Bucket for all tracks
   my $match = []; # Bucket for all query matches
+  my $genre = {}; # Bucket for all artist genres
 
   my $track_info;  # discovered track details
   my $track_image; # track/album cover art
@@ -130,6 +132,11 @@ get '/' => sub ($c) {
   }
   else {
     $c->flash(error => 'Cannot read track list file. Please <a href="/refresh">refresh</a>');
+  }
+
+  # Load the artist genres list or make a new one
+  if (-e ARTIST) {
+    $genre = retrieve(ARTIST);
   }
 
   if (keys %$audio) {
@@ -246,7 +253,7 @@ get '/' => sub ($c) {
     my $summary = $R->get('summary(tune)'); # R returns a space separated arrayref!
     my $peak = $R->get('max(tune@left, tune@right, abs(min(tune@left, tune@right)))');
     $R->stop;
-warn __PACKAGE__,' L',__LINE__,' ',,"Peak: $peak\n";
+#warn __PACKAGE__,' L',__LINE__,' ',,"Peak: $peak\n";
 #warn __PACKAGE__,' L',__LINE__,' ',,"P: $peak, D: $density\n";
 
     $freq_image = '/' . FREQ if -e $freq_file;
@@ -332,22 +339,24 @@ warn __PACKAGE__,' L',__LINE__,' ',,"Peak: $peak\n";
     my $limit = 10;
     my $max   = 50;
     BATCH: for (my $i = 0; $i <= $max; $i += $limit) {
-        my $step = $max - $i < $limit ? $max - $i + 1 : $limit;
-#        warn "offset=$i, limit=$step\n";
-        my $result = $spotify->search(
-            $artist, 'artist',
-            { limit => $step, offset => $i }
-        );
+      my $step = $max - $i < $limit ? $max - $i + 1 : $limit;
+#      warn "offset=$i, limit=$step\n";
+      my $result = $spotify->search(
+        $artist, 'artist',
+        { limit => $step, offset => $i }
+      );
 #warn __PACKAGE__,' L',__LINE__,' ',ddc($result, {max_width=>128});exit;
 #warn __PACKAGE__,' L',__LINE__,' Batch: ',scalar($result->{artists}{items}->@*),"\n";
-        for my $item ($result->{artists}{items}->@*) {
-            if ($item->{name} eq $artist) {
+      for my $item ($result->{artists}{items}->@*) {
+        if ($item->{name} eq $artist) {
 #warn __PACKAGE__,' L',__LINE__,' ',ddc($item, {max_width=>128});
-                $artist_genres = join ', ', $item->{genres}->@*;
-                $artist_image  = $item->{images}[1]{url};
-                last BATCH;
-            }
+          $genre->{$artist} = $item->{genres}
+            unless exists $genre->{$artist};
+          $artist_genres = join ', ', $item->{genres}->@*;
+          $artist_image  = $item->{images}[1]{url};
+          last BATCH;
         }
+      }
     }
 
     # Find an image
