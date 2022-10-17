@@ -1,0 +1,34 @@
+#!/usr/bin/env perl
+
+use Data::Dumper::Compact qw(ddc);
+use Mojolicious::Lite -signatures;
+use Storable qw(retrieve);
+
+use constant ARTIST => 'artists.dat';
+
+get '/' => sub ($c) {
+  my $genre = {};
+  if (-e ARTIST) {
+    $genre = retrieve(ARTIST);
+  }
+  $c->render(
+    template => 'index',
+    genre    => ddc($genre),
+  );
+} => 'index';
+
+app->start;
+__DATA__
+
+@@ index.html.ep
+% layout 'default';
+% title 'Welcome';
+<h1>Artist Genres</h1>
+<pre><%= $genre %></pre>
+
+@@ layouts/default.html.ep
+<!DOCTYPE html>
+<html>
+  <head><title><%= title %></title></head>
+  <body><%= content %></body>
+</html>
