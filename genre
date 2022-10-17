@@ -2,18 +2,26 @@
 
 use Mojolicious::Lite -signatures;
 use Data::Dumper::Compact qw(ddc);
+use List::Util ();
 use Storable qw(retrieve);
 
 use constant ARTIST => 'artists.dat';
 
 get '/' => sub ($c) {
+  my $query = $c->param('q') || '';
   my $genre = {};
+  my @matches;
   if (-e ARTIST) {
     $genre = retrieve(ARTIST);
+  }
+  for my $artist (keys %$genre) {
+    push @matches, $artist
+      if List::Util::any { $_ =~ /$query/ } $genre->{$artist}->@*;
   }
   $c->render(
     template => 'index',
     genre    => ddc($genre),
+    matches  => ddc(\@matches),
   );
 } => 'index';
 
@@ -22,8 +30,15 @@ __DATA__
 
 @@ index.html.ep
 % layout 'default';
-% title 'Welcome';
+% title 'Genres';
 <h1>Artist Genres</h1>
+<form method="get">
+  <input type="text" name="q" placeholder="Search phrase"/>
+  <input type="submit" value="Query"/>
+</form>
+<p></p>
+<pre><%= $matches %></pre>
+<p></p>
 <pre><%= $genre %></pre>
 
 @@ layouts/default.html.ep
