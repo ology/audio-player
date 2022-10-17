@@ -2,7 +2,7 @@
 
 use Mojolicious::Lite -signatures;
 use Data::Dumper::Compact qw(ddc);
-use List::Util ();
+use List::Util qw(uniq);
 use Storable qw(retrieve);
 
 use constant ARTIST => 'artists.dat';
@@ -16,12 +16,12 @@ get '/' => sub ($c) {
     $genre = retrieve(ARTIST);
   }
   for my $artist (sort keys %$genre) {
-    push @matches, $artist
-      if List::Util::any { $_ =~ /$query/ } $genre->{$artist}->@*;
     for my $g ($genre->{$artist}->@*) {
+      push @matches, $artist if $g =~ /$query/;
       $all_genres{$g}++;
     }
   }
+  @matches = uniq @matches;
   $c->render(
     template => 'index',
     genre    => ddc($genre),
