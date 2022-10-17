@@ -135,7 +135,7 @@ get '/' => sub ($c) {
     $c->flash(error => 'Cannot read track list file. Please <a href="/refresh">refresh</a>');
   }
 
-  # Load the artist genres list or make a new one
+  # Load the artist genres list
   if (-e ARTIST) {
     $genre = retrieve(ARTIST);
   }
