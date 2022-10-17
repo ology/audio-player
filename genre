@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 
-use Data::Dumper::Compact qw(ddc);
 use Mojolicious::Lite -signatures;
+use Data::Dumper::Compact qw(ddc);
 use Storable qw(retrieve);
 
 use constant ARTIST => 'artists.dat';
