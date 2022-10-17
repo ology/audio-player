@@ -57,6 +57,7 @@ use Mojo::Util qw(url_unescape);
 use Number::Format ();
 use Statistics::R ();
 use Storable qw(retrieve store);
+use Text::Unidecode qw(unidecode);
 use Try::Tiny qw(try catch);
 use lib map { "$ENV{HOME}/sandbox/$_/lib" } qw(WebService-LastFM-TrackInfo);
 use WebService::LastFM::TrackInfo ();
@@ -341,14 +342,15 @@ get '/' => sub ($c) {
     BATCH: for (my $i = 0; $i <= $max; $i += $limit) {
       my $step = $max - $i < $limit ? $max - $i + 1 : $limit;
 #      warn "offset=$i, limit=$step\n";
+      my $decoded = unidecode($artist);
       my $result = $spotify->search(
-        $artist, 'artist',
+        $decoded, 'artist',
         { limit => $step, offset => $i }
       );
 #warn __PACKAGE__,' L',__LINE__,' ',ddc($result, {max_width=>128});exit;
 #warn __PACKAGE__,' L',__LINE__,' Batch: ',scalar($result->{artists}{items}->@*),"\n";
       for my $item ($result->{artists}{items}->@*) {
-        if ($item->{name} eq $artist) {
+        if ($item->{name} eq $decoded) {
 #warn __PACKAGE__,' L',__LINE__,' ',ddc($item, {max_width=>128});
           unless (exists $genre->{$artist}) {
             $genre->{$artist} = $item->{genres};
