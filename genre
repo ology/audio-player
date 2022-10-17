@@ -11,16 +11,21 @@ get '/' => sub ($c) {
   my $query = $c->param('q') || '';
   my $genre = {};
   my @matches;
+  my %all_genres;
   if (-e ARTIST) {
     $genre = retrieve(ARTIST);
   }
   for my $artist (keys %$genre) {
     push @matches, $artist
       if List::Util::any { $_ =~ /$query/ } $genre->{$artist}->@*;
+    for my $g ($genre->{$artist}->@*) {
+      $all_genres{$g}++;
+    }
   }
   $c->render(
     template => 'index',
     genre    => ddc($genre),
+    genres   => ddc(\%all_genres),
     query    => $query,
     matches  => ddc(\@matches),
   );
@@ -41,6 +46,8 @@ __DATA__
 "<b><%= $query %></b>" :
 <br>
 <pre><%= $matches %></pre>
+<p></p>
+<pre><%= $genres %></pre>
 <hr>
 <pre><%= $genre %></pre>
 
