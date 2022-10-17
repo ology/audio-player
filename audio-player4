@@ -350,8 +350,10 @@ get '/' => sub ($c) {
       for my $item ($result->{artists}{items}->@*) {
         if ($item->{name} eq $artist) {
 #warn __PACKAGE__,' L',__LINE__,' ',ddc($item, {max_width=>128});
-          $genre->{$artist} = $item->{genres}
-            unless exists $genre->{$artist};
+          unless (exists $genre->{$artist}) {
+            $genre->{$artist} = $item->{genres};
+            store $genre, ARTIST;
+          }
           $artist_genres = join ', ', $item->{genres}->@*;
           $artist_image  = $item->{images}[1]{url};
           last BATCH;
