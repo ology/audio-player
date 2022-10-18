@@ -6,6 +6,7 @@ use List::Util qw(uniq);
 use Storable qw(retrieve);
 
 use constant ARTIST => 'artists.dat';
+use constant TRACKS => 'audio-player4.dat';
 
 get '/' => sub ($c) {
   my $query = $c->param('q') || '';
@@ -13,6 +14,8 @@ get '/' => sub ($c) {
   my %all_genres;
   my $genre = {};
   $genre = retrieve(ARTIST) if -e ARTIST;
+  my $audio = {};
+  $audio = retrieve(TRACKS) if -e TRACKS;
   for my $artist (sort keys %$genre) {
     for my $g ($genre->{$artist}->@*) {
       push @matches, $artist if $g =~ /$query/;
@@ -20,6 +23,8 @@ get '/' => sub ($c) {
     }
   }
   @matches = uniq @matches;
+  my @tracks;
+  push @tracks, map { _query($audio, $_) } @matches;
   $c->render(
     template => 'index',
     genre    => ddc($genre),
@@ -27,16 +32,27 @@ get '/' => sub ($c) {
     query    => $query,
     matches  => ddc(\@matches),
     n        => scalar(@matches),
+    tracks   => \@tracks,
   );
 } => 'index';
+
+sub _query {
+  my ($audio, $query) = @_;
+  my @match;
+  # Brute force through every track, looking for matches
+  for my $key (sort { $a <=> $b } keys %$audio) {
+    push @match, $key if lc($audio->{$key}{track}) =~ /$query/i;
+  }
+  return @match;
+}
 
 app->start;
 __DATA__
 
 @@ index.html.ep
 % layout 'default';
-% title 'Genres';
-<h1>Artist Genres</h1>
+% title 'Artist Genres';
+<h1><%= title %></h1>
 <form method="get">
   <input type="text" name="q" placeholder="Search phrase" value="<%= $query %>"/>
   <input type="submit" value="Query"/>
@@ -46,9 +62,18 @@ __DATA__
 <br>
 <pre><%= $matches %></pre>
 <p></p>
+<ol>
+% for my $track (@$tracks) {
+  <li>
+    <a href="<%= url_for('index')->query(current => $track, noinc => 1, shuffle => 0, autoplay => 1, autoadvance => 0, darkmode => 1) %>"><%= $track =%>
+  </li>
+% }
+</ol>
+<!-- Genres:
 <pre><%= $genres %></pre>
 <hr>
 <pre><%= $genre %></pre>
+-->
 
 @@ layouts/default.html.ep
 <!DOCTYPE html>
