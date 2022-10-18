@@ -10,7 +10,7 @@ use constant TRACKS => 'audio-player4.dat';
 
 get '/' => sub ($c) {
   my $query = $c->param('q') || '';
-  my @matches;
+  my @artists;
   my %all_genres;
   my $genre = {};
   $genre = retrieve(ARTIST) if -e ARTIST;
@@ -18,30 +18,34 @@ get '/' => sub ($c) {
   $audio = retrieve(TRACKS) if -e TRACKS;
   for my $artist (sort keys %$genre) {
     for my $g ($genre->{$artist}->@*) {
-      push @matches, $artist if $g =~ /$query/;
+      push @artists, $artist if $g =~ /$query/;
       $all_genres{$g}++;
     }
   }
-  @matches = uniq @matches;
-  my @tracks;
-  push @tracks, map { _query($audio, $_) } @matches;
+  @artists = uniq @artists;
+  my @tracks = _query($audio, \@artists);
   $c->render(
     template => 'index',
     genre    => ddc($genre),
     genres   => ddc(\%all_genres),
     query    => $query,
-    matches  => ddc(\@matches),
-    n        => scalar(@matches),
+    artists  => ddc(\@artists),
+    n        => scalar(@artists),
     tracks   => \@tracks,
+    m        => scalar(@tracks),
   );
 } => 'index';
 
 sub _query {
-  my ($audio, $query) = @_;
+  my ($audio, $artists) = @_;
   my @match;
   # Brute force through every track, looking for matches
   for my $key (sort { $a <=> $b } keys %$audio) {
-    push @match, $key if lc($audio->{$key}{track}) =~ /$query/i;
+    my $track = $audio->{$key}{track};
+    my @parts  = split /\//, $track;
+    my $artist = $parts[-3]; # but not always
+    push @match, { $key => $track }
+      if grep { $artist eq $_ } @$artists;
   }
   return @match;
 }
@@ -60,12 +64,15 @@ __DATA__
 <p></p>
 <%= $n %> matches:
 <br>
-<pre><%= $matches %></pre>
+<pre><%= $artists %></pre>
 <p></p>
+<%= $m %> tracks:
 <ol>
 % for my $track (@$tracks) {
+%   my $current = (keys %$track)[0];
+%   my $name = (values %$track)[0];
   <li>
-    <a href="<%= url_for('index')->query(current => $track, noinc => 1, shuffle => 0, autoplay => 1, autoadvance => 0, darkmode => 1) %>"><%= $track =%>
+    <a href="<%= url_for('index')->query(current => $current, noinc => 1, shuffle => 0, autoplay => 1, autoadvance => 0, darkmode => 1) %>"><%= $name %>
   </li>
 % }
 </ol>
