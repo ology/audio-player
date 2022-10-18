@@ -26,6 +26,7 @@ get '/' => sub ($c) {
     genres   => ddc(\%all_genres),
     query    => $query,
     matches  => ddc(\@matches),
+    n        => scalar(@matches),
   );
 } => 'index';
 
@@ -37,11 +38,11 @@ __DATA__
 % title 'Genres';
 <h1>Artist Genres</h1>
 <form method="get">
-  <input type="text" name="q" placeholder="Search phrase"/>
+  <input type="text" name="q" placeholder="Search phrase" value="<%= $query %>"/>
   <input type="submit" value="Query"/>
 </form>
 <p></p>
-"<b><%= $query %></b>" :
+<%= $n %> matches:
 <br>
 <pre><%= $matches %></pre>
 <p></p>
