@@ -167,7 +167,7 @@ get '/' => sub ($c) {
 
         if ($is_genre) {
             my $trk = $audio->{$key}{track};
-            my @parts  = split /\//, $trk;
+            my @parts = split /\//, $trk;
             my $name = $parts[-3]; # artist but not always
             push @$match, $key
               if grep { $name eq $_ } @artists;
