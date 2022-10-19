@@ -309,7 +309,7 @@ get '/' => sub ($c) {
       ( [\w\s()/]+: \s \w+       ) \s
       ( [\w\s()/]+: \s [\d.-]+   ) \s
       ( [\w\s()/]+: \s .+? Max\. ) \s
-      ( [\w.-]+ \s .+ )
+      ( [\w.-]+     \s .+        )
       $
     |gx;
     $track_info->{frequency} = \@parts if @parts;
