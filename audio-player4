@@ -173,7 +173,8 @@ get '/' => sub ($c) {
               if grep { $name eq $_ } @artists;
         }
         else {
-          push @$match, $key if lc($audio->{$key}{track}) =~ /$query/i;
+          push @$match, $key
+            if lc($audio->{$key}{track}) =~ /$query/i;
         }
       }
 
