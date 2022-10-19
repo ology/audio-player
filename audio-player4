@@ -49,7 +49,7 @@ use Data::Dumper::Compact qw(ddc);
 use Encoding::FixLatin qw(fix_latin);
 use File::Find::Rule ();
 #use Imager (); # For computing density
-use List::SomeUtils qw(all first_index);
+use List::SomeUtils qw(all first_index uniq);
 use Math::Utils qw(uniform_scaling);
 use Mojolicious::Lite -signatures;
 use Mojo::File;
@@ -127,6 +127,8 @@ get '/' => sub ($c) {
   my $track_image; # track/album cover art
   my $freq_image;  # frequency analysis
 
+  my $is_genre = 0;
+
   # Load the track list or flash an error
   if (-e TRACKS) {
     $audio = retrieve(TRACKS);
@@ -145,10 +147,34 @@ get '/' => sub ($c) {
       # Convert encoded things like %26 back into &
       $query = url_unescape($query);
 
+      my @artists;
+      if ($query =~ /^G:(.*)$/) {
+        $query = $1;
+        $is_genre = 1;
+      }
+      if ($is_genre) {
+          for my $artist (sort keys %$genre) {
+            for my $g ($genre->{$artist}->@*) {
+              push @artists, $artist if $g =~ /$query/;
+            }
+          }
+          @artists = uniq @artists;
+      }
+
       # Brute force through every track, looking for matches
       for my $key (sort { $a <=> $b } keys %$audio) {
         next if $showrate && !_in_rate_range($op, $rate, $audio->{$key}{rating});
-        push @$match, $key if lc($audio->{$key}{track}) =~ /$query/i;
+
+        if ($is_genre) {
+            my $trk = $audio->{$key}{track};
+            my @parts  = split /\//, $trk;
+            my $name = $parts[-3]; # artist but not always
+            push @$match, $key
+              if grep { $name eq $_ } @artists;
+        }
+        else {
+          push @$match, $key if lc($audio->{$key}{track}) =~ /$query/i;
+        }
       }
 
       # Accumulate the matches
@@ -406,7 +432,7 @@ get '/' => sub ($c) {
     autoplay    => $autoplay,
     autoadvance => $autoadvance,
     shuffle     => $shuffle,
-    query       => $query,
+    query       => $is_genre ? "G:$query" : $query,
     match       => $match,
     matches     => $matches,
     showrate    => $showrate,
