@@ -127,7 +127,7 @@ get '/' => sub ($c) {
   my $track_image; # track/album cover art
   my $freq_image;  # frequency analysis
 
-  my $is_genre = 0;
+  my $is_genre = 0; # G: genre search query
 
   # Load the track list or flash an error
   if (-e TRACKS) {
