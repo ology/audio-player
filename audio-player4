@@ -153,12 +153,12 @@ get '/' => sub ($c) {
         $is_genre = 1;
       }
       if ($is_genre) {
-          for my $artist (sort keys %$genre) {
-            for my $g ($genre->{$artist}->@*) {
-              push @artists, $artist if $g =~ /$query/;
-            }
+        for my $artist (sort keys %$genre) {
+          for my $g ($genre->{$artist}->@*) {
+            push @artists, $artist if $g =~ /$query/;
           }
-          @artists = uniq @artists;
+        }
+        @artists = uniq @artists;
       }
 
       # Brute force through every track, looking for matches
@@ -166,11 +166,11 @@ get '/' => sub ($c) {
         next if $showrate && !_in_rate_range($op, $rate, $audio->{$key}{rating});
 
         if ($is_genre) {
-            my $trk = $audio->{$key}{track};
-            my @parts = split /\//, $trk;
-            my $name = $parts[-3]; # artist but not always
-            push @$match, $key
-              if grep { $name eq $_ } @artists;
+          my $trk = $audio->{$key}{track};
+          my @parts = split /\//, $trk;
+          my $name = $parts[-3]; # artist but not always
+          push @$match, $key
+            if grep { $name eq $_ } @artists;
         }
         else {
           push @$match, $key
