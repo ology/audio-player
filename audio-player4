@@ -148,7 +148,7 @@ get '/' => sub ($c) {
       $query = url_unescape($query);
 
       my @artists;
-      if ($query =~ /^G:(.*)$/) {
+      if ($query =~ /^G:\s*(.*?)\s*$/) {
         $query = $1;
         $is_genre = 1;
       }
