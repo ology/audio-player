@@ -44,6 +44,7 @@ And browse to:
 
 =cut
 
+use Mojolicious::Lite -signatures;
 
 use Data::Dumper::Compact qw(ddc);
 use Encoding::FixLatin qw(fix_latin);
@@ -51,7 +52,6 @@ use File::Find::Rule ();
 #use Imager (); # For computing density
 use List::SomeUtils qw(all first_index uniq);
 use Math::Utils qw(uniform_scaling);
-use Mojolicious::Lite -signatures;
 use Mojo::File;
 use Mojo::Util qw(url_unescape);
 use Number::Format ();
