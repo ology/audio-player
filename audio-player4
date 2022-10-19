@@ -134,7 +134,9 @@ get '/' => sub ($c) {
     $audio = retrieve(TRACKS);
   }
   else {
-    $c->flash(error => 'Cannot read track list file. Please fix and <a href="/refresh">refresh</a>');
+    $c->flash(
+      error => 'Cannot read track list file. Please fix and <a href="/refresh">refresh</a>'
+    );
   }
 
   # Load the artist genres list
