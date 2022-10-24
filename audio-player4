@@ -375,7 +375,7 @@ get '/' => sub ($c) {
       ($artist, $name) = ($who, $what)
         if $who && $what;
     }
-    if ($artist_name =~ /Hôtel Costes/) { 
+    if ($artist =~ /Hôtel Costes/) { 
       $name =~ s/Hotel Costes \d+ - (.*)$/$1/;      # album in track
       my ($who, $what) = split /\s*-\s*/, $name, 2; # artist in track
       ($artist, $name) = ($who, $what)
