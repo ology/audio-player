@@ -170,9 +170,33 @@ get '/' => sub ($c) {
         if ($is_genre) {
           my $trk = $audio->{$key}{track};
           my @parts = split /\//, $trk;
-          my $name = $parts[-3]; # artist but not always
+          my $trk_name = $parts[-1];    # track name
+          my $album = $parts[-2];       # album name
+          my $artist_name = $parts[-3]; # artist but not always
+          my $types = TYPES;
+
+          $trk_name =~ s/^(?:\d+-)?\d+\s+(.*?)/$1/;                         # disc-track number
+          $trk_name =~ s/(.*?)-\d+\.mp3$/$1/;                               # reencoded mp3
+          $trk_name =~ s/(.*?)-[\w-]+\.(?:m4a|mp3)$/$1/;                    # from youtube
+          $trk_name =~ s/(.*?)$types/$1/i;                                  # audio file
+          $trk_name =~ s/(.*?) \((?:Official )?Audio\)/$1/;                 # paren extras
+          $trk_name =~ s/(.*?) \(Remastered(?: \d+)?\)/$1/;                 # "
+          $trk_name =~ s/(.*?) \(\d+ Remaster(?:ed)?\)/$1/;                 # "
+          $trk_name =~ s/(.*?) \(Official\s*(?:Lyric|Music)?\s*Video\)/$1/; # "
+          $trk_name =~ s/$artist_name\s*-\s*(.*?)$/$1/;                     # artist in track
+          # Special cases
+          if ($album =~ /80's/) {
+            my ($who) = split /\s*-\s*/, $trk_name, 2; # artist in track
+            $artist_name = $who if $who;
+          }
+          if ($artist_name =~ /Hôtel Costes/) { 
+            $trk_name =~ s/Hotel Costes \d+ - (.*)$/$1/;  # album in track
+            my ($who) = split /\s*-\s*/, $trk_name, 2;    # artist in track
+            $artist_name = $who if $who;
+          }
+
           push @$match, $key
-            if grep { $name eq $_ } @artists;
+            if grep { $artist_name eq $_ } @artists;
         }
         else {
           push @$match, $key
