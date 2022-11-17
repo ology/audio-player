@@ -99,6 +99,20 @@ my $API_KEY = $config->{api_key};
 
 =head1 ROUTES
 
+=head2 GET /help
+
+Show hidden interface features, etc.
+
+Name: C<help>
+
+=cut
+
+get '/help' => sub ($c) {
+  $c->render(
+    template => 'help',
+  );
+};
+
 =head2 GET /
 
 The main endpoint and player page.
