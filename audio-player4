@@ -695,6 +695,12 @@ This is free software, licensed under:
 
 __DATA__
 
+@@ help.html.ep
+% layout 'default';
+% title 'Help!';
+
+Hidden interface features: Clicking the word "Rating" will take you to the /stats breakdown, if you have rated tracks. Pressing the y key will either play or pause the current track. Pressing the c key will re-focus on the audio player control. Pressing the 0 through 5 keys will rate the current track at that level. Pressing the f key will relocate to the first track (if not shuffling). This is the same as clicking the "First" button. Pressing the n key is the same as clicking the "Next" button. The h key focuses on the history list, the r key focuses on the rate filter list, and the s key focuses on the search input. When not focused on the search input, the x key will clear the search. Pressing the a key will toggle the auto-advance checkbox. Pressing the p key will toggle the auto-play checkbox. Pressing the e key will toggle the shuffle checkbox. Pressing the d key will toggle dark or light mode.  Pressing the t key will call refresh. Pressing the g key will call purge.
+
 @@ index.html.ep
 % layout 'default';
 % title 'Music!';
@@ -1193,7 +1199,8 @@ $('input[name=rating]').attr('disabled', true);
       built by <a href="http://gene.ology.net/">Gene</a>
       with <a href="https://www.perl.org/">Perl</a>,
       <a href="https://mojolicious.org/">Mojolicious</a>
-      and <a href="https://jquery.com/">jQuery</a>
+      & <a href="https://jquery.com/">jQuery</a>
+      | <a href="/help">Help</a>
     </div>
   </body>
 </html>
