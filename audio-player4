@@ -23,6 +23,11 @@ New to this version is that it can do waveform analysis with C<R>
 and the C<tuneR> package.  Also new is optional system volume
 management (on my linux machine).
 
+Also new is the ability to search for a genre, as known to Spotify.
+This is done by prepending the search string with C<G:>, as in:
+
+  G:ambient
+
 =head1 SYNOPSIS
 
 This app depends on a directory (or symbolic link) called C<Audio> in
