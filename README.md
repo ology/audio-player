@@ -36,6 +36,6 @@ This app has built-in playback error detection.  So for example, if **advance** 
 
 ~
 
-audio-player3 is the evolution of #2 and displays album cover art for the currently playing track.  Also it allows manually triggering dark-mode.
+audio-player3 is the evolution of v2 and displays album cover art for the currently playing track.  Also it allows manually triggering dark-mode.
 
 ![audio-player3](audio-player3.png)
