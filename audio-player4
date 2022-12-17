@@ -4,6 +4,27 @@
 
 audio-player4
 
+=head1 SYNOPSIS
+
+This app depends on a directory (or symbolic link) called C<Audio> in
+the C<public> directory.
+
+On unix-like systems, symlink your audio source:
+
+  audio-player/public $ ln -s /media/you/external_drive/Music/ Audio
+
+Or on windows, as the Administrator:
+
+  mklink /D C:\Users\you\repos\audio-player\public\Audio "X:\My Music"
+
+Then:
+
+  audio-player $ morbo audio-player4
+
+And browse to:
+
+  http://127.0.0.1:3000/refresh
+
 =head1 DESCRIPTION
 
 This program is the evolution of C<audioplayer3>, and is a
@@ -27,27 +48,6 @@ Also new is the ability to search for a genre, as known to Spotify.
 This is done by prepending the search string with C<G:>, as in:
 
   G:ambient
-
-=head1 SYNOPSIS
-
-This app depends on a directory (or symbolic link) called C<Audio> in
-the C<public> directory.
-
-On unix-like systems, symlink your audio source:
-
-  audio-player/public $ ln -s /media/you/external_drive/Music/ Audio
-
-Or on windows, as the Administrator:
-
-  mklink /D C:\Users\you\repos\audio-player\public\Audio "X:\My Music"
-
-Then:
-
-  audio-player $ morbo audio-player4
-
-And browse to:
-
-  http://127.0.0.1:3000/refresh
 
 =cut
 
