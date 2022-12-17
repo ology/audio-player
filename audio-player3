@@ -97,7 +97,7 @@ get '/' => sub ($c) {
 
   if (keys %$audio) {
     if ($query) {
-      # Convert encoded things like &amp; back into &
+      # Convert encoded things like %26 back into &
       $query = url_unescape($query);
 
       # Brute force through every track, looking for matches
@@ -140,11 +140,9 @@ get '/' => sub ($c) {
   # Handle the undef case that makes bad things happen
   $current = -1 unless defined $current;
 
-  # Do not have a track when there is no current track index
+  # get the track and rating
   my $track  = '';
   my $rating = 0;
-
-  # Ok get the track and rating
   if (keys %$audio) {
     $track  = $current >= 0 ? $audio->{$current}{track} : '';
     $rating = $current >= 0 ? $audio->{$current}{rating} : 0;
@@ -185,7 +183,7 @@ get '/' => sub ($c) {
     $name =~ s/(.*?) \(Official\s*(?:Lyric|Music)?\s*Video\)/$1/;
     $name =~ s/$artist\s*-\s*(.*?)$/$1/;
 
-    # Special case
+    # Special cases
     if ($track =~ /Hôtel Costes/) {
       $name =~ s/Hotel Costes \d+ - (.*)$/$1/;
       my ($who, $what) = split /\s*-\s*/, $name, 2;
