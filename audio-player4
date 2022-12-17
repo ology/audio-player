@@ -9,6 +9,8 @@ audio-player4
 This program is the evolution of C<audioplayer3>, and is a
 light-weight, simple audio server.
 
+Write-up: https://ology.github.io/2021/06/04/mojolicious-music-player/
+
 Version 4 has been heavily customized for my personal use.  For a
 more generic player, see the previous incarnation, C<audio-player3>.
 
@@ -20,8 +22,6 @@ Change this in the source below for your filenames.
 New to this version is that it can do waveform analysis with C<R>
 and the C<tuneR> package.  Also new is optional system volume
 management (on my linux machine).
-
-Write-up: https://ology.github.io/2021/06/04/mojolicious-music-player/
 
 =head1 SYNOPSIS
 
