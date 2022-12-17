@@ -7,8 +7,10 @@ audio-player4
 =head1 DESCRIPTION
 
 This program is the evolution of audioplayer3, and is a lightweight,
-simple audio server.  It has been heavily customized for my use.  For
-a generic player, see the previous incarnation, C<audio-player3>.
+simple audio server.
+
+Version 4 has been heavily customized for my personal use.  For a
+more generic player, see the previous incarnation, C<audio-player3>.
 
 This app has logic to fetch cover art from the last.fm API, and the
 artist image and genres from Spotify.  In order to do this, the
