@@ -39,11 +39,11 @@ And browse to:
 
 =cut
 
+use Mojolicious::Lite -signatures;
 use Data::Dumper::Compact qw(ddc);
 use Encoding::FixLatin qw(fix_latin);
 use File::Find::Rule ();
 use List::SomeUtils qw(first_index);
-use Mojolicious::Lite -signatures;
 use Mojo::Util qw(url_unescape);
 use Number::Format ();
 use Storable qw(retrieve store);
