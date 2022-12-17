@@ -30,7 +30,7 @@ the C<public> directory.
 
 On unix-like systems, symlink your audio source:
 
-  audio-player/public> ln -s /media/you/external_drive/Music/ Audio
+  audio-player/public $ ln -s /media/you/external_drive/Music/ Audio
 
 Or on windows, as the Administrator:
 
@@ -38,7 +38,7 @@ Or on windows, as the Administrator:
 
 Then:
 
-  audio-player> morbo audio-player4
+  audio-player $ morbo audio-player4
 
 And browse to:
 
@@ -96,7 +96,7 @@ use constant VOL_RANGE  => [ 90, 73];
 
 # load the configuration file and get the API key
 my $config  = -e CONFIG ? LoadFile(CONFIG) : {};
-my $API_KEY = $config->{api_key};
+my $API_KEY = $config->{api_key}; # for last.fm
 
 
 =head1 ROUTES
