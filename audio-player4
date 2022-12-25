@@ -720,7 +720,23 @@ __DATA__
 % layout 'default';
 % title 'Help!';
 
-Hidden interface features: Clicking the word "Rating" will take you to the /stats breakdown, if you have rated tracks. Pressing the y key will either play or pause the current track. Pressing the c key will re-focus on the audio player control. Pressing the 0 through 5 keys will rate the current track at that level. Pressing the f key will relocate to the first track (if not shuffling). This is the same as clicking the "First" button. Pressing the n key is the same as clicking the "Next" button. The h key focuses on the history list, the r key focuses on the rate filter list, and the s key focuses on the search input. When not focused on the search input, the x key will clear the search. Pressing the a key will toggle the auto-advance checkbox. Pressing the p key will toggle the auto-play checkbox. Pressing the e key will toggle the shuffle checkbox. Pressing the d key will toggle dark or light mode.  Pressing the t key will call refresh. Pressing the g key will call purge.
+<h3>Hidden interface features</h3>
+<ul>
+<li>Clicking the word "Rating" will take you to the /stats breakdown, if you have rated tracks.</li>
+<li>The `y` key will either play or pause the current track.</li>
+<li>The `c` key will re-focus on the audio player control.</li>
+<li>The `0` through `5` keys will rate the current track at that level.</li>
+<li>The `f` key will relocate to the first track (if not shuffling). This is the same as clicking the "First" button.</li>
+<li>The `n` key is the same as clicking the "Next" button.</li>
+<li>The `h` key focuses on the history list.</li>
+<li>The `r` key focuses on the rate filter list.</li>
+<li>The `s` key focuses on the search input.</li>
+<li>When <b>not</b> focused on the search input, the `x` key will clear the search.</li>
+<li>The `a` key will toggle the auto-advance checkbox.</li>
+<li>The `p` key will toggle the auto-play checkbox.</li>
+<li>The `e` key will toggle the shuffle checkbox.</li>
+<li>The `d` key will toggle dark or light mode.</li>
+</ul>
 
 @@ index.html.ep
 % layout 'default';
