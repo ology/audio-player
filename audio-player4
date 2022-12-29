@@ -78,6 +78,8 @@ use constant TRACKS => app->moniker . '.dat';             # The tracks file
 use constant CONFIG => 'config.yml';                      # The configuration file
 use constant ARTIST => 'artists.dat';                     # The artist genres file
 
+use constant PLAYING => 'now_playing.dat';
+
 use constant LOCAL   => '127.0.0.1';
 use constant NETWORK => '192.168.100.115';
 
@@ -467,6 +469,8 @@ get '/' => sub ($c) {
 
   $track_info = TRACK_INFO && ($c->remote_addr eq LOCAL || $c->remote_addr eq NETWORK) ? ddc($track_info, DUMPOPTS) : '';
 
+  store [ $track ], PLAYING;
+
   $c->render(
     template    => 'index',
     audio       => $audio,
@@ -488,6 +492,14 @@ get '/' => sub ($c) {
     darkmode    => $darkmode,
   );
 } => 'index';
+
+get '/now_playing' => sub ($c) {
+  my $history = ['?'];
+  if (-e PLAYING) {
+    $history = retrieve(PLAYING);
+  }
+  $c->render(text => $history->[0]);
+} => 'now_playing';
 
 sub _log10 { return log(shift)/log(10) }
 
