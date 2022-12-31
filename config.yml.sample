@@ -1,5 +1,5 @@
-api_key: 'abcdef123456'
 secrets:
     - 'Change me to something unique.'
+api_key: 'abcdef123456'
 oauth_client_id: 'abcdefghijklmnopqrstuvwxyz'
 oauth_client_secret: '12345678901234567890'
