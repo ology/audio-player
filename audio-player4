@@ -407,6 +407,8 @@ get '/' => sub ($c) {
 
     # this helps!
     $album =~ s/^(.*?[^_])_ (.+)$/$1: $2/g;
+    $name =~ s/^(.*?[^_])_ (.+)$/$1: $2/g;
+
 
     # Find the artist image and genres
     my $artist_image;
