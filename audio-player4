@@ -405,6 +405,9 @@ get '/' => sub ($c) {
         if $who && $what;
     }
 
+    # this helps!
+    $album =~ s/^(.*?[^_])_ (.+)$/$1: $2/g;
+
     # Find the artist image and genres
     my $artist_image;
     my $artist_genres;
