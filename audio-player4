@@ -405,7 +405,7 @@ get '/' => sub ($c) {
         if $who && $what;
     }
 
-    # this helps!
+    # translating punctuation helps!
     $album =~ s/^(.*?[^_ ])_ (.+)$/$1: $2/g;
     $name  =~ s/^(.*?[^_ ])_ (.+)$/$1: $2/g;
     $album =~ s/^(.*?[^_])_$/$1?/g;
