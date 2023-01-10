@@ -288,38 +288,8 @@ get '/' => sub ($c) {
     $R->run(qq`tune <- readMP3("$tune")`)  if $track =~ /\.mp3$/i;
     $R->run(qq`tune <- readWave("$tune")`) if $track =~ /\.wav$/i;
 
-    # Compute density
-    my ($w, $h) = (DWIDTH, DHEIGHT);
-#    my $stereo = $R->get('tune@stereo'); # R returns TRUE or FALSE
-#    if ($stereo eq 'TRUE') {
-#        $R->run(q`mtune <- mono(tune, which=c("both"))`);
-#    }
-#    else {
-#        $R->run(q`mtune <- mono(tune, which=c("left"))`);
-#    }
-##    $R->run(q`mtune <- normalize(mtune, unit=c("1"))`);
-#    $R->run(qq`png("$freq_file", width=$w, height=$h)`);
-##    $R->run(qq`plot(mtune, ylim=c(-40000,40000))`);
-#    $R->run(qq`plot(mtune, axes=FALSE, xlab="", ylab="", ylim=c(-40000,40000))`);
-#    $R->run(q`dev.off()`);
-#    # Perform b/w density analysis
-#    my $img = Imager->new(file => $freq_file);
-#    my $density = 0;
-#    for my $i (0 .. $w - 1) {
-#        for my $j (0 .. $h - 1) {
-#            my $color = $img->getpixel(x => $i, y => $j);
-#            my ($r, $g, $b) = $color->rgba;
-#            if (!all { $_ == 255 } $r, $g, $b) {
-##warn __PACKAGE__,' L',__LINE__,' ',,"$i,$j: ($r, $g, $b)\n";
-#                # weighted method - https://www.dynamsoft.com/blog/insights/image-processing/image-processing-101-color-space-conversion/
-##                $density += 0.299 * $r + 0.587 * $g + 0.114 * $b;
-#                $density++;
-#            }
-#        }
-#    }
-
     # Display
-    ($w, $h) = (WIDTH, HEIGHT);
+    my ($w, $h) = (WIDTH, HEIGHT);
     $R->run(q`seconds <- length(tune) / tune@samp.rate`);
     $R->run(qq`png("$freq_file", width=$w, height=$h)`);
     $R->run(q`par(bg="#DADADA")`);
