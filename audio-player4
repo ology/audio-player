@@ -180,7 +180,7 @@ get '/' => sub ($c) {
       if ($is_genre) {
         for my $artist (sort keys %$genre) {
           for my $g ($genre->{$artist}->@*) {
-            push @artists, $artist if $g =~ /$query/;
+            push @artists, $artist if $g =~ /$query/i;
           }
         }
         @artists = uniq @artists;
