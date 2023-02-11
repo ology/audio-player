@@ -282,7 +282,7 @@ get '/' => sub ($c) {
   ) {
     my $freq_file = 'public/' . FREQ;
     my $tune = "public$track";
-    my ($summary, $peak) = (0, 0);
+    my ($summary, $peak) = ([], 0);
 
 try {
     my $R = Statistics::R->new;
