@@ -282,6 +282,7 @@ get '/' => sub ($c) {
   ) {
     my $freq_file = 'public/' . FREQ;
     my $tune = "public$track";
+    my ($summary, $peak) = (0, 0);
 
 try {
     my $R = Statistics::R->new;
@@ -298,8 +299,8 @@ try {
     $R->run(q`axis(1, at=seq(0, seconds, 10), labels=FALSE)`);
     $R->run(q`axis(1, at=seq(0, seconds, 30))`); # label every 30 seconds
     $R->run(q`dev.off()`);
-    my $summary = $R->get('summary(tune)'); # R returns a space separated arrayref!
-    my $peak = $R->get('max(tune@left, tune@right, abs(min(tune@left, tune@right)))');
+    $summary = $R->get('summary(tune)'); # R returns a space separated arrayref!
+    $peak = $R->get('max(tune@left, tune@right, abs(min(tune@left, tune@right)))');
     $R->stop;
 #warn __PACKAGE__,' L',__LINE__,' ',,"Peak: $peak\n";
 #warn __PACKAGE__,' L',__LINE__,' ',,"P: $peak, D: $density\n";
