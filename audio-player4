@@ -152,6 +152,8 @@ get '/' => sub ($c) {
 
   my $is_genre = 0; # G: genre search query
 
+  my $title = 'Music!'; # webpage title
+
   # Load the track list or flash an error
   if (-e TRACKS) {
     $audio = retrieve(TRACKS);
@@ -449,6 +451,8 @@ catch {
     $track_info->{artist_image}   = $artist_image;
     $track_info->{computed_title} = "|$artist| |$album| |$name|";
 
+    $title = $name; # set the web page title!
+
     $track_info = { %$info, %$track_info };
   }
 
@@ -458,6 +462,7 @@ catch {
 
   $c->render(
     template    => 'index',
+    title       => $title,
     audio       => $audio,
     total       => $total,
     current     => $current,
@@ -715,7 +720,6 @@ __DATA__
 
 @@ help.html.ep
 % layout 'default';
-% title 'Help!';
 
 <h3>Hidden interface features</h3>
 <ul>
@@ -737,7 +741,7 @@ __DATA__
 
 @@ index.html.ep
 % layout 'default';
-% title 'Music!';
+% title $title;
 
 % # Flash error/message
 % if (flash('error')) {
@@ -1186,7 +1190,7 @@ $('input[name=rating]').attr('disabled', true);
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="/style.css">
-    <title><%= title %></title>
+    <title><%= $title %></title>
     <style>
       body {
         color: #414A4C;
