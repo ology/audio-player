@@ -68,7 +68,7 @@ use Text::Unidecode qw(unidecode);
 use Try::Tiny qw(try catch);
 use lib map { "$ENV{HOME}/sandbox/$_/lib" } qw(WebService-LastFM-TrackInfo);
 use WebService::LastFM::TrackInfo ();
-use WWW::Spotify;
+#use WWW::Spotify;
 use YAML::XS qw(LoadFile);
 
 use constant RATES  => (0 .. 5); #qw(None Bad Poor Fair Good Best);
@@ -393,8 +393,11 @@ catch {
 
 
     # Find the artist image and genres
-    my $artist_image;
-    my $artist_genres;
+    my $artist_image  = '';
+    my $artist_genres = '';
+
+=pod
+
     my $spotify = WWW::Spotify->new;
     $spotify->oauth_client_id($config->{oauth_client_id});
     $spotify->oauth_client_secret($config->{oauth_client_secret});
@@ -425,6 +428,8 @@ catch {
         }
       }
     }
+
+=cut
 
     # Find an image
     my $info = {}; # track information
