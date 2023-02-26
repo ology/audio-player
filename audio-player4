@@ -391,7 +391,6 @@ catch {
     $album =~ s/^(.*?[a-zA-Z ])_([a-zA-Z ].*)$/$1\/$2/g;
     $name  =~ s/^(.*?[a-zA-Z ])_([a-zA-Z ].*)$/$1\/$2/g;
 
-
     # Find the artist image and genres
     my $artist_image  = '';
     my $artist_genres = '';
