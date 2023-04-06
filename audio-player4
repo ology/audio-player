@@ -200,7 +200,7 @@ get '/' => sub ($c) {
           my $artist_name = $parts[-3]; # artist but not always
           my $types = TYPES;
 
-          $trk_name =~ s/^(?:\d+-)?\d+\s+(.*?)/$1/;                         # disc-track number
+          $trk_name =~ s/^(?:\d{1,2}-)?\d{1,2}\s+(.*?)/$1/;                 # disc-track number
           $trk_name =~ s/(.*?)-\d+\.mp3$/$1/;                               # reencoded mp3
           $trk_name =~ s/(.*?)-[\w-]+\.(?:m4a|mp3)$/$1/;                    # from youtube
           $trk_name =~ s/(.*?)$types/$1/i;                                  # audio file
@@ -388,8 +388,8 @@ catch {
     $name  =~ s/^(.*?[^_ ])_ (.+)$/$1: $2/g;
     $album =~ s/^(.*?[^_])_$/$1?/g;
     $name  =~ s/^(.*?[^_])_$/$1?/g;
-    $album =~ s/^(.*?[a-zA-Z ])_([a-zA-Z ].*)$/$1\/$2/g;
-    $name  =~ s/^(.*?[a-zA-Z ])_([a-zA-Z ].*)$/$1\/$2/g;
+    $album =~ s/^(.*?[a-zA-Z])_([a-zA-Z].*)$/$1\/$2/g;
+    $name  =~ s/^(.*?[a-zA-Z])_([a-zA-Z].*)$/$1\/$2/g;
 
     # Find the artist image and genres
     my $artist_image  = '';
