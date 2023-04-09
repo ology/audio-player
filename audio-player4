@@ -666,6 +666,7 @@ get '/purge' => sub ($c) {
 
   store $audio, TRACKS;
 
+  app->log->info("Purged $total tracks");
   $c->flash(message => "Purged $total tracks");
 
   $c->redirect_to($c->url_for('refresh'));
