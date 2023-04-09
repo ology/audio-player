@@ -644,7 +644,7 @@ get '/purge' => sub ($c) {
   my $total = 0;
   my $i = 0;
 
-  for my $n (sort { $a <=> $b } keys %$audio) {
+  for my $n (keys %$audio) {
     $i++;
     my $track = Mojo::File->new("public$audio->{$n}{track}");
     unless (-e $track) {
