@@ -597,6 +597,9 @@ get '/refresh' => sub ($c) {
   # Save the files to disk
   store $audio, TRACKS;
 
+  my $total = keys(%$audio) - keys(%$old);
+
+  app->log->info("Added $total tracks");
   $c->flash(message => 'Saved track list file');
 
   $c->redirect_to($c->url_for('index'));
