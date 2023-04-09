@@ -503,21 +503,9 @@ sub _get_image ($data) {
   my $image;
 
   for my $item ($data->{image}->@*) {
-    if ($item->{'#text'}) {
-        # extralarge first...
-        if ($item->{size} eq 'extralarge') {
-          $image = $item->{'#text'};
-        }
-        elsif ($item->{size} eq 'large') {
-          $image = $item->{'#text'};
-        }
-        elsif ($item->{size} eq 'medium') {
-          $image = $item->{'#text'};
-        }
-        elsif ($item->{size} eq 'small') {
-          $image = $item->{'#text'};
-        }
-        last;
+    if ($item->{size} eq 'extralarge' && $item->{'#text'}) {
+      $image = $item->{'#text'};
+      last;
     }
   }
 
