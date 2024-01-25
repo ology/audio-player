@@ -465,7 +465,7 @@ catch {
 
   $track_info = TRACK_INFO && ($c->remote_addr eq LOCAL || $c->remote_addr eq NETWORK) ? ddc($track_info, DUMPOPTS) : '';
 
-  store [ $track ], PLAYING;
+  store [ $track, $track_image ], PLAYING;
 
   $c->render(
     template    => 'index',
@@ -495,7 +495,11 @@ get '/now_playing' => sub ($c) {
   if (-e PLAYING) {
     $history = retrieve(PLAYING);
   }
-  $c->render(text => $history->[0]);
+  $c->render(
+    template    => 'now_playing',
+    track_name  => $history->[0],
+    track_image => $history->[1],
+  );
 } => 'now_playing';
 
 sub _log10 { return log(shift)/log(10) }
@@ -1194,6 +1198,19 @@ $('input[name=rating]').attr('disabled', true);
 % for my $i (sort keys %$by_genre) {
 <p><b><%= $i %> rating:</b> <%= $by_genre->{$i} %> (<%= sprintf '%.2f', $by_genre->{$i} / $total * 100 %>%)</p>
 % }
+
+
+@@ now_playing.html.ep
+% layout 'default';
+% title 'Now playing!';
+
+% if ($track_image) {
+<div>
+  <img src="<%= $track_image %>" height="300"/>
+  <p></p>
+</div>
+% }
+<p><%= $track_name %></p>
 
 
 @@ layouts/default.html.ep
