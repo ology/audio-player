@@ -1212,6 +1212,16 @@ $('input[name=rating]').attr('disabled', true);
 % }
 <p><%= $track_name %></p>
 
+<script>
+$(document).ready( function () {
+% # Replace classes when in dark mode
+  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    $('p').attr('style', 'color: #FFF');
+    $('a').attr('style', 'color: #FFF');
+    $('[class="text-secondary"]').attr('class', 'text-medium');
+  }
+});
+</script>
 
 @@ layouts/default.html.ep
 <!DOCTYPE html>
