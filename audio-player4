@@ -1216,7 +1216,7 @@ $('input[name=rating]').attr('disabled', true);
 $(document).ready( function () {
 % # Replace classes when in dark mode
   if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    $('p').attr('style', 'color: #FFF');
+    $('p').attr('class', 'text-medium');
     $('a').attr('style', 'color: #FFF');
     $('[class="text-secondary"]').attr('class', 'text-medium');
   }
