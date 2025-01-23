@@ -470,8 +470,9 @@ catch {
   $track_info = TRACK_INFO && ($c->remote_addr eq LOCAL || $c->remote_addr eq NETWORK) ? ddc($track_info, DUMPOPTS) : '';
 
   my $text = '';
-  my $text_file = Mojo::File->new("$audio.txt");
+  my $text_file = "public/$track.txt";
   if (-e $text_file) {
+    $text_file = Mojo::File->new($text_file);
     $text = $text_file->slurp;
   }
 
@@ -871,6 +872,13 @@ __DATA__
   &nbsp;
   <span id="total" class="text-secondary"><%= $total %> tracks</span>
 </p>
+
+% # Display content if any
+% if ($content) {
+<p></p>
+<%== $content %>
+<p></p>
+% }
 
 % # Search query matches
 % if (@$match) {
