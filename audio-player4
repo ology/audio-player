@@ -474,6 +474,7 @@ catch {
   if (-e $text_file) {
     $text_file = Mojo::File->new($text_file);
     $text = $text_file->slurp;
+    $text =~ s/\n/<br>/g;
   }
 
   store [ $track, $track_image ], PLAYING;
