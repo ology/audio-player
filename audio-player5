@@ -6,15 +6,15 @@ audio-player5
 
 =head1 SYNOPSIS
 
-This app depends on a directory (or symbolic link) called C<Audio>.
+This app depends on a directory (or symbolic link) called C<Audio> in the C<public> directory.
 
 On unix-like systems, symlink your audio source:
 
-  audio-player $ ln -s /media/you/external_drive/Music/ Audio
+  audio-player/public $ ln -s /media/you/external_drive/Music/ Audio
 
 Or on windows, as the Administrator:
 
-  mklink /D C:\Users\you\repos\audio-player\Audio "X:\My Music"
+  mklink /D C:\Users\you\repos\audio-player\public\Audio "X:\My Music"
 
 Then:
 
@@ -25,9 +25,6 @@ And browse to:
   http://127.0.0.1:3000/refresh
 
 =head1 DESCRIPTION
-
-This program is the evolution of C<audioplayer4>, and is a
-light-weight, simple audio server.
 
 Write-up: https://ology.github.io/2021/06/04/mojolicious-music-player/
 
