@@ -434,29 +434,29 @@ catch {
 
 =cut
 
-  my $info = {}; # track information
+    my $info = {}; # track information
 
-  if ($API_KEY) {
-    # Find an image
-    my $w = WebService::LastFM::TrackInfo->new(api_key => $API_KEY);
-    try {
-      $info = $w->fetch(artist => $artist, track => $name);
-    };
-    $track_image = _get_image($info->{track}{album});
-    unless ($track_image) {
-      $w = WebService::LastFM::TrackInfo->new(
-        api_key => $API_KEY,
-        method  => 'album',
-      );
+    if ($API_KEY) {
+      # Find an image
+      my $w = WebService::LastFM::TrackInfo->new(api_key => $API_KEY);
       try {
-        $info = $w->fetch(artist => $artist, album => $album);
+        $info = $w->fetch(artist => $artist, track => $name);
       };
-      $track_image = _get_image($info->{album});
+      $track_image = _get_image($info->{track}{album});
+      unless ($track_image) {
+        $w = WebService::LastFM::TrackInfo->new(
+          api_key => $API_KEY,
+          method  => 'album',
+        );
+        try {
+          $info = $w->fetch(artist => $artist, album => $album);
+        };
+        $track_image = _get_image($info->{album});
+      }
+      if (!$track_image && $artist_image) {
+          $track_image = $artist_image;
+      }
     }
-    if (!$track_image && $artist_image) {
-        $track_image = $artist_image;
-    }
-  }
 
     $track_info->{artist_genres}  = $artist_genres;
     $track_info->{artist_image}   = $artist_image;
@@ -469,10 +469,17 @@ catch {
 
   $track_info = TRACK_INFO && ($c->remote_addr eq LOCAL || $c->remote_addr eq NETWORK) ? ddc($track_info, DUMPOPTS) : '';
 
+  my $text = '';
+  my $text_file = Mojo::File->new("$audio.txt");
+  if (-e $text_file) {
+    $text = $text_file->slurp;
+  }
+
   store [ $track, $track_image ], PLAYING;
 
   $c->render(
     template    => 'index',
+    content     => $text,
     title       => $title,
     audio       => $audio,
     total       => $total,
