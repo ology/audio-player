@@ -6,30 +6,7 @@ audio-player5
 
 =head1 SYNOPSIS
 
-This app depends on a directory (or symbolic link) called C<Audio> in the C<public> directory.
-
-On unix-like systems, symlink your audio source:
-
-  audio-player/public $ ln -s /media/you/external_drive/Music/ Audio
-
-Or on windows, as the Administrator:
-
-  mklink /D C:\Users\you\repos\audio-player\public\Audio "X:\My Music"
-
-Then:
-
-  audio-player $ morbo audio-player5
-
-And browse to:
-
-  http://127.0.0.1:3000/refresh
-
-=head1 DESCRIPTION
-
-Write-up: https://ology.github.io/2021/06/04/mojolicious-music-player/
-
-This app has logic to fetch cover art from the last.fm API with your API key. In order to do this, the
-artist, track and album names are divined (with regular expressions).
+Please see the C<README.md> file in this distribution.
 
 =cut
 
