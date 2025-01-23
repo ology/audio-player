@@ -2,7 +2,7 @@ secrets:
     - 'Change me to something unique.'
 
 # last.fm images
-api_key: 'abcdef123456'
+API_KEY: 'abcdef123456'
 
 PATH: 'Audio/'
 ARTIST: 'artists.dat'
