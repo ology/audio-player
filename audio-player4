@@ -81,7 +81,7 @@ use constant ARTIST => 'artists.dat';                     # The artist genres fi
 use constant PLAYING => 'now_playing.dat';
 
 use constant LOCAL   => '127.0.0.1';
-use constant NETWORK => '192.168.100.115';
+use constant NETWORK => '192.168.100.50';
 
 # track name info
 use constant TRACK_INFO => 1;
