@@ -1,5 +1,13 @@
 secrets:
     - 'Change me to something unique.'
+
+# last.fm images
 api_key: 'abcdef123456'
-oauth_client_id: 'abcdefghijklmnopqrstuvwxyz'
-oauth_client_secret: '12345678901234567890'
+
+PATH: 'Audio/'
+ARTIST: 'artists.dat'
+PLAYING: 'now_playing.dat'
+LOCAL: '127.0.0.1'
+# your local network IP
+NETWORK: '192.168.100.50'
+TRACK_INFO: 1
