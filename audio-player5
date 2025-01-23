@@ -45,7 +45,6 @@ use Number::Format ();
 use Storable qw(retrieve store);
 use Text::Unidecode qw(unidecode);
 use Try::Tiny qw(try catch);
-use lib map { "$ENV{HOME}/sandbox/$_/lib" } qw(WebService-LastFM-TrackInfo);
 use WebService::LastFM::TrackInfo ();
 use YAML::XS qw(LoadFile);
 
@@ -229,10 +228,6 @@ get '/' => sub ($c) {
     $album =~ s/^(.*?[a-zA-Z])_([a-zA-Z].*)$/$1\/$2/g;
     $name  =~ s/^(.*?[a-zA-Z])_([a-zA-Z].*)$/$1\/$2/g;
 
-    # Find the artist image and genres
-    my $artist_image  = '';
-    my $artist_genres = '';
-
     my $info = {}; # track information
 
     if ($config->{API_KEY}) {
@@ -251,9 +246,6 @@ get '/' => sub ($c) {
           $info = $w->fetch(artist => $artist, album => $album);
         };
         $track_image = _get_image($info->{album});
-      }
-      if (!$track_image && $artist_image) {
-          $track_image = $artist_image;
       }
     }
 
