@@ -697,13 +697,6 @@ __DATA__
 %   }
 % }
 
-% if ($freq_image) {
-<div>
-  <img src="<%= $freq_image %>"/>
-  <p></p>
-</div>
-% }
-
 <script>
 $(document).ready( function () {
 
