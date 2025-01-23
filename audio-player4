@@ -286,6 +286,8 @@ get '/' => sub ($c) {
     my $tune = "public$track";
     my ($summary, $peak) = ([], 0);
 
+=pod
+
 try {
     my $R = Statistics::R->new;
     $R->run(q`library(tuneR)`);
@@ -322,6 +324,8 @@ catch {
       system(@cmd) == 0
         or die "system(@cmd) failed: $?";
     }
+
+=cut
 
     # perform these regex gymnastics in order to make the info nicer
     $summary = join ' ', $summary->@*;
