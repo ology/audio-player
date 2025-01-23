@@ -45,6 +45,7 @@ use Number::Format ();
 use Storable qw(retrieve store);
 use Text::Unidecode qw(unidecode);
 use Try::Tiny qw(try catch);
+use lib map { "$ENV{HOME}/sandbox/$_/lib" } qw(WebService-LastFM-TrackInfo);
 use WebService::LastFM::TrackInfo ();
 use YAML::XS qw(LoadFile);
 
@@ -54,7 +55,7 @@ use constant TRACKS   => app->moniker . '.dat'; # The tracks file
 use constant DUMPOPTS => { max_width => 128 }; # for ddc()
 
 # load the configuration file and get the API key
-my $config  = -e 'config.yml' ? LoadFile('config.yml') : {};
+my $config = -e 'config.yml' ? LoadFile('config.yml') : {};
 
 
 =head1 ROUTES
@@ -386,7 +387,8 @@ get '/refresh' => sub ($c) {
   my $rule = File::Find::Rule->new;
   my @files = $rule->file()
     ->not($rule->new->name(qr/^\./)) # no dot files please
-    ->name(TYPES)->in($config->{PATH});
+    ->name(TYPES)
+    ->in("public/$config->{PATH}");
   my $n = 0;
   for my $file (@files) {
     # Make the name relative to /
