@@ -54,7 +54,6 @@ use constant TYPES    => qr/\.(?:flac|m4a|mp3|ogg|wav)$/i; # Tracks of interest
 use constant TRACKS   => app->moniker . '.dat'; # The tracks file
 use constant DUMPOPTS => { max_width => 128 }; # for ddc()
 
-# load the configuration file and get the API key
 my $config = -e 'config.yml' ? LoadFile('config.yml') : {};
 
 
