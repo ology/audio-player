@@ -4,7 +4,7 @@
 
 audio-player5
 
-=head1 SYNOPSIS
+=head1 DESCRIPTION
 
 Please see the C<README.md> file in this distribution.
 
@@ -31,7 +31,6 @@ use constant TRACKS   => app->moniker . '.dat'; # The tracks file
 use constant DUMPOPTS => { max_width => 128 }; # for ddc()
 
 my $config = -e 'config.yml' ? LoadFile('config.yml') : {};
-
 
 =head1 ROUTES
 
