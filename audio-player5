@@ -45,7 +45,6 @@ use Number::Format ();
 use Storable qw(retrieve store);
 use Text::Unidecode qw(unidecode);
 use Try::Tiny qw(try catch);
-use lib map { "$ENV{HOME}/sandbox/$_/lib" } qw(WebService-LastFM-TrackInfo);
 use WebService::LastFM::TrackInfo ();
 use YAML::XS qw(LoadFile);
 
