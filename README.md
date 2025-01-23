@@ -4,6 +4,8 @@ Light-weight, ultra-simple audio server!
 
 Write-up: [Mojolicious Music Player](https://ology.github.io/2021/06/04/mojolicious-music-player/)
 
+This app has logic to fetch cover art from the last.fm API with your API key, declared in the `config.yml` file.
+
 Before running, the perl dependencies are required:
 
     audio-player $ cpanm --installdeps .
