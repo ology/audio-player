@@ -32,4 +32,4 @@ Keystroke interface features are documented on the **Help** page.
 
 This app has built-in playback error detection.  So for example, if **advance** is on and an error is detected, the app will attempt to load to the next track. And the same goes for **shuffle** mode.  Now if none of the selected tracks (e.g. search results) can be loaded, the app will try each and fail.  If **shuffle** is on and this happens, an infinite loop will occur.  In order to stop this, just click the "Clear Search" button - the bold **x** button on the right of the search box or press the `x` key.
 
-![audio-player5](audio-player5.png)
+![audio-player-UI](audio-player-UI.png)
