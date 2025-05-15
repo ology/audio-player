@@ -18,6 +18,7 @@ use File::Find::Rule ();
 use List::SomeUtils qw(all first_index uniq);
 use Mojo::File;
 use Mojo::Util qw(url_unescape);
+use Net::Ping ();
 use Number::Format ();
 use Storable qw(retrieve store);
 use Text::Unidecode qw(unidecode);
@@ -207,25 +208,28 @@ get '/' => sub ($c) {
     my $info = {}; # track information
 
     if ($config->{API_KEY}) {
-      # Find an image
+      my $ping = Net::Ping->new;
       my $w = WebService::LastFM::TrackInfo->new(api_key => $config->{API_KEY});
-      try {
-        $info = $w->fetch(artist => $artist, track => $name);
-      };
-      $track_image = _get_image($info->{track}{album});
-      unless ($track_image) {
-        $w = WebService::LastFM::TrackInfo->new(
-          api_key => $config->{API_KEY},
-          method  => 'album',
-        );
+      if ($ping->ping($w->base, 1)) {
+        # Find an image
         try {
-          $info = $w->fetch(artist => $artist, album => $album);
+          $info = $w->fetch(artist => $artist, track => $name);
         };
-        $track_image = _get_image($info->{album});
+        $track_image = _get_image($info->{track}{album});
+        unless ($track_image) {
+          $w = WebService::LastFM::TrackInfo->new(
+            api_key => $config->{API_KEY},
+            method  => 'album',
+          );
+          try {
+            $info = $w->fetch(artist => $artist, album => $album);
+          };
+          $track_image = _get_image($info->{album});
+        }
       }
-    }
 
-    $title = $name; # set the web page title!
+      $title = $name; # set the web page title!
+    }
   }
 
   my $text = '';
