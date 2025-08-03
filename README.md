@@ -18,7 +18,7 @@ Next symlink your audio source under `public/`:
 
 For windows, as the Administrator do:
 
-    mklink /D C:\Users\you\wherever\audio-player\Audio "X:\My Music"
+    mklink /D C:\Users\you\wherever\audio-player\public\Audio "X:\My Music"
 
 Then to run the app:
 
