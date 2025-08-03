@@ -10,9 +10,11 @@ Before running, the perl dependencies are required:
 
     audio-player $ cpanm --installdeps .
 
-Next symlink your audio source:
+Next symlink your audio source under `public/`:
 
-    audio-player $ ln -s /media/you/external_drive/Music/ Audio
+    cd public/
+    ln -s /media/you/external_drive/Music/ Audio
+    cd ..
 
 For windows, as the Administrator do:
 
