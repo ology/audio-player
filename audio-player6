@@ -33,6 +33,8 @@ use constant DUMPOPTS => { max_width => 128 }; # for ddc()
 
 my $config = -e 'config.yml' ? LoadFile('config.yml') : {};
 
+my $ARTIST = $config->{ARTIST};
+
 =head1 ROUTES
 
 =head2 GET /help
@@ -73,6 +75,7 @@ get '/' => sub ($c) {
   my $match = []; # Bucket for all query matches
   my $genre = {}; # Bucket for all artist genres
 
+  my $track_info;  # discovered track details
   my $track_image; # track/album cover art
 
   my $is_genre = 0; # G: genre search query
@@ -90,8 +93,8 @@ get '/' => sub ($c) {
   }
 
   # Load the artist genres list
-  if (-e $config->{ARTIST}) {
-    $genre = retrieve($config->{ARTIST});
+  if (-e $ARTIST) {
+    $genre = retrieve($ARTIST);
   }
 
   if (keys %$audio) {
@@ -124,7 +127,6 @@ get '/' => sub ($c) {
           my $album = $parts[-2];       # album name
           my $artist_name = $parts[-3]; # artist but not always
           my $types = TYPES;
-
           $trk_name =~ s/^(?:\d{1,2}-)?\d{1,2}\s+(.*?)/$1/;                 # disc-track number
           $trk_name =~ s/(.*?)-\d+\.mp3$/$1/;                               # reencoded mp3
           $trk_name =~ s/(.*?)-[\w-]+\.(?:m4a|mp3)$/$1/;                    # from youtube
@@ -144,7 +146,6 @@ get '/' => sub ($c) {
             my ($who) = split /\s*-\s*/, $trk_name, 2;    # artist in track
             $artist_name = $who if $who;
           }
-
           push @$match, $key
             if grep { $artist_name eq $_ } @artists;
         }
@@ -257,10 +258,8 @@ get '/' => sub ($c) {
     my $ping = Net::Ping->new;
     my $ip = '130.211.19.189';
     my $is_alive = $ping->ping($ip, 1);
-# warn __PACKAGE__,' L',__LINE__,' ',,"HELLO? '$is_alive'\n";
     if ($config->{API_KEY}){# && $is_alive) {
       my $w = WebService::LastFM::TrackInfo->new(api_key => $config->{API_KEY});
-# warn __PACKAGE__,' L',__LINE__,' ',,"WS: $w\n";
       # Find an image
       try {
         $info = $w->fetch(artist => $artist, track => $name);
@@ -466,6 +465,32 @@ post '/rating' => sub ($c) {
   $c->render(text => $message);
 } => 'rating';
 
+
+=head2 POST /tag_it
+
+Track tagging endpoint that renders a success or failure text message.
+
+Name: C<rating>
+
+=cut
+
+post '/tag_it' => sub ($c) {
+  my $track = $c->param('current');
+  my $tag   = $c->param('tag');
+  my $artists = retrieve($ARTIST);
+  my $message = 'Failed to tag artist!';
+
+  my @parts = split /\//, $track;
+  my $artist_name = $parts[-3]; # artist but not always
+  push $artists->{$artist_name}->@*, $tag;
+
+  store $artists, $ARTIST;
+  $message = "Tagged artist $artist_name with $tag";
+
+  $c->render(text => $message);
+} => 'tag_it';
+
+
 =head2 GET /purge
 
 Purge tracks that have a rating of C<1>.
@@ -658,13 +683,8 @@ __DATA__
 
 % # Tag track
 <div>
-  <b>Tag:</b>
-  <select id="tag" name="tag" class="btn btn-mini" title="Add a tag (t)">
-    <option value="">Add tag...</option>
-% for my $tag (0 .. $#$tags) {
-    <option value="<%= $tag %>"><%= $tag %></option>
-% }
-  </select>
+  <p></p>
+  <input type="text" id="tag" name="tag" class="form-control" placeholder="Tag" value="" title="Artist genre tag (t)" />
 </div>
 
 % # Playlist history select
@@ -757,9 +777,10 @@ $(document).ready( function () {
   }
 
 % # Tag artist function
-  function tag_it (t) {
+  function tag_it () {
+    t = $('#tag').val();
     $.ajax({
-      url: "<%= url_for('tag') %>" + '?current=' + <%= $current %> + '&tag=' + t,
+      url: "<%= url_for('tag_it') %>" + '?current=' + '<%= $track %>' + '&tag=' + t,
       method: 'POST',
       success: function(data, textStatus, jqXHR) {
         console.log('Tag: ' + t);
@@ -855,9 +876,17 @@ $(document).ready( function () {
       advance();
     }
   });
+  // Submit a tag
+  $('#tag').on('keypress', function (e) {
+    if (e.which == 13) {
+      // Submit = ENTER
+      tag_it();
+    }
+  });
   $(document).on('keypress', function (e) {
     var x = $('#query').is(':focus');
-    if (!x) {
+    var y = $('#tag').is(':focus');
+    if (!x && !y) {
       var rate = -1; // For rating below
       if (e.which == 99) {
         // Audio controls = c
@@ -873,11 +902,10 @@ $(document).ready( function () {
           audio.pause();
         }
       }
-//      else if (e.which == 116) {
-//        // refresh = t
-//        var link = "<%= url_for('refresh') %>";
-//        window.location = link;
-//      }
+      else if (e.which == 116) {
+        // Tag focus = t
+        $('#tag').focus();
+      }
       else if (e.which == 103) {
         // purge = g
         var link = "<%= url_for('purge') %>";
