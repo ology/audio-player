@@ -474,7 +474,6 @@ Name: C<rating>
 
 =cut
 
-# TODO unique & remove with preceeding '-'
 post '/tag_it' => sub ($c) {
   my $track = $c->param('current');
   my $tag   = $c->param('tag');
@@ -487,6 +486,15 @@ post '/tag_it' => sub ($c) {
   my @tags = split /\W+/, $tag;
   push $artists->{$artist_name}->@*, $_
     for @tags;
+
+  my @temp_tags;
+  for my $t ($artists->{$artist_name}->@*) {
+    if ($t !~ /^-/) {
+      push @temp_tags, $t;
+    }
+  }
+
+  $artists->{$artist_name} = [ uniq @temp_tags ];
 
   store $artists, $ARTIST;
   $message = "Tagged artist $artist_name with $tag";
