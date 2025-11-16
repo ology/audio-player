@@ -474,6 +474,7 @@ Name: C<rating>
 
 =cut
 
+# TODO unique & remove with preceeding '-'
 post '/tag_it' => sub ($c) {
   my $track = $c->param('current');
   my $tag   = $c->param('tag');
