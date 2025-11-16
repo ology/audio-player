@@ -681,12 +681,6 @@ __DATA__
   </select>
 </div>
 
-% # Tag track
-<div>
-  <p></p>
-  <input type="text" id="tag" name="tag" class="form-control" placeholder="Tag" value="" title="Artist genre tag (t)" />
-</div>
-
 % # Playlist history select
 <p></p>
 <p>
@@ -707,6 +701,12 @@ __DATA__
       <i class="fa fa-chevron-right"></i>
     </button>
   </div>
+</div>
+
+% # Tag track
+<div>
+  <p></p>
+  <input type="text" id="tag" name="tag" class="form-control" placeholder="Tag" value="" title="Artist genre tag (t)" />
 </div>
 
 % # Track buttons
