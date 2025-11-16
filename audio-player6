@@ -709,7 +709,7 @@ __DATA__
 % # Tag track
 <div>
   <p></p>
-  <input type="text" id="tag" name="tag" class="form-control" placeholder="Tag" value="" title="Artist genre tag (t)" />
+  <input type="text" id="tag" name="tag" class="form-control" placeholder="Tags" value="" title="Artist genre tags (t)" />
 </div>
 
 % # Track buttons
