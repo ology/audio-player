@@ -483,7 +483,7 @@ post '/tag_it' => sub ($c) {
   my @parts = split /\//, $track;
   my $artist_name = $parts[-3]; # artist but not always
 
-  my @tags = split /\W+/, $tag;
+  my @tags = split /[ ,;:|]+/, $tag;
   push $artists->{$artist_name}->@*, $_
     for @tags;
 
