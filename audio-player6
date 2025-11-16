@@ -482,7 +482,10 @@ post '/tag_it' => sub ($c) {
 
   my @parts = split /\//, $track;
   my $artist_name = $parts[-3]; # artist but not always
-  push $artists->{$artist_name}->@*, $tag;
+
+  my @tags = split /\W+/, $tag;
+  push $artists->{$artist_name}->@*, $_
+    for @tags;
 
   store $artists, $ARTIST;
   $message = "Tagged artist $artist_name with $tag";
