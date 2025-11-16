@@ -884,6 +884,7 @@ $(document).ready( function () {
     if (e.which == 13) {
       // Submit = ENTER
       tag_it();
+      $('#tag').val('');
     }
   });
   $(document).on('keypress', function (e) {
