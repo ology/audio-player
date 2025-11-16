@@ -484,15 +484,19 @@ post '/tag_it' => sub ($c) {
   my $artist_name = $parts[-3]; # artist but not always
 
   my @tags = split /[ ,;:|]+/, $tag;
-  push $artists->{$artist_name}->@*, $_
-    for @tags;
 
   my @temp_tags;
   for my $t ($artists->{$artist_name}->@*) {
-    if ($t !~ /^-/) {
-      push @temp_tags, $t;
+    for my $u (@tags) {
+      if ($u ne "-$t") {
+        push @temp_tags, $t;
+        last;
+      }
     }
   }
+
+  push @temp_tags, $_
+    for grep { !/^-/ } @tags;
 
   $artists->{$artist_name} = [ uniq @temp_tags ];
 
