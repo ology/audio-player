@@ -284,6 +284,8 @@ get '/' => sub ($c) {
     $title = $name; # set the web page title!
   }
 
+  my @tags = $artist && $genre->{$artist} ? $genre->{$artist}->@* : ();
+
   my $text = '';
   my $text_file = "public/$track.txt";
   if (-e $text_file) {
@@ -312,7 +314,7 @@ get '/' => sub ($c) {
     matches     => $matches,
     showrate    => $showrate,
     ratings     => [RATES],
-    tags        => join(', ', $genre->{$artist}->@*),
+    tags        => join(', ', @tags),
     darkmode    => $darkmode,
   );
 } => 'index';
