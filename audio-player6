@@ -277,7 +277,7 @@ get '/' => sub ($c) {
       }
     }
 
-    $track_info->{artist_genres}  = $artist_genres;
+    $track_info->{artist_genres} = $artist_genres;
 
     $title = $name; # set the web page title!
   }
@@ -582,6 +582,21 @@ get '/stats' => sub ($c) {
   );
 } => 'stats';
 
+
+=head2 GET /genre
+
+Render a page with artist genres.
+
+Name: C<genre>
+
+=cut
+
+get '/genre' => sub ($c) {
+  $c->render(
+    template => 'genre',
+  );
+} => 'genre';
+
 plugin 'RemoteAddr';
 
 app->log->with_roles('+Color');
@@ -728,7 +743,7 @@ __DATA__
 % # Track buttons
 <p></p>
 <p>
-  <button id="firsttrack" class="btn btn-outline-dark" title="Move to the first track (f)"><i class="fa fa-fast-backward" aria-hidden="true"></i> First</button>
+  <a href="<%= url_for('genre') %>" id="genre" class="btn btn-outline-dark" title="Show the artist genres (?)"><i class="fa fa-tags" aria-hidden="true"></i> Genres</a>
   &nbsp;
   <button id="nexttrack" class="btn btn-outline-dark" title="Advance to the next track (n)">Next <i class="fa fa-step-forward" aria-hidden="true"></i></button>
   &nbsp;
@@ -771,7 +786,7 @@ $(document).ready( function () {
   if (<%= $darkmode %> || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
     $('#clearsearch').attr('class', 'btn btn-outline-white rounded-right');
     $('#submitsearch').attr('class', 'btn btn-outline-light');
-    $('#firsttrack').attr('class', 'btn btn-outline-light');
+    $('#genre').attr('class', 'btn btn-outline-light');
     $('#nexttrack').attr('class', 'btn btn-outline-light');
     $('[class="text-secondary"]').attr('class', 'text-medium');
     $('body').toggleClass('dark');
@@ -805,6 +820,10 @@ $(document).ready( function () {
         console.log('Tag: ' + error);
       }
     });
+  }
+
+% # Genre artist function
+  function genre () {
   }
 
 % # Advance track function
@@ -1018,8 +1037,8 @@ $(document).ready( function () {
   $('#clearsearch').on('click', function() {
     $('input[name=query]').val('');
   });
-  $('#firsttrack').on('click', function() {
-    advance(1, 0, 1, 0);
+  $('#genre').on('click', function() {
+    genre();
   });
   $('#nexttrack').on('click', function() {
     advance(1);
@@ -1113,6 +1132,11 @@ $(document).ready( function () {
   }
 });
 </script>
+
+@@ genre.html.ep
+% layout 'default';
+% title 'Artist Genres';
+Hello
 
 @@ layouts/default.html.ep
 <!DOCTYPE html>

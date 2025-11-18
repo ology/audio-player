@@ -209,8 +209,11 @@ get '/' => sub ($c) {
 
     my $ping = Net::Ping->new;
     my $ip = '130.211.19.189';
-    if ($config->{API_KEY} && $ping->ping($ip, 1)) {
+    my $is_alive = $ping->ping($ip, 1);
+# warn __PACKAGE__,' L',__LINE__,' ',,"HELLO? '$is_alive'\n";
+    if ($config->{API_KEY}){# && $is_alive) {
       my $w = WebService::LastFM::TrackInfo->new(api_key => $config->{API_KEY});
+# warn __PACKAGE__,' L',__LINE__,' ',,"WS: $w\n";
       # Find an image
       try {
         $info = $w->fetch(artist => $artist, track => $name);
