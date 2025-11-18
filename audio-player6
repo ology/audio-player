@@ -486,9 +486,9 @@ post '/tag_it' => sub ($c) {
   my $message = 'Failed to tag artist!';
 
   my @parts = split /\//, $track;
-  my $artist_name = $parts[-3]; # artist but not always
+  my $artist_name = $parts[-3]; # but not always
 
-  my @tags = split /[,;|]+/, $tag;
+  my @tags = split /\s*[,;|]+\s*/, $tag;
 
   my @temp_tags;
   for my $t ($artists->{$artist_name}->@*) {
