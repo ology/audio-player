@@ -478,18 +478,25 @@ Name: C<rating>
 
 post '/tag_it' => sub ($c) {
   my $track = $c->param('current');
+warn "Trk: $track\n";
   my $tag   = $c->param('tag');
   my $artists = retrieve($ARTIST);
   my $message = 'Failed to tag artist!';
 
   my @parts = split /\//, $track;
+warn "P: ", join(" ,", @parts), "\n";
   my $artist_name = $parts[-3]; # but not always
+warn "A: $artist_name\n";
+warn "T: ", join(" ,", $artists->{$artist_name}->@*), "\n";
 
   my @tags = split /\s*[,;|]+\s*/, $tag;
+  warn "F: @tags\n";
 
   my @temp_tags;
   for my $t ($artists->{$artist_name}->@*) {
+  warn "t: $t\n";
     for my $u (@tags) {
+  warn "?: $u ne -$t\n";
       if ($u ne "-$t") {
         push @temp_tags, $t;
         last;
@@ -740,13 +747,15 @@ __DATA__
 
 % # Tag track
 <p></p>
-<div class="input-group">
+<div><!-- class="input-group"> -->
   <input type="text" id="tag" name="tag" class="form-control" placeholder="Tags" value="<%= $tags %>" title="Artist genre tags (t)" />
+<!--
   <div class="input-group-append">
     <button type="button" id="submittag" class="btn btn-outline-secondary rounded-right" title="Submit the artist tag update">
       <i class="fa fa-chevron-right"></i>
     </button>
   </div>
+-->
 </div>
 
 % # Buttons
@@ -821,7 +830,7 @@ $(document).ready( function () {
   function tag_it () {
     t = $('#tag').val();
     $.ajax({
-      url: "<%= url_for('tag_it') %>" + '?current=' + '<%= $track %>' + '&tag=' + t,
+      url: "<%= url_for('tag_it') %>" + '?current=' + '<%== $track %>' + '&tag=' + t,
       method: 'POST',
       success: function(data, textStatus, jqXHR) {
         console.log('Tag: ' + t);
@@ -1056,10 +1065,10 @@ $(document).ready( function () {
   $('#submitsearch').on('click', function() {
     advance(1);
   });
-  $('#submittag').on('click', function() {
-    tag_it();
-    $('#tag').val('');
-  });
+//  $('#submittag').on('click', function() {
+//    tag_it();
+//    $('#tag').val('');
+//  });
   $('.trackmatch').on('click', function() {
     current = $(this).attr('data-current');
     advance(1, current, 1);
