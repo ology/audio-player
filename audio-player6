@@ -35,6 +35,57 @@ my $config = -e 'config.yml' ? LoadFile('config.yml') : {};
 
 my $ARTIST = $config->{ARTIST};
 
+=head1 FUNCTIONS
+
+=head2 track_name_fn(track)
+
+Handle cases like:
+
+  01 Tom Sawyer-1647382734.mp3
+  1-02 Mingulay Boat Song-1647389909.mp3
+  05 Let Me Tell You About My Boat.m4a
+  New Day-6SumbNBSEo8.m4a
+  Revolution 1 (Remastered 2009)-OmsXsIv2Ppw.m4a
+  Goodbye Stranger (2010 Remastered)-u8pVZ5hTGJQ.m4a
+  A Reminiscent Drive - Ambrosia-rP89haLVP4k.m4a
+  Van Halen - Hot For Teacher (Official Music Video)-6M4_Ommfvv0.m4a
+
+=cut
+
+my $track_name_fn = sub {
+  my ($trk) = @_;
+
+  my @parts = split /\//, $trk;
+  my $name = $parts[-1];
+  my $album = $parts[-2];
+  my $artist = $parts[-3]; # but not always
+  my $types = TYPES;
+
+  $name =~ s/^(?:\d{1,2}-)?\d{1,2}\s+(.*?)/$1/;                 # disc-track number
+  $name =~ s/(.*?)-\d+\.mp3$/$1/;                               # reencoded mp3
+  $name =~ s/(.*?)-[\w-]+\.(?:m4a|mp3)$/$1/;                    # from youtube
+  $name =~ s/(.*?)$types/$1/i;                                  # audio file
+  $name =~ s/(.*?) \((?:Official )?Audio\)/$1/;                 # paren extras
+  $name =~ s/(.*?) \(Remastered(?: \d+)?\)/$1/;                 # "
+  $name =~ s/(.*?) \(\d+ Remaster(?:ed)?\)/$1/;                 # "
+  $name =~ s/(.*?) \(Official\s*(?:Lyric|Music)?\s*Video\)/$1/; # "
+  $name =~ s/$artist\s*-\s*(.*?)$/$1/;                     # artist in track
+  # Special cases
+  if ($album =~ /80's/) {
+    my ($who, $what) = split /\s*-\s*/, $name, 2; # artist in track
+    ($artist, $name) = ($who, $what)
+      if $who && $what;
+  }
+  if ($artist =~ /Hôtel Costes/) { 
+    $name =~ s/Hotel Costes \d+ - (.*)$/$1/;      # album in track
+    my ($who, $what) = split /\s*-\s*/, $name, 2; # artist in track
+    ($artist, $name) = ($who, $what)
+      if $who && $what;
+  }
+
+  return $name, $artist, $album;
+};
+
 =head1 ROUTES
 
 =head2 GET /help
@@ -123,30 +174,9 @@ get '/' => sub ($c) {
 
         if ($is_genre) {
           my $trk = $audio->{$key}{track};
-          my @parts = split /\//, $trk;
-          my $trk_name = $parts[-1];    # track name
-          my $album = $parts[-2];       # album name
-          my $artist_name = $parts[-3]; # artist but not always
-          my $types = TYPES;
-          $trk_name =~ s/^(?:\d{1,2}-)?\d{1,2}\s+(.*?)/$1/;                 # disc-track number
-          $trk_name =~ s/(.*?)-\d+\.mp3$/$1/;                               # reencoded mp3
-          $trk_name =~ s/(.*?)-[\w-]+\.(?:m4a|mp3)$/$1/;                    # from youtube
-          $trk_name =~ s/(.*?)$types/$1/i;                                  # audio file
-          $trk_name =~ s/(.*?) \((?:Official )?Audio\)/$1/;                 # paren extras
-          $trk_name =~ s/(.*?) \(Remastered(?: \d+)?\)/$1/;                 # "
-          $trk_name =~ s/(.*?) \(\d+ Remaster(?:ed)?\)/$1/;                 # "
-          $trk_name =~ s/(.*?) \(Official\s*(?:Lyric|Music)?\s*Video\)/$1/; # "
-          $trk_name =~ s/$artist_name\s*-\s*(.*?)$/$1/;                     # artist in track
-          # Special cases
-          if ($album =~ /80's/) {
-            my ($who) = split /\s*-\s*/, $trk_name, 2; # artist in track
-            $artist_name = $who if $who;
-          }
-          if ($artist_name =~ /Hôtel Costes/) { 
-            $trk_name =~ s/Hotel Costes \d+ - (.*)$/$1/;  # album in track
-            my ($who) = split /\s*-\s*/, $trk_name, 2;    # artist in track
-            $artist_name = $who if $who;
-          }
+
+          my ($trk_name, $artist_name) = $track_name_fn->($trk);
+
           push @$match, $key
             if grep { $artist_name eq $_ } @artists;
         }
@@ -206,43 +236,7 @@ get '/' => sub ($c) {
 
   # Parse the track name and find an image
   if ($track) {
-    my @parts  = split /\//, $track;
-    my $name   = $parts[-1]; # track name
-    my $album  = $parts[-2]; # album name
-    $artist = $parts[-3]; # but not always
-    my $types  = TYPES;
-
-    # Handle cases like:
-    # 01 Tom Sawyer-1647382734.mp3
-    # 1-02 Mingulay Boat Song-1647389909.mp3
-    # 05 Let Me Tell You About My Boat.m4a
-    # New Day-6SumbNBSEo8.m4a
-    # Revolution 1 (Remastered 2009)-OmsXsIv2Ppw.m4a
-    # Goodbye Stranger (2010 Remastered)-u8pVZ5hTGJQ.m4a
-    # A Reminiscent Drive - Ambrosia-rP89haLVP4k.m4a
-    # Van Halen - Hot For Teacher (Official Music Video)-6M4_Ommfvv0.m4a
-    $name =~ s/^(?:\d+-)?\d+\s+(.*?)/$1/;                         # disc-track number
-    $name =~ s/(.*?)-\d+\.mp3$/$1/;                               # reencoded mp3
-    $name =~ s/(.*?)-[\w-]+\.(?:m4a|mp3)$/$1/;                    # from youtube
-    $name =~ s/(.*?)$types/$1/i;                                  # audio file
-    $name =~ s/(.*?) \((?:Official )?Audio\)/$1/;                 # paren extras
-    $name =~ s/(.*?) \(Remastered(?: \d+)?\)/$1/;                 # "
-    $name =~ s/(.*?) \(\d+ Remaster(?:ed)?\)/$1/;                 # "
-    $name =~ s/(.*?) \(Official\s*(?:Lyric|Music)?\s*Video\)/$1/; # "
-    $name =~ s/$artist\s*-\s*(.*?)$/$1/;                          # artist in track
-
-    # Special cases
-    if ($album =~ /80's/) {
-      my ($who, $what) = split /\s*-\s*/, $name, 2; # artist in track
-      ($artist, $name) = ($who, $what)
-        if $who && $what;
-    }
-    if ($artist =~ /Hôtel Costes/) { 
-      $name =~ s/Hotel Costes \d+ - (.*)$/$1/;      # album in track
-      my ($who, $what) = split /\s*-\s*/, $name, 2; # artist in track
-      ($artist, $name) = ($who, $what)
-        if $who && $what;
-    }
+    my ($name, $artist, $album) = $track_name_fn->($track);
 
     # translating punctuation helps!
     $album =~ s/^(.*?[^_ ])_ (.+)$/$1: $2/g;
