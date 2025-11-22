@@ -821,7 +821,7 @@ $(document).ready( function () {
   function tag_it () {
     t = $('#tag').val();
     $.ajax({
-      url: "<%= url_for('tag_it') %>" + '?' + 'current=' + encodeURIComponent('<%== $track %>') + '&tag=' + encodeURIComponent(t),
+      url: "<%= url_for('tag_it') %>" + '?' + 'current=' + encodeURIComponent("<%== $track %>"") + '&tag=' + encodeURIComponent(t),
       method: 'POST',
       success: function(data, textStatus, jqXHR) {
         console.log('Tag: ' + t);
