@@ -1203,7 +1203,7 @@ Hello
       with <a href="https://www.perl.org/">Perl</a>,
       <a href="https://mojolicious.org/">Mojolicious</a>
       & <a href="https://jquery.com/">jQuery</a>
-      | <a href="/help">Help</a>
+      | <a href="/help" target="_blank">Help</a>
     </div>
   </body>
 </html>
