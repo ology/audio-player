@@ -1057,11 +1057,8 @@ $(document).ready( function () {
     advance(1);
   });
   $('#submittag').on('click', function() {
-    if (e.which == 13) {
-      // Submit = ENTER
-      tag_it();
-      $('#tag').val('');
-    }
+    tag_it();
+    $('#tag').val('');
   });
   $('.trackmatch').on('click', function() {
     current = $(this).attr('data-current');
