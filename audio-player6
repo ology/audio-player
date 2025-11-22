@@ -295,8 +295,6 @@ get '/' => sub ($c) {
 
   store [ $track, $track_image ], $config->{PLAYING};
 
-  warn "Y: $name, $artist, $album\n";
-
   $c->render(
     template    => 'index',
     content     => $text,
