@@ -747,15 +747,13 @@ __DATA__
 
 % # Tag track
 <p></p>
-<div><!-- class="input-group"> -->
+<div class="input-group">
   <input type="text" id="tag" name="tag" class="form-control" placeholder="Tags" value="<%= $tags %>" title="Artist genre tags (t)" />
-<!--
   <div class="input-group-append">
     <button type="button" id="submittag" class="btn btn-outline-secondary rounded-right" title="Submit the artist tag update">
       <i class="fa fa-chevron-right"></i>
     </button>
   </div>
--->
 </div>
 
 % # Buttons
@@ -830,7 +828,7 @@ $(document).ready( function () {
   function tag_it () {
     t = $('#tag').val();
     $.ajax({
-      url: "<%= url_for('tag_it') %>" + '?current=' + '<%== $track %>' + '&tag=' + t,
+      url: "<%= url_for('tag_it') %>" + '?' + 'current=' + '<%== $track %>' + '&tag=' + t,
       method: 'POST',
       success: function(data, textStatus, jqXHR) {
         console.log('Tag: ' + t);
@@ -1065,10 +1063,10 @@ $(document).ready( function () {
   $('#submitsearch').on('click', function() {
     advance(1);
   });
-//  $('#submittag').on('click', function() {
-//    tag_it();
-//    $('#tag').val('');
-//  });
+  $('#submittag').on('click', function() {
+    tag_it();
+    $('#tag').val('');
+  });
   $('.trackmatch').on('click', function() {
     current = $(this).attr('data-current');
     advance(1, current, 1);
