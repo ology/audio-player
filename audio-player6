@@ -138,6 +138,8 @@ get '/' => sub ($c) {
   my $is_genre = 0; # G: genre search query
 
   my $artist = '';
+  my $name = ''; # track name
+  my $album = '';
 
   # Load the track list or flash an error
   if (-e TRACKS) {
@@ -241,7 +243,7 @@ get '/' => sub ($c) {
 
   # Parse the track name and find an image
   if ($track) {
-    my ($name, $artist, $album) = $track_name_fn->($track);
+    ($name, $artist, $album) = $track_name_fn->($track);
 
     # translating punctuation helps!
     $album =~ s/^(.*?[^_ ])_ (.+)$/$1: $2/g;
@@ -292,6 +294,8 @@ get '/' => sub ($c) {
   }
 
   store [ $track, $track_image ], $config->{PLAYING};
+
+  warn "Y: $name, $artist, $album\n";
 
   $c->render(
     template    => 'index',
@@ -991,7 +995,7 @@ $(document).ready( function () {
       }
       else if (e.which == 105) {
         // Put artist into search = i
-        $('#query').val('<%= $artist %>');
+        $('#query').val("<%= $artist %>");
       }
       else if (e.which >= 48 && e.which <= 53) {
         // Track rating = 0-5
@@ -1048,7 +1052,7 @@ $(document).ready( function () {
     $('input[name=query]').val('');
   });
   $('#artist_search').on('click', function() {
-    $('#query').val('<%= $artist %>');
+    $('#query').val("<%= $artist %>");
   });
   $('#nexttrack').on('click', function() {
     advance(1);
