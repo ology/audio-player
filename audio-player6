@@ -478,25 +478,18 @@ Name: C<rating>
 
 post '/tag_it' => sub ($c) {
   my $track = $c->param('current');
-warn "Trk: $track\n";
   my $tag   = $c->param('tag');
   my $artists = retrieve($ARTIST);
   my $message = 'Failed to tag artist!';
 
   my @parts = split /\//, $track;
-warn "P: ", join(" ,", @parts), "\n";
   my $artist_name = $parts[-3]; # but not always
-warn "A: $artist_name\n";
-warn "T: ", join(" ,", $artists->{$artist_name}->@*), "\n";
 
   my @tags = split /\s*[,;|]+\s*/, $tag;
-  warn "F: @tags\n";
 
   my @temp_tags;
   for my $t ($artists->{$artist_name}->@*) {
-  warn "t: $t\n";
     for my $u (@tags) {
-  warn "?: $u ne -$t\n";
       if ($u ne "-$t") {
         push @temp_tags, $t;
         last;
