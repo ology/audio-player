@@ -739,8 +739,8 @@ __DATA__
 </div>
 
 % # Tag track
-<div>
-  <p></p>
+<p></p>
+<div class="input-group">
   <input type="text" id="tag" name="tag" class="form-control" placeholder="Tags" value="<%= $tags %>" title="Artist genre tags (t)" />
   <div class="input-group-append">
     <button type="button" id="submittag" class="btn btn-outline-secondary rounded-right" title="Submit the artist tag update">
