@@ -742,6 +742,11 @@ __DATA__
 <div>
   <p></p>
   <input type="text" id="tag" name="tag" class="form-control" placeholder="Tags" value="<%= $tags %>" title="Artist genre tags (t)" />
+  <div class="input-group-append">
+    <button type="button" id="submittag" class="btn btn-outline-secondary rounded-right" title="Submit the artist tag update">
+      <i class="fa fa-chevron-right"></i>
+    </button>
+  </div>
 </div>
 
 % # Buttons
@@ -790,6 +795,7 @@ $(document).ready( function () {
   if (<%= $darkmode %> || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
     $('#clearsearch').attr('class', 'btn btn-outline-white rounded-right');
     $('#submitsearch').attr('class', 'btn btn-outline-light');
+    $('#submittag').attr('class', 'btn btn-outline-light');
     $('#artist_search').attr('class', 'btn btn-outline-light');
     $('#nexttrack').attr('class', 'btn btn-outline-light');
     $('[class="text-secondary"]').attr('class', 'text-medium');
@@ -1049,6 +1055,13 @@ $(document).ready( function () {
   });
   $('#submitsearch').on('click', function() {
     advance(1);
+  });
+  $('#submittag').on('click', function() {
+    if (e.which == 13) {
+      // Submit = ENTER
+      tag_it();
+      $('#tag').val('');
+    }
   });
   $('.trackmatch').on('click', function() {
     current = $(this).attr('data-current');
