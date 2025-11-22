@@ -79,8 +79,13 @@ my $track_name_fn = sub {
   if ($artist =~ /Hôtel Costes/) { 
     $name =~ s/Hotel Costes \d+ - (.*)$/$1/;      # album in track
     my ($who, $what) = split /\s*-\s*/, $name, 2; # artist in track
-    ($artist, $name) = ($who, $what)
-      if $who && $what;
+    $artist = $who if $who;
+    $name = $what if $what;
+  }
+  if ($artist =~ /Various Artists/ || $album =~ /Various Artists/) { 
+    my ($who, $what) = split /\s*-\s*/, $name, 2; # artist in track
+    $artist = $who if $who;
+    $name = $what if $what;
   }
 
   return $name, $artist, $album;
