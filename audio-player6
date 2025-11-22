@@ -81,7 +81,6 @@ get '/' => sub ($c) {
 
   my $is_genre = 0; # G: genre search query
 
-  my $title = 'Music!'; # webpage title
   my $artist = '';
 
   # Load the track list or flash an error
@@ -260,7 +259,7 @@ get '/' => sub ($c) {
     my $ping = Net::Ping->new;
     my $ip = '130.211.19.189';
     my $is_alive = $ping->ping($ip, 1);
-    if ($config->{API_KEY}){# && $is_alive) {
+    if ($config->{API_KEY} && $is_alive) {
       my $w = WebService::LastFM::TrackInfo->new(api_key => $config->{API_KEY});
       # Find an image
       try {
@@ -280,8 +279,6 @@ get '/' => sub ($c) {
     }
 
     $track_info->{artist_genres} = $artist_genres;
-
-    $title = $name; # set the web page title!
   }
 
   my @tags = $artist && $genre->{$artist} ? $genre->{$artist}->@* : ();
@@ -299,12 +296,12 @@ get '/' => sub ($c) {
   $c->render(
     template    => 'index',
     content     => $text,
-    title       => $title,
     audio       => $audio,
     total       => $total,
     current     => $current,
     track       => $track,
     track_image => $track_image,
+    artist      => $artist || '',
     rating      => $rating,
     autoplay    => $autoplay,
     autoadvance => $autoadvance,
@@ -649,7 +646,7 @@ __DATA__
 
 @@ index.html.ep
 % layout 'default';
-% title $title;
+% title 'Music!';
 
 % # Flash error/message
 % if (flash('error')) {
@@ -1146,7 +1143,7 @@ Hello
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="/style.css">
-    <title><%= $title %></title>
+    <title><%= title %></title>
     <style>
       body {
         color: #414A4C;
