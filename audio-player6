@@ -256,8 +256,8 @@ get '/' => sub ($c) {
 
     my $info = {}; # track information
 
-    my $ping = Net::Ping->new("tcp", 2);
-    $ping->port_number(scalar(getservbyname("http", "tcp")));
+    my $ping = Net::Ping->new('tcp', 2);
+    $ping->port_number(scalar(getservbyname('http', 'tcp')));
     my $ip = '130.211.19.189';
     my $is_alive = $ping->ping($ip);
     if ($config->{API_KEY} && $is_alive) {
