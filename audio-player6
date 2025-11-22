@@ -636,7 +636,7 @@ __DATA__
 <li>The <code>n</code> key is the same as clicking the "Next" button for the next track.</li>
 <li>The <code>h</code> key focuses on the history list.</li>
 <li>The <code>s</code> key focuses on the search input.</li>
-<li>The <code>i</code> key put the track artist into the search input.</li>
+<li>The <code>i</code> key puts the track artist into the search input.</li>
 <li>The <code>t</code> key focuses on the artist tag input.</li>
 <li>When <b>not</b> focused on the search input, the <code>x</code> key will clear the search.</li>
 <li>The <code>a</code> key will toggle the auto-advance checkbox.</li>
