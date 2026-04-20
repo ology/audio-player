@@ -613,18 +613,20 @@ Name: C<advance_track>
 
 get '/advance_track' => sub ($c) {
   my $action = $c->param('action');
+  my $message;
   unless (-e ADVANCE) {
     store [0], ADVANCE;
   }
   if ($action eq 'set') {
     store [1], ADVANCE;
-    return $c->render(text => $action);
+    $message = $action;
   }
   else {
     my $advance = retrieve(ADVANCE);
     store [0], ADVANCE;
-    return $c->render(text => $advance->[0]);
+    $message = $advance->[0];
   }
+  return $c->render(text => $message);
 } => 'advance_track';
 
 
