@@ -29,6 +29,7 @@ use YAML::XS qw(LoadFile);
 use constant RATES    => (0 .. 5); #qw(None Bad Poor Fair Good Best);
 use constant TYPES    => qr/\.(?:flac|m4a|mp3|ogg|wav)$/i; # Tracks of interest
 use constant TRACKS   => app->moniker . '.dat'; # The tracks file
+use constant ADVANCE  => 'advance_track.dat';
 use constant DUMPOPTS => { max_width => 128 }; # for ddc()
 
 my $config = -e 'config.yml' ? LoadFile('config.yml') : {};
@@ -601,6 +602,32 @@ get '/genre' => sub ($c) {
   );
 } => 'genre';
 
+
+=head2 GET /advance_track
+
+Set or retrieve the flag to advance the track.
+
+Name: C<advance_track>
+
+=cut
+
+get '/advance_track' => sub ($c) {
+  my $action = $c->param('action');
+  unless (-e ADVANCE) {
+    store [0], ADVANCE;
+  }
+  if ($action eq 'set') {
+    store [1], ADVANCE;
+    return $c->render(text => $action);
+  }
+  else {
+    my $advance = retrieve(ADVANCE);
+    store [0], ADVANCE;
+    return $c->render(text => $advance->[0]);
+  }
+} => 'advance_track';
+
+
 plugin 'RemoteAddr';
 
 app->log->with_roles('+Color');
@@ -1107,6 +1134,22 @@ $('input[name=rating]').attr('disabled', true);
     advance();
   });
 
+  (function worker() {
+    $.ajax({
+      url: "<%= url_for('advance_track') %>?action=fetch", 
+      success: function(data) {
+        //console.log('Advance:', data);
+        if (data == 1) {
+          advance();
+        }
+      },
+      complete: function() {
+        // Schedule the next request 5 seconds after the current one finishes
+        setTimeout(worker, 10000);
+      }
+    });
+  })();
+
 });
 </script>
 
@@ -1138,13 +1181,29 @@ $('input[name=rating]').attr('disabled', true);
 % }
 <p><%= $track_name %></p>
 
+<button id="nexttrack" class="btn btn-outline-dark" title="Advance to the next track (n)">Next <i class="fa fa-step-forward" aria-hidden="true"></i></button>
+
 <script>
 $(document).ready( function () {
+  $('#nexttrack').on('click', function() {
+    $.ajax({
+      url: "<%= url_for('advance_track') %>?action=set",
+      type: 'GET',
+      success: function(data) {
+        console.log('Advance...')
+      },
+      error: function(e) {
+        console.log('Error:', e)
+      }
+    });
+  });
+
 % # Replace classes when in dark mode
   if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
     $('p').attr('class', 'text-medium');
     $('a').attr('style', 'color: white');
     $('[class="text-secondary"]').attr('class', 'text-medium');
+    $('#nexttrack').attr('class', 'btn btn-outline-light');
   }
 });
 </script>
