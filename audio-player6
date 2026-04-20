@@ -1144,7 +1144,7 @@ $('input[name=rating]').attr('disabled', true);
         }
       },
       complete: function() {
-        // Schedule the next request 5 seconds after the current one finishes
+        // schedule the next request after the current one finishes
         setTimeout(worker, 10000);
       }
     });
