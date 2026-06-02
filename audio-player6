@@ -834,6 +834,19 @@ $(document).ready( function () {
     $('input[name=darkmode]').attr('checked', true);
   }
 
+% # Handle media keys
+if ('mediaSession' in navigator) {
+  //  navigator.mediaSession.setActionHandler('play', () => {
+  //  });
+  //  navigator.mediaSession.setActionHandler('pause', () => {
+  //  });
+  //  navigator.mediaSession.setActionHandler('previoustrack', () => {
+  //  });
+    navigator.mediaSession.setActionHandler('nexttrack', () => {
+        advance();
+    });
+}
+
 % # Rate track function
   function rating (r) {
     $.ajax({
@@ -1136,21 +1149,21 @@ $('input[name=rating]').attr('disabled', true);
     advance();
   });
 
-  (function worker() {
-    $.ajax({
-      url: "<%= url_for('advance_track') %>?action=fetch", 
-      success: function(data) {
-        //console.log('Advance:', data);
-        if (data == 1) {
-          advance();
-        }
-      },
-      complete: function() {
-        // schedule the next request after the current one finishes
-        setTimeout(worker, 10000);
-      }
-    });
-  })();
+//  (function worker() {
+//    $.ajax({
+//      url: "<%= url_for('advance_track') %>?action=fetch", 
+//      success: function(data) {
+//        //console.log('Advance:', data);
+//        if (data == 1) {
+//          advance();
+//        }
+//      },
+//      complete: function() {
+//        // schedule the next request after the current one finishes
+//        setTimeout(worker, 10000);
+//      }
+//    });
+//  })();
 
 });
 </script>
