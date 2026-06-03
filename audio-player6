@@ -841,7 +841,7 @@ if ('mediaSession' in navigator) {
   //  navigator.mediaSession.setActionHandler('pause', () => {
   //  });
     navigator.mediaSession.setActionHandler('previoustrack', () => {
-      advance(<%= $current %>);
+      advance(0, <%= $current %>, 1, 0);
     });
     navigator.mediaSession.setActionHandler('nexttrack', () => {
       advance();
