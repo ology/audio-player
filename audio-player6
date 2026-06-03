@@ -783,7 +783,7 @@ __DATA__
 % # Buttons
 <p></p>
 <p>
-  <button id="artist_search" class="btn btn-outline-dark" title="Track artist to the search field (i)">Artist <i class="fa fa-paint-brush" aria-hidden="true"></i></button>
+  <button id="retrack" class="btn btn-outline-dark" title="Replay the current track (v)"><i class="fa fa-play-circle" aria-hidden="true"></i> Replay</button>
   &nbsp;
   <button id="nexttrack" class="btn btn-outline-dark" title="Advance to the next track (n)">Next <i class="fa fa-step-forward" aria-hidden="true"></i></button>
   &nbsp;
@@ -828,6 +828,7 @@ $(document).ready( function () {
     $('#submitsearch').attr('class', 'btn btn-outline-light');
     $('#submittag').attr('class', 'btn btn-outline-light');
     $('#artist_search').attr('class', 'btn btn-outline-light');
+    $('#retrack').attr('class', 'btn btn-outline-light');
     $('#nexttrack').attr('class', 'btn btn-outline-light');
     $('[class="text-secondary"]').attr('class', 'text-medium');
     $('body').toggleClass('dark');
@@ -980,7 +981,6 @@ if ('mediaSession' in navigator) {
         $('#myAudio').focus();
       }
       else if (e.key === 'v' || e.key === 'V') {
-        alert('v!');
         // Replay current track = v
         advance(0, <%= $current %>, 1, 0);
       }
@@ -1097,8 +1097,8 @@ if ('mediaSession' in navigator) {
   $('#clearsearch').on('click', function() {
     $('input[name=query]').val('');
   });
-  $('#artist_search').on('click', function() {
-    $('#query').val("<%= $artist %>");
+  $('#retrack').on('click', function() {
+    advance(0, <%= $current %>, 1, 0);
   });
   $('#nexttrack').on('click', function() {
     advance(1);
