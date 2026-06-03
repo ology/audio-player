@@ -975,11 +975,16 @@ if ('mediaSession' in navigator) {
     var y = $('#tag').is(':focus');
     if (!x && !y) {
       var rate = -1; // For rating below
-      if (e.which == 99) {
+      if (e.key === 'c' || e.key === 'C') {
         // Audio controls = c
         $('#myAudio').focus();
       }
-      else if (e.which == 121) {
+      else if (e.key === 'v' || e.key === 'V') {
+        alert('v!');
+        // Replay current track = v
+        advance(0, <%= $current %>, 1, 0);
+      }
+      else if (e.key === 'y' || e.key === 'Y') {
         // Pause-Play = y
         var audio = document.getElementById('myAudio');
         if (audio.paused) {
@@ -989,16 +994,16 @@ if ('mediaSession' in navigator) {
           audio.pause();
         }
       }
-      else if (e.which == 116) {
+      else if (e.key === 't' || e.key === 'T') {
         // Tag focus = t
         $('#tag').focus();
       }
-      else if (e.which == 103) {
+      else if (e.key === 'g' || e.key === 'G') {
         // purge = g
         var link = "<%= url_for('purge') %>";
         window.location = link;
       }
-      else if (e.which == 122) {
+      else if (e.key === 'z' || e.key === 'Z') {
         // space-music = z
         var link = "<%= url_for('index') %>?current=0"
           + '&noinc=0'
@@ -1010,31 +1015,31 @@ if ('mediaSession' in navigator) {
           + "&darkmode=<%= $darkmode %>"
         window.location = link;
       }
-      else if (e.which == 102) {
+      else if (e.key === 'f' || e.key === 'F') {
         // First track = f
         advance(1, 0, 1, 0);
       }
-      else if (e.which == 110) {
+      else if (e.key === 'n' || e.key === 'N') {
         // Next track = n
         advance(1);
       }
-      else if (e.which == 114) {
+      else if (e.key === 'r' || e.key === 'R') {
         // Rate filter focus = r
         $('#showrate').focus();
       }
-      else if (e.which == 104) {
+      else if (e.key === 'h' || e.key === 'H') {
         // History playlist focus = h
         $('#playlist').focus();
       }
-      else if (e.which == 120) {
+      else if (e.key === 'x' || e.key === 'X') {
         // Clear search query = x
         $('#clearsearch').click();
       }
-      else if (e.which == 115) {
+      else if (e.key === 's' || e.key === 'S') {
         // Search query focus = s
         $('#query').focus();
       }
-      else if (e.which == 105) {
+      else if (e.key === 'i' || e.key === 'I') {
         // Put artist into search = i
         $('#query').val("<%= $artist %>");
       }
@@ -1042,7 +1047,7 @@ if ('mediaSession' in navigator) {
         // Track rating = 0-5
         rate = e.which - 48;
       }
-      else if (e.which == 97) {
+      else if (e.key === 'a' || e.key === 'A') {
         // Advance = a
         if ($('#autoadvance').is(':checked')) {
           $('input[name=autoadvance]').attr('checked', false);
@@ -1051,7 +1056,7 @@ if ('mediaSession' in navigator) {
           $('input[name=autoadvance]').attr('checked', true);
         }
       }
-      else if (e.which == 112) {
+      else if (e.key === 'p' || e.key === 'P') {
         // Play = p
         if ($('#autoplay').is(':checked')) {
           $('input[name=autoplay]').attr('checked', false);
@@ -1060,7 +1065,7 @@ if ('mediaSession' in navigator) {
           $('input[name=autoplay]').attr('checked', true);
         }
       }
-      else if (e.which == 101) {
+      else if (e.key === 'e' || e.key === 'E') {
         // Shuffle = e
         if ($('#shuffle').is(':checked')) {
           $('input[name=shuffle]').attr('checked', false);
@@ -1069,7 +1074,7 @@ if ('mediaSession' in navigator) {
           $('input[name=shuffle]').attr('checked', true);
         }
       }
-      else if (e.which == 100) {
+      else if (e.key === 'd' || e.key === 'D') {
         // Dark mode = d
         if ($('#darkmode').is(':checked')) {
           $('input[name=darkmode]').attr('checked', false);
