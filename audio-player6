@@ -17,6 +17,7 @@ use Encoding::FixLatin qw(fix_latin);
 use File::Find::Rule ();
 use List::SomeUtils qw(all first_index uniq);
 use Mojo::File;
+use Mojo::JSON qw(encode_json);
 use Mojo::Util qw(url_unescape);
 use Net::Ping ();
 use Number::Format ();
@@ -296,6 +297,8 @@ get '/' => sub ($c) {
 
   store [ $track, $track_image ], $config->{PLAYING};
 
+  my $track_js = _js_string($track);
+
   $c->render(
     template    => 'index',
     content     => $text,
@@ -303,6 +306,7 @@ get '/' => sub ($c) {
     total       => $total,
     current     => $current,
     track       => $track,
+    track_js    => $track_js,
     track_image => $track_image,
     artist      => $artist || '',
     rating      => $rating,
@@ -331,16 +335,33 @@ get '/now_playing' => sub ($c) {
   );
 } => 'now_playing';
 
+=head2 _js_string(str)
+
+Turn a Perl string into a JSON-encoded (i.e. properly quoted and
+backslash-escaped) string literal that is safe to splice directly
+into an inline C<script> block.
+
+=cut
+
+sub _js_string ($str) {
+  my $json = encode_json("$str");
+  $json =~ s{</}{<\\/}g;
+  return $json;
+}
+
 =head2 _load(path)
 
 Safely C<retrieve> a Storable file. Returns an empty hashref if the
-file doesn't exist yet.
+file doesn't exist yet, instead of letting C<retrieve> hand back
+C<undef> and blowing up the caller.
 
 =cut
 
 sub _load ($path) {
   return -e $path ? retrieve($path) : {};
 }
+
+sub _log10 { return log(shift)/log(10) }
 
 sub _get_image ($data) {
   return undef unless $data->{image} && $data->{image}->@*;
@@ -483,8 +504,6 @@ post '/rating' => sub ($c) {
 =head2 POST /tag_it
 
 Track tagging endpoint that renders a success or failure text message.
-
-Name: C<tag_it>
 
 =cut
 
@@ -871,7 +890,7 @@ if ('mediaSession' in navigator) {
   function tag_it () {
     t = $('#tag').val();
     $.ajax({
-      url: "<%= url_for('tag_it') %>" + '?' + 'current=' + encodeURIComponent("<%== $track %>") + '&tag=' + encodeURIComponent(t),
+      url: "<%= url_for('tag_it') %>" + '?' + 'current=' + encodeURIComponent(<%== $track_js %>) + '&tag=' + encodeURIComponent(t),
       method: 'POST',
       success: function(data, textStatus, jqXHR) {
         console.log('Tag: ' + t);
@@ -1127,7 +1146,7 @@ $('input[name=rating]').attr('disabled', true);
 
 % # Configure the audio element
   $('#myAudio').focus();
-  $('#myAudio').attr('src', "<%== $track %>");
+  $('#myAudio').attr('src', <%== $track_js %>);
   $('#myAudio').on('error', function() {
     if ("<%= $track %>") {
       console.log('Playback error!');
@@ -1154,7 +1173,7 @@ $('input[name=rating]').attr('disabled', true);
     if (plh.length >= max) {
       plh.shift();
     }
-    plh.push({ "<%== $track %>": "<%= $current %>" });
+    plh.push({ <%== $track_js %>: "<%= $current %>" });
     localStorage.setItem('playlist_history', JSON.stringify(plh));
     advance();
   });
