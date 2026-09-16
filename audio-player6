@@ -342,8 +342,6 @@ sub _load ($path) {
   return -e $path ? retrieve($path) : {};
 }
 
-sub _log10 { return log(shift)/log(10) }
-
 sub _get_image ($data) {
   return undef unless $data->{image} && $data->{image}->@*;
 
@@ -486,7 +484,7 @@ post '/rating' => sub ($c) {
 
 Track tagging endpoint that renders a success or failure text message.
 
-Name: C<rating>
+Name: C<tag_it>
 
 =cut
 
@@ -586,7 +584,7 @@ get '/stats' => sub ($c) {
 
   $c->render(
     template => 'stats',
-    total    => $total,
+    total    => $total || 1,
     rated    => $rated,
     rate     => $rate,
     by_genre => $by_genre,
@@ -638,7 +636,7 @@ get '/advance_track' => sub ($c) {
 
 plugin 'RemoteAddr';
 
-app->log->with_roles('+Color');
+app->log(app->log->with_roles('+Color'));
 app->secrets($config->{secrets});
 app->start;
 
@@ -724,7 +722,7 @@ __DATA__
 % # Audio widget
 <p>
   <div>
-    <audio controls id="myAudio" <%= $autoplay ? "autoplay='autoplay'" : '' %> preload="auto" crossorigin="anonymous" src="<%== $track %>" title="Audio controls (c) - Pause/play (y)">
+    <audio controls id="myAudio" <%= $autoplay ? "autoplay='autoplay'" : '' %> preload="auto" crossorigin="anonymous" src="<%= $track %>" title="Audio controls (c) - Pause/play (y)">
       Your browser does not support the <code>audio</code> element.
     </audio>
     <div id="warning"><b>Could not load audio!</b></div>
