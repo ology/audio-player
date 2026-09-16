@@ -331,6 +331,17 @@ get '/now_playing' => sub ($c) {
   );
 } => 'now_playing';
 
+=head2 _load(path)
+
+Safely C<retrieve> a Storable file. Returns an empty hashref if the
+file doesn't exist yet.
+
+=cut
+
+sub _load ($path) {
+  return -e $path ? retrieve($path) : {};
+}
+
 sub _log10 { return log(shift)/log(10) }
 
 sub _get_image ($data) {
@@ -455,7 +466,7 @@ post '/rating' => sub ($c) {
   my $track = $c->param('current');
   my $rate  = $c->param('rating');
 
-  my $audio = retrieve(TRACKS);
+  my $audio = _load(TRACKS);
 
   my $message = 'Failed to rate track!';
 
@@ -482,7 +493,7 @@ Name: C<rating>
 post '/tag_it' => sub ($c) {
   my $track = $c->param('current');
   my $tag   = $c->param('tag');
-  my $artists = retrieve($ARTIST);
+  my $artists = _load($ARTIST);
   my $message = 'Failed to tag artist!';
 
   my @parts = split /\//, $track;
@@ -521,7 +532,7 @@ Name: C<purge>
 =cut
 
 get '/purge' => sub ($c) {
-  my $audio = retrieve(TRACKS);
+  my $audio = _load(TRACKS);
 
   my $total = 0;
   my $i = 0;
@@ -564,7 +575,7 @@ Name: C<stats>
 =cut
 
 get '/stats' => sub ($c) {
-  my $audio = retrieve(TRACKS);
+  my $audio = _load(TRACKS);
 
   my ($total, $rated, $rate, $by_genre) = (0, 0, {}, {});
 
