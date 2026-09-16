@@ -71,7 +71,7 @@ my $track_name_fn = sub {
   $name =~ s/(.*?) \(Remastered(?: \d+)?\)/$1/;                 # "
   $name =~ s/(.*?) \(\d+ Remaster(?:ed)?\)/$1/;                 # "
   $name =~ s/(.*?) \(Official\s*(?:Lyric|Music)?\s*Video\)/$1/; # "
-  $name =~ s/$artist\s*-\s*(.*?)$/$1/;                     # artist in track
+  $name =~ s/\Q$artist\E\s*-\s*(.*?)$/$1/;                      # artist in track
   # Special cases
   if ($album =~ /80's/) {
     my ($who, $what) = split /\s*-\s*/, $name, 2; # artist in track
