@@ -502,13 +502,8 @@ post '/tag_it' => sub ($c) {
   my @tags = split /\s*[,;|]+\s*/, $tag;
 
   my @temp_tags;
-  for my $t ($artists->{$artist_name}->@*) {
-    for my $u (@tags) {
-      if ($u ne "-$t") {
-        push @temp_tags, $t;
-        last;
-      }
-    }
+  for my $t (($artists->{$artist_name} // [])->@*) {
+    push @temp_tags, $t unless grep { $_ eq "-$t" } @tags;
   }
 
   push @temp_tags, $_
