@@ -1,0 +1,1381 @@
+#!/usr/bin/env perl
+
+=head1 NAME
+
+audio-player5
+
+=head1 DESCRIPTION
+
+Please see the C<README.md> file in this distribution.
+
+=cut
+
+use Mojolicious::Lite -signatures;
+
+use Data::Dumper::Compact qw(ddc);
+use Encoding::FixLatin qw(fix_latin);
+use File::Find::Rule ();
+use List::SomeUtils qw(all first_index uniq);
+use Mojo::File;
+use Mojo::JSON qw(encode_json);
+use Mojo::Util qw(url_unescape);
+use Net::Ping ();
+use Number::Format ();
+use Statistics::R ();
+use Storable qw(retrieve store);
+use Text::Unidecode qw(unidecode);
+use Try::Tiny qw(try catch);
+use WebService::LastFM::TrackInfo ();
+use YAML::XS qw(LoadFile);
+
+use constant RATES    => (0 .. 5); #qw(None Bad Poor Fair Good Best);
+use constant TYPES    => qr/\.(?:flac|m4a|mp3|ogg|wav)$/i; # Tracks of interest
+use constant TRACKS   => app->moniker . '.dat'; # The tracks file
+use constant ADVANCE  => 'advance_track.dat';
+use constant DUMPOPTS => { max_width => 128 }; # for ddc()
+use constant FREQ     => 'frequency.png'; # relative to public/
+use constant LOCAL    => '127.0.0.1';
+use constant NETWORK  => '192.168.99.50';
+use constant WIDTH   => 1600;
+use constant HEIGHT  => 300;
+
+my $config = -e 'config.yml' ? LoadFile('config.yml') : {};
+
+my $ARTIST = $config->{ARTIST};
+
+=head1 FUNCTIONS
+
+=head2 track_name_fn(track)
+
+Handle cases like:
+
+  01 Tom Sawyer-1647382734.mp3
+  1-02 Mingulay Boat Song-1647389909.mp3
+  05 Let Me Tell You About My Boat.m4a
+  New Day-6SumbNBSEo8.m4a
+  Revolution 1 (Remastered 2009)-OmsXsIv2Ppw.m4a
+  Goodbye Stranger (2010 Remastered)-u8pVZ5hTGJQ.m4a
+  A Reminiscent Drive - Ambrosia-rP89haLVP4k.m4a
+  Van Halen - Hot For Teacher (Official Music Video)-6M4_Ommfvv0.m4a
+
+=cut
+
+my $track_name_fn = sub {
+  my ($trk) = @_;
+
+  my @parts = split /\//, $trk;
+  my $name = $parts[-1];
+  my $album = $parts[-2];
+  my $artist = $parts[-3]; # but not always
+  my $types = TYPES;
+
+  $name =~ s/^(?:\d{1,2}-)?\d{1,2}\s+(.*?)/$1/;                 # disc-track number
+  $name =~ s/(.*?)-\d+\.mp3$/$1/;                               # reencoded mp3
+  $name =~ s/(.*?)-[\w-]+\.(?:m4a|mp3)$/$1/;                    # from youtube
+  $name =~ s/(.*?)$types/$1/i;                                  # audio file
+  $name =~ s/(.*?) \((?:Official )?Audio\)/$1/;                 # paren extras
+  $name =~ s/(.*?) \(Remastered(?: \d+)?\)/$1/;                 # "
+  $name =~ s/(.*?) \(\d+ Remaster(?:ed)?\)/$1/;                 # "
+  $name =~ s/(.*?) \(Official\s*(?:Lyric|Music)?\s*Video\)/$1/; # "
+  $name =~ s/\Q$artist\E\s*-\s*(.*?)$/$1/;                      # artist in track
+  # Special cases
+  if ($album =~ /80's/) {
+    my ($who, $what) = split /\s*-\s*/, $name, 2; # artist in track
+    ($artist, $name) = ($who, $what)
+      if $who && $what;
+  }
+  if ($artist =~ /Hôtel Costes/) { 
+    $name =~ s/Hotel Costes \d+ - (.*)$/$1/;      # album in track
+    my ($who, $what) = split /\s*-\s*/, $name, 2; # artist in track
+    $artist = $who if $who;
+    $name = $what if $what;
+  }
+  if ($artist =~ /Various Artists/ || $album =~ /Various Artists/) { 
+    my ($who, $what) = split /\s*-\s*/, $name, 2; # artist in track
+    $artist = $who if $who;
+    $name = $what if $what;
+  }
+
+  return $name, $artist, $album;
+};
+
+=head1 ROUTES
+
+=head2 GET /help
+
+Show hidden interface features, etc.
+
+Name: C<help>
+
+=cut
+
+get '/help' => sub ($c) {
+  $c->render(
+    template => 'help',
+  );
+};
+
+=head2 GET /
+
+The main endpoint and player page.
+
+Name: C<index>
+
+=cut
+
+get '/' => sub ($c) {
+  my $autoadvance = $c->param('autoadvance') || 0; # Automatically move to the next track
+  my $autoplay    = $c->param('autoplay') || 0;    # Start playing the current track
+  my $current     = $c->param('current') || 0;     # The last and next played track
+  my $noinc       = $c->param('noinc') || 0;       # Do not increment to the next track
+  my $shuffle     = $c->param('shuffle') || 0;     # Select a random track to play next
+  my $query       = $c->param('query') || '';      # The url encoded search query
+  my $showrate    = $c->param('showrate') || '';   # Filter by the requested rate
+  my $darkmode    = $c->param('darkmode') || 0;    # Use dark mode
+
+  my ($op, $rate) = split / /, $showrate;
+
+  my $audio = {}; # Bucket for all tracks
+  my $match = []; # Bucket for all query matches
+  my $genre = {}; # Bucket for all artist genres
+  my $tags  = []; # Bucket for all artist genre tags
+
+  my $track_info;  # discovered track details
+  my $track_image; # track/album cover art
+  my $freq_image;  # frequency analysis
+
+  my $is_genre = 0; # G: genre search query
+
+  my $artist = '';
+  my $name = ''; # track name
+  my $album = '';
+
+  # Load the track list or flash an error
+  if (-e TRACKS) {
+    $audio = retrieve(TRACKS);
+  }
+  else {
+    $c->flash(
+      error => 'Cannot read track list file. Please fix and <a href="/refresh">refresh</a>'
+    );
+  }
+
+  # Load the artist genres list
+  if (-e $ARTIST) {
+    $genre = retrieve($ARTIST);
+  }
+
+  if (keys %$audio) {
+    if ($query) {
+      # Convert encoded things like %26 back into &
+      $query = url_unescape($query);
+
+      my @artists;
+      if ($query =~ /^G:\s*(.*?)\s*$/) {
+        $query = $1;
+        $is_genre = 1;
+      }
+      if ($is_genre) {
+        for my $artist (sort keys %$genre) {
+          for my $g ($genre->{$artist}->@*) {
+            push @artists, $artist if $g =~ /$query/i;
+          }
+        }
+        @artists = uniq @artists;
+      }
+
+      # Brute force through every track, looking for matches
+      for my $key (sort { $a <=> $b } keys %$audio) {
+        next if $showrate && !_in_rate_range($op, $rate, $audio->{$key}{rating});
+
+        if ($is_genre) {
+          my $trk = $audio->{$key}{track};
+
+          my ($trk_name, $artist_name) = $track_name_fn->($trk);
+
+          push @$match, $key
+            if grep { $artist_name eq $_ } @artists;
+        }
+        else {
+          push @$match, $key
+            if lc($audio->{$key}{track}) =~ /$query/i;
+        }
+      }
+
+      # Accumulate the matches
+      my %tracks;
+      for my $n (@$match) {
+        $tracks{ $audio->{$n}{track} } = $n;
+      }
+      $match = [ map { $tracks{$_} } sort { $a cmp $b } keys %tracks ];
+
+      $current = _get_current($match, $current, $shuffle, $noinc);
+    }
+    # Don't compute track rates if not incrementing
+    elsif ($showrate && !$noinc) {
+      my $filtered = [];
+
+      # Gather the rated tracks
+      for my $trk (sort { $a <=> $b } keys %$audio) {
+        next if !_in_rate_range($op, $rate, $audio->{$trk}{rating});
+        push @$filtered, $trk;
+      }
+
+      $current = _get_current($filtered, $current, $shuffle, $noinc);
+    }
+    else {
+      # If shuffling, get a random audio track index, otherwise increment... or don't.
+      $current = $shuffle && !$noinc
+        ? int(rand keys %$audio)
+        : $noinc
+          ? $current
+          : $current + 1;
+    }
+  }
+
+  # Handle the undef case that makes bad things happen
+  $current = -1 unless defined $current;
+
+  # get the track and rating
+  my $track  = '';
+  my $rating = 0;
+  if (keys %$audio && $current >= 0) {
+    $track  = $audio->{$current}{track};
+    $rating = $audio->{$current}{rating};
+  }
+  app->log->info("Track: $current $track");
+
+  # Add a number separator (comma)
+  my $nf = Number::Format->new;
+  my $total = $nf->format_number(scalar keys %$audio);
+  my $matches = $nf->format_number(scalar @$match);
+
+  if (
+    ($c->remote_addr eq LOCAL || $c->remote_addr eq NETWORK)
+    && ($track =~ /\.mp3$/i || $track =~ /\.wav$/i)
+  ) {
+    my $freq_file = 'public/' . FREQ;
+    my $tune = "public$track";
+    my ($summary, $peak) = ([], 0);
+
+    try {
+        my $R = Statistics::R->new;
+        $R->run(q`library(tuneR)`);
+        $R->run(qq`tune <- readMP3("$tune")`)  if $track =~ /\.mp3$/i;
+        $R->run(qq`tune <- readWave("$tune")`) if $track =~ /\.wav$/i;
+
+        # Display
+        my ($w, $h) = (WIDTH, HEIGHT);
+        $R->run(q`seconds <- length(tune) / tune@samp.rate`);
+        $R->run(qq`png("$freq_file", width=$w, height=$h)`);
+        $R->run(q`par(bg="#DADADA")`);
+        $R->run(qq`plot(tune, xaxt="n", main="$track", xlab="seconds")`);
+        $R->run(q`axis(1, at=seq(0, seconds, 10), labels=FALSE)`);
+        $R->run(q`axis(1, at=seq(0, seconds, 30))`); # label every 30 seconds
+        $R->run(q`dev.off()`);
+        $summary = $R->get('summary(tune)'); # R returns a space separated arrayref!
+        $peak = $R->get('max(tune@left, tune@right, abs(min(tune@left, tune@right)))');
+        $R->stop;
+    #warn __PACKAGE__,' L',__LINE__,' ',,"Peak: $peak\n";
+    #warn __PACKAGE__,' L',__LINE__,' ',,"P: $peak, D: $density\n";
+    }
+    catch {
+        warn "Can't read mp3 with R: $_\n";
+    };
+
+    $freq_image = '/' . FREQ if -e $freq_file;
+  }
+
+  # Parse the track name and find an image
+  if ($track) {
+    ($name, $artist, $album) = $track_name_fn->($track);
+
+    # translating punctuation helps!
+    $album =~ s/^(.*?[^_ ])_ (.+)$/$1: $2/g;
+    $name  =~ s/^(.*?[^_ ])_ (.+)$/$1: $2/g;
+    $album =~ s/^(.*?[^_])_$/$1?/g;
+    $name  =~ s/^(.*?[^_])_$/$1?/g;
+    $album =~ s/^(.*?[a-zA-Z])_([a-zA-Z].*)$/$1\/$2/g;
+    $name  =~ s/^(.*?[a-zA-Z])_([a-zA-Z].*)$/$1\/$2/g;
+
+    my $artist_genres = '';
+
+    my $info = {}; # track information
+
+    my $ping = Net::Ping->new('tcp', 2);
+    $ping->port_number(scalar(getservbyname('http', 'tcp')));
+    my $ip = '130.211.19.189';
+    my $is_alive = $ping->ping($ip);
+    if ($config->{API_KEY} && $is_alive) {
+      my $w = WebService::LastFM::TrackInfo->new(api_key => $config->{API_KEY});
+      # Find an image
+      try {
+        $info = $w->fetch(artist => $artist, track => $name);
+      };
+      $track_image = _get_image($info->{track}{album});
+      unless ($track_image) {
+        $w = WebService::LastFM::TrackInfo->new(
+          api_key => $config->{API_KEY},
+          method  => 'album',
+        );
+        try {
+          $info = $w->fetch(artist => $artist, album => $album);
+        };
+        $track_image = _get_image($info->{album});
+      }
+    }
+
+    $track_info->{artist_genres} = $artist_genres;
+  }
+
+  my @tags = $artist && $genre->{$artist} ? $genre->{$artist}->@* : ();
+
+  my $text = '';
+  my $text_file = "public/$track.txt";
+  if (-e $text_file) {
+    $text_file = Mojo::File->new($text_file);
+    $text = $text_file->slurp;
+    $text =~ s/\n/<br>/g;
+  }
+
+  store [ $track, $track_image ], $config->{PLAYING};
+
+  my $track_js = _js_string($track);
+
+  $c->render(
+    template    => 'index',
+    content     => $text,
+    audio       => $audio,
+    total       => $total,
+    current     => $current,
+    track       => $track,
+    track_js    => $track_js,
+    track_image => $track_image,
+    freq_image  => $freq_image,
+    artist      => $artist || '',
+    rating      => $rating,
+    autoplay    => $autoplay,
+    autoadvance => $autoadvance,
+    shuffle     => $shuffle,
+    query       => $is_genre ? "G:$query" : $query,
+    match       => $match,
+    matches     => $matches,
+    showrate    => $showrate,
+    ratings     => [RATES],
+    tags        => join(', ', @tags),
+    darkmode    => $darkmode,
+  );
+} => 'index';
+
+get '/now_playing' => sub ($c) {
+  my $history = ['?'];
+  if (-e $config->{PLAYING}) {
+    $history = retrieve($config->{PLAYING});
+  }
+  $c->render(
+    template    => 'now_playing',
+    track_name  => $history->[0],
+    track_image => $history->[1],
+  );
+} => 'now_playing';
+
+=head2 _js_string(str)
+
+Turn a Perl string into a JSON-encoded (i.e. properly quoted and
+backslash-escaped) string literal that is safe to splice directly
+into an inline C<script> block.
+
+=cut
+
+sub _js_string ($str) {
+  my $json = encode_json("$str");
+  $json =~ s{</}{<\\/}g;
+  return $json;
+}
+
+=head2 _load(path)
+
+Safely C<retrieve> a Storable file. Returns an empty hashref if the
+file doesn't exist yet, instead of letting C<retrieve> hand back
+C<undef> and blowing up the caller.
+
+=cut
+
+sub _load ($path) {
+  return -e $path ? retrieve($path) : {};
+}
+
+sub _log10 { return log(shift)/log(10) }
+
+sub _get_image ($data) {
+  return undef unless $data->{image} && $data->{image}->@*;
+
+  my $image;
+
+  for my $item ($data->{image}->@*) {
+    if ($item->{size} eq 'extralarge' && $item->{'#text'}) {
+      $image = $item->{'#text'};
+      last;
+    }
+  }
+
+  return $image;
+}
+
+sub _get_current ($match, $current, $shuffle, $noinc) {
+  # If shuffling, get a random member of the matches,
+  # otherwise increment, unless we are told not to
+  if ($shuffle && !$noinc) {
+    $current = $match->[int rand @$match];
+  }
+  else {
+    # Find the index of the current item in the search results
+    my $idx = first_index { $_ == $current } @$match;
+    $idx = 0 if $idx == -1;
+
+    # To increment, or not to increment...
+    if ($noinc) {
+      $current = $match->[$idx];
+    }
+    else {
+      $current = $match->[$idx + 1];
+    }
+  }
+
+  return $current;
+}
+
+sub _in_rate_range ($op, $rate, $track_rating) {
+  my $in_range = 0;
+
+  if ($op eq '<') {
+    $in_range++ if $track_rating < $rate;
+  }
+  elsif ($op eq '=') {
+    $in_range++ if $track_rating == $rate;
+  }
+  elsif ($op eq '>') {
+    $in_range++ if $track_rating > $rate;
+  }
+
+  return $in_range;
+}
+
+
+=head2 GET /refresh
+
+Track file initialize and refresh endpoint that redirects back to the
+C<index>.
+
+Name: C<refresh>
+
+=cut
+
+get '/refresh' => sub ($c) {
+  # If a previous track exists, use its rating
+  my $old = {};
+  my %rated;
+  if (-e TRACKS) {
+    $old = retrieve(TRACKS);
+    for my $n (keys %$old) {
+      $rated{ $old->{$n}{track} } = $old->{$n}{rating};
+    }
+  }
+
+  # Process the filenames
+  my $audio = {};
+  my $rule = File::Find::Rule->new;
+  my @files = $rule->file()
+    ->not($rule->new->name(qr/^\./)) # no dot files please
+    ->name(TYPES)
+    ->in("public/$config->{PATH}");
+  my $n = 0;
+  for my $file (@files) {
+    # Make the name relative to /
+    $file =~ s/^public//;
+    # Make sure the name is properly displayable
+    $file = fix_latin($file);
+
+    # Find the file rating
+    my $rating = exists $rated{$file} ? $rated{$file} : 0;
+
+    # Add an entry to the audio list
+    $audio->{$n} = { track => $file, rating => $rating };
+
+    $n++;
+  }
+
+  # Save the files to disk
+  store $audio, TRACKS;
+
+  my $total = keys(%$audio) - keys(%$old);
+  app->log->info("Added $total tracks");
+
+  $c->flash(message => 'Saved track list file');
+
+  $c->redirect_to($c->url_for('index'));
+} => 'refresh';
+
+
+=head2 POST /rating
+
+Track rating endpoint that renders a success or failure text message.
+
+Name: C<rating>
+
+=cut
+
+post '/rating' => sub ($c) {
+  my $track = $c->param('current');
+  my $rate  = $c->param('rating');
+
+  my $audio = _load(TRACKS);
+
+  my $message = 'Failed to rate track!';
+
+  if (exists $audio->{$track}) {
+    $audio->{$track}{rating} = $rate;
+
+    store $audio, TRACKS;
+
+    $message = "Rated track $track at $rate";
+  }
+
+  $c->render(text => $message);
+} => 'rating';
+
+
+=head2 POST /tag_it
+
+Track tagging endpoint that renders a success or failure text message.
+
+=cut
+
+post '/tag_it' => sub ($c) {
+  my $track = $c->param('current');
+  my $tag   = $c->param('tag');
+  my $artists = _load($ARTIST);
+  my $message = 'Failed to tag artist!';
+
+  my @parts = split /\//, $track;
+  my $artist_name = $parts[-3]; # but not always
+
+  my @tags = split /\s*[,;|]+\s*/, $tag;
+
+  my @temp_tags;
+  for my $t (($artists->{$artist_name} // [])->@*) {
+    push @temp_tags, $t unless grep { $_ eq "-$t" } @tags;
+  }
+
+  push @temp_tags, $_
+    for grep { !/^-/ } @tags;
+
+  $artists->{$artist_name} = [ uniq @temp_tags ];
+
+  store $artists, $ARTIST;
+  $message = "Tagged artist $artist_name with $tag";
+
+  $c->render(text => $message);
+} => 'tag_it';
+
+
+=head2 GET /purge
+
+Purge tracks that have a rating of C<1>.
+
+Name: C<purge>
+
+=cut
+
+get '/purge' => sub ($c) {
+  my $audio = _load(TRACKS);
+
+  my $total = 0;
+  my $i = 0;
+
+  for my $n (keys %$audio) {
+    $i++;
+    my $track = Mojo::File->new("public$audio->{$n}{track}");
+    unless (-e $track) {
+      app->log->info("$i. REMOVE INDEX: $n $track");
+      delete $audio->{$n};
+      $total++;
+      next;
+    }
+    #app->log->info("Processing $track...");
+    my $rating = $audio->{$n}{rating};
+    if ($rating && $rating == 1) {
+      app->log->info("$i. DELETE: $n $track");
+      $track->remove or warn "ERROR: Can't remove $track: $!\n";
+      delete $audio->{$n};
+      $total++;
+      app->log->info('Removed track');
+    }
+  }
+
+  store $audio, TRACKS;
+
+  app->log->info("Purged $total tracks");
+  $c->flash(message => "Purged $total tracks");
+
+  $c->redirect_to($c->url_for('refresh'));
+} => 'purge';
+
+
+=head2 GET /stats
+
+Render a page with rating counts.
+
+Name: C<stats>
+
+=cut
+
+get '/stats' => sub ($c) {
+  my $audio = _load(TRACKS);
+
+  my ($total, $rated, $rate, $by_genre) = (0, 0, {}, {});
+
+  for my $key (keys %$audio) {
+    my $r = $audio->{$key}{rating};
+    $rated++ if $r;
+    $rate->{$r}++;
+    $total++;
+
+    my @parts = split /\//, $audio->{$key}{track};
+    $by_genre->{ $parts[2] }++ if $audio->{$key}{rating};
+  }
+
+  $c->render(
+    template => 'stats',
+    total    => $total || 1,
+    rated    => $rated,
+    rate     => $rate,
+    by_genre => $by_genre,
+  );
+} => 'stats';
+
+
+=head2 GET /genre
+
+Render a page with artist genres.
+
+Name: C<genre>
+
+=cut
+
+get '/genre' => sub ($c) {
+  $c->render(
+    template => 'genre',
+  );
+} => 'genre';
+
+
+=head2 GET /advance_track
+
+Set or retrieve the flag to advance the track.
+
+Name: C<advance_track>
+
+=cut
+
+get '/advance_track' => sub ($c) {
+  my $action = $c->param('action');
+  my $message;
+  unless (-e ADVANCE) {
+    store [0], ADVANCE;
+  }
+  if ($action eq 'set') {
+    store [1], ADVANCE;
+    $message = $action;
+  }
+  else {
+    my $advance = retrieve(ADVANCE);
+    store [0], ADVANCE;
+    $message = $advance->[0];
+  }
+  return $c->render(text => $message);
+} => 'advance_track';
+
+
+plugin 'RemoteAddr';
+
+app->log(app->log->with_roles('+Color'));
+
+# app->config(hypnotoad => { inactivity_timeout => 120 });
+
+app->secrets($config->{secrets});
+
+app->start;
+
+
+=head1 AUTHOR
+
+Gene Boggs <gene.boggs@gmail.com>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is Copyright (c) 2022 by Gene Boggs.
+
+This is free software, licensed under:
+
+  The Artistic License 2.0 (GPL Compatible)
+
+=cut
+
+__DATA__
+
+@@ help.html.ep
+% layout 'default';
+
+<h3>Hidden interface features</h3>
+<ul>
+<li>Clicking the word "Rating" will take you to the /stats breakdown, if you have rated tracks.</li>
+<li>The <code>r</code> key focuses on the rate filter list.</li>
+<li>The <code>0</code> through <code>5</code> keys will rate the current track at that level.</li>
+<li>The <code>c</code> key will re-focus on the audio player control.</li>
+<li>The <code>y</code> key will either play or pause the current track.</li>
+<li>The <code>f</code> key will relocate to the first track (if not shuffling). This is the same as clicking the "First" button.</li>
+<li>The <code>n</code> key is the same as clicking the "Next" button for the next track.</li>
+<li>The <code>h</code> key focuses on the history list.</li>
+<li>The <code>s</code> key focuses on the search input.</li>
+<li>The <code>i</code> key puts the track artist into the search input.</li>
+<li>The <code>t</code> key focuses on the artist tag input.</li>
+<li>When <b>not</b> focused on the search input, the <code>x</code> key will clear the search.</li>
+<li>The <code>a</code> key will toggle the auto-advance checkbox.</li>
+<li>The <code>p</code> key will toggle the auto-play checkbox.</li>
+<li>The <code>e</code> key will toggle the shuffle checkbox.</li>
+<li>The <code>d</code> key will toggle dark or light mode.</li>
+<li>The <code>g</code> key will purge all tracks with a rating of <code>1</code>.</li>
+</ul>
+
+@@ index.html.ep
+% layout 'default';
+% title 'Music!';
+
+% # Flash error/message
+% if (flash('error')) {
+%= tag h4 => (style => 'color:red') => sub { flash('error') }
+% }
+% if (flash('message')) {
+%= tag h4 => (style => 'color:green') => sub { flash('message') }
+% }
+
+% if ($track_image) {
+<div>
+  <img src="<%= $track_image %>" height="300"/>
+  <p></p>
+</div>
+% }
+
+% # Checkboxes
+<div>
+  <label for="autoadvance"><b>Advance:</b></label>
+  <input type="checkbox" id="autoadvance" name="autoadvance" title="Automatically advance to the next track (a)" <%= $autoadvance ? 'checked' : '' %> />
+  &nbsp;
+  <label for="autoplay"><b>Play:</b></label>
+  <input type="checkbox" id="autoplay" name="autoplay" title="Automatically start playing the current track (p)" <%= $autoplay ? 'checked' : '' %> />
+  &nbsp;
+  <label for="shuffle"><b>Shuffle:</b></label>
+  <input type="checkbox" id="shuffle" name="shuffle" title="Select a random track (e)" <%= $shuffle ? 'checked' : '' %> />
+  &nbsp;
+  <label for="darkmode"><b>Dark:</b></label>
+  <input type="checkbox" id="darkmode" name="darkmode" title="Toggle dark/light mode (d)" <%= $darkmode ? 'checked' : '' %> />
+  &nbsp;
+</div>
+
+% # Current track name
+<p id="track"><b><a href="<%= url_for('index')->query(current => $current, noinc => 1, shuffle => 0, autoplay => 1, autoadvance => 0, darkmode => $darkmode) %>">Track</a>:</b> <%= $track %></p>
+
+% # Audio widget
+<p>
+  <div>
+    <audio controls id="myAudio" <%= $autoplay ? "autoplay='autoplay'" : '' %> preload="auto" crossorigin="anonymous" src="<%= $track %>" title="Audio controls (c) - Pause/play (y)">
+      Your browser does not support the <code>audio</code> element.
+    </audio>
+    <div id="warning"><b>Could not load audio!</b></div>
+  </div>
+</p>
+
+% # Rate track
+<div>
+  <b><a href="<%= url_for('stats') %>" id="statslink" title="Inspect rating stats">Rating</a>:</b>
+% for my $rate (0 .. $#$ratings) {
+  &nbsp;
+  <input type="radio" name="rating" value="<%= $rate %>" <%= $rate == $rating ? 'checked' : '' %> title="<%= $ratings->[$rate] %>" />
+% }
+  &nbsp;
+  <select id="showrate" name="showrate" class="btn btn-mini" title="Filter by rating (r)">
+    <option value="">Any</option>
+% for my $show (
+%   '< 1', '= 1', '> 1',
+%   '< 2', '= 2', '> 2',
+%   '< 3', '= 3', '> 3',
+%   '< 4', '= 4', '> 4',
+%   '< 5'
+% ) {
+    <option value="<%= $show %>" <%= $showrate eq $show ? 'selected' : '' %>><%= $show %></option>
+% }
+  </select>
+</div>
+
+% # Playlist history select
+<p></p>
+<p>
+  <select id="playlist" name="playlist" class="form-control input-lg" title="Playback history (h)">
+    <option value="" disabled selected>History</option>
+  </select>
+  <i class="fa fa-chevron-down"></i>
+</p>
+
+% # Search query
+<div class="input-group">
+  <input type="search" id="query" name="query" class="form-control" placeholder="Search" value="<%= $query %>" title="Track search query (s)" />
+  <div class="input-group-append">
+    <button type="button" id="clearsearch" class="btn btn-outline-secondary" title="Clear the search query (x)">
+      <i class="fa fa-times"></i>
+    </button>
+    <button type="button" id="submitsearch" class="btn btn-outline-secondary rounded-right" title="Submit the search query">
+      <i class="fa fa-chevron-right"></i>
+    </button>
+  </div>
+</div>
+
+% # Tag track
+<p></p>
+<div class="input-group">
+  <input type="text" id="tag" name="tag" class="form-control" placeholder="Tags" value="<%= $tags %>" title="Artist genre tags (t)" />
+  <div class="input-group-append">
+    <button type="button" id="submittag" class="btn btn-outline-secondary rounded-right" title="Submit the artist tag update">
+      <i class="fa fa-chevron-right"></i>
+    </button>
+  </div>
+</div>
+
+% # Buttons
+<p></p>
+<p>
+  <button id="retrack" class="btn btn-outline-dark" title="Replay the current track (v)"><i class="fa fa-play-circle" aria-hidden="true"></i> Replay</button>
+  &nbsp;
+  <button id="nexttrack" class="btn btn-outline-dark" title="Advance to the next track (n)">Next <i class="fa fa-step-forward" aria-hidden="true"></i></button>
+  &nbsp;
+  <span id="total" class="text-secondary"><%= $total %> tracks</span>
+</p>
+
+% # Display content if any
+% if ($content) {
+<p></p>
+<%== $content %>
+<p></p>
+% }
+
+% # Search query matches
+% if (@$match) {
+<p></p>
+<p><b>Matches:</b> <%= $matches %></p>
+<ol>
+%   for my $n (@$match) {
+  <li>
+%     if ($track eq $audio->{$n}{track}) {
+    <b><a href="#" class="trackmatch" data-current="<%= $n %>"><%= $audio->{$n}{track} %></a></b>
+%     } else {
+    <a href="#" class="trackmatch" data-current="<%= $n %>"><%= $audio->{$n}{track} %></a>
+%     }
+  </li>
+%   }
+</ol>
+% } else {
+%   if ($query) {
+<p></p>
+<p id="no_matches">No matches</p>
+%   }
+% }
+
+% if ($freq_image) {
+<div>
+  <img src="<%= $freq_image %>"/>
+  <p></p>
+</div>
+% }
+
+<script>
+$(document).ready( function () {
+
+% # Replace classes when in dark mode
+  if (<%= $darkmode %> || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+    $('#clearsearch').attr('class', 'btn btn-outline-white rounded-right');
+    $('#submitsearch').attr('class', 'btn btn-outline-light');
+    $('#submittag').attr('class', 'btn btn-outline-light');
+    $('#artist_search').attr('class', 'btn btn-outline-light');
+    $('#retrack').attr('class', 'btn btn-outline-light');
+    $('#nexttrack').attr('class', 'btn btn-outline-light');
+    $('[class="text-secondary"]').attr('class', 'text-medium');
+    $('body').toggleClass('dark');
+    $('input[name=darkmode]').attr('checked', true);
+  }
+
+% # Handle media keys
+if ('mediaSession' in navigator) {
+  //  navigator.mediaSession.setActionHandler('play', () => {
+  //  });
+  //  navigator.mediaSession.setActionHandler('pause', () => {
+  //  });
+    navigator.mediaSession.setActionHandler('previoustrack', () => {
+      advance(0, <%= $current %>, 1, 0);
+    });
+    navigator.mediaSession.setActionHandler('nexttrack', () => {
+      advance();
+    });
+}
+
+% # Rate track function
+  function rating (r) {
+    $.ajax({
+      url: "<%= url_for('rating') %>" + '?current=' + <%= $current %> + '&rating=' + r,
+      method: 'POST',
+      success: function(data, textStatus, jqXHR) {
+        console.log('Rating: ' + r);
+      },
+      error: function(jqXHR, textStatus, error) {
+        console.log('Rating: ' + error);
+      }
+    });
+  }
+
+% # Tag artist function
+  function tag_it () {
+    t = $('#tag').val();
+    $.ajax({
+      url: "<%= url_for('tag_it') %>" + '?' + 'current=' + encodeURIComponent(<%== $track_js %>) + '&tag=' + encodeURIComponent(t),
+      method: 'POST',
+      success: function(data, textStatus, jqXHR) {
+        console.log('Tag: ' + t);
+      },
+      error: function(jqXHR, textStatus, error) {
+        console.log('Tag: ' + error);
+      }
+    });
+  }
+
+% # Advance track function
+  function advance (force = 0, current = -1, noinc = 0, useq = 1) {
+    var audio = document.getElementById('myAudio');
+    var wasPlaying = !audio.paused; // capture real playback state before pausing
+    audio.pause();
+    var showrate = $('select[name=showrate] option').filter(':selected').val();
+    var query = '';
+    if (useq == 1) {
+      query = $('input[name=query]').val();
+    }
+    if (current == -1) {
+      current = <%= $current || 0 %>;
+    }
+    var shuffle = 0;
+    if ($('#shuffle').is(':checked')) {
+      shuffle = 1;
+    }
+    var autoplay = 0;
+    if ($('#autoplay').is(':checked') || wasPlaying) {
+      autoplay = 1;
+      $('#autoplay').prop('checked', true);
+    }
+    autoadvance = 0;
+    if ($('#autoadvance').is(':checked')) {
+      autoadvance = 1;
+    }
+    darkmode = 0;
+    if ($('#darkmode').is(':checked')) {
+      darkmode = 1;
+    }
+    if (force == 1 || autoadvance == 1) {
+      var link = "<%= url_for('index') %>?current=" + current
+        + '&noinc=' + noinc
+        + '&query=' + encodeURIComponent(query)
+        + '&shuffle=' + shuffle
+        + '&autoplay=' + autoplay
+        + '&autoadvance=' + autoadvance
+        + '&showrate=' + showrate
+        + '&darkmode=' + darkmode;
+      window.location = link;
+    }
+  }
+
+% # Keep track of the volume
+  var vol = localStorage.getItem('playback_volume');
+  if (vol === null) {
+    vol = 1;
+    localStorage.setItem('playback_volume', vol);
+  }
+
+% # Keep track of the played audio history
+//var plh = [];                                                  // Reset history
+//localStorage.setItem('playlist_history', JSON.stringify(plh)); // Reset history & comment the next 5 lines:
+  var plh = JSON.parse(localStorage.getItem('playlist_history'));
+  if (plh === null) {
+    plh = [];
+    localStorage.setItem('playlist_history', JSON.stringify(plh));
+  }
+  var max = 10;
+  var j = 0;
+  for (var i = plh.length; i >= 0; i--) {
+    for (var key in plh[i]) {
+      if (plh[i].hasOwnProperty(key)) {
+        $('#playlist').append($('<option>', {
+          text: key,
+          value: plh[i][key]
+        }));
+      }
+    }
+    if (j >= max) {
+      break;
+    }
+    j++;
+  }
+
+% # Miscellaneous jQuery on events
+  $('#playlist').on('change', function () {
+    var current = $(this).children('option:selected').val();
+    advance(1, current, 1, 0);
+  });
+  // Submit a search query
+  $('#query').on('keypress', function (e) {
+    if (e.which == 13) {
+      // Submit = ENTER
+      advance();
+    }
+  });
+  // Submit a tag
+  $('#tag').on('keypress', function (e) {
+    if (e.which == 13) {
+      // Submit = ENTER
+      tag_it();
+      $('#tag').val('');
+    }
+  });
+  $(document).on('keypress', function (e) {
+    var x = $('#query').is(':focus');
+    var y = $('#tag').is(':focus');
+    if (!x && !y) {
+      var rate = -1; // For rating below
+      if (e.key === 'c' || e.key === 'C') {
+        // Audio controls = c
+        $('#myAudio').focus();
+      }
+      else if (e.key === 'v' || e.key === 'V') {
+        // Replay current track = v
+        advance(0, <%= $current %>, 1, 0);
+      }
+      else if (e.key === 'y' || e.key === 'Y') {
+        // Pause-Play = y
+        var audio = document.getElementById('myAudio');
+        if (audio.paused) {
+          audio.play();
+        }
+        else {
+          audio.pause();
+        }
+      }
+      else if (e.key === 't' || e.key === 'T') {
+        // Tag focus = t
+        $('#tag').focus();
+      }
+      else if (e.key === 'g' || e.key === 'G') {
+        // purge = g
+        var link = "<%= url_for('purge') %>";
+        window.location = link;
+      }
+      else if (e.key === 'z' || e.key === 'Z') {
+        // space-music = z
+        var link = "<%= url_for('index') %>?current=0"
+          + '&noinc=0'
+          + '&query=space-music'
+          + "&shuffle=<%= $shuffle %>"
+          + "&autoplay=<%= $autoplay %>"
+          + "&autoadvance=<%= $autoadvance %>"
+          + "&showrate=<%= $showrate %>"
+          + "&darkmode=<%= $darkmode %>"
+        window.location = link;
+      }
+      else if (e.key === 'f' || e.key === 'F') {
+        // First track = f
+        advance(1, 0, 1, 0);
+      }
+      else if (e.key === 'n' || e.key === 'N') {
+        // Next track = n
+        advance(1);
+      }
+      else if (e.key === 'r' || e.key === 'R') {
+        // Rate filter focus = r
+        $('#showrate').focus();
+      }
+      else if (e.key === 'h' || e.key === 'H') {
+        // History playlist focus = h
+        $('#playlist').focus();
+      }
+      else if (e.key === 'x' || e.key === 'X') {
+        // Clear search query = x
+        $('#clearsearch').click();
+      }
+      else if (e.key === 's' || e.key === 'S') {
+        // Search query focus = s
+        $('#query').focus();
+      }
+      else if (e.key === 'i' || e.key === 'I') {
+        // Put artist into search = i
+        $('#query').val("<%= $artist %>");
+      }
+      else if (e.which >= 48 && e.which <= 53) {
+        // Track rating = 0-5
+        rate = e.which - 48;
+      }
+      else if (e.key === 'a' || e.key === 'A') {
+        // Advance = a
+        if ($('#autoadvance').is(':checked')) {
+          $('input[name=autoadvance]').attr('checked', false);
+        }
+        else {
+          $('input[name=autoadvance]').attr('checked', true);
+        }
+      }
+      else if (e.key === 'p' || e.key === 'P') {
+        // Play = p
+        if ($('#autoplay').is(':checked')) {
+          $('input[name=autoplay]').attr('checked', false);
+        }
+        else {
+          $('input[name=autoplay]').attr('checked', true);
+        }
+      }
+      else if (e.key === 'e' || e.key === 'E') {
+        // Shuffle = e
+        if ($('#shuffle').is(':checked')) {
+          $('input[name=shuffle]').attr('checked', false);
+        }
+        else {
+          $('input[name=shuffle]').attr('checked', true);
+        }
+      }
+      else if (e.key === 'd' || e.key === 'D') {
+        // Dark mode = d
+        if ($('#darkmode').is(':checked')) {
+          $('input[name=darkmode]').attr('checked', false);
+        }
+        else {
+          $('input[name=darkmode]').attr('checked', true);
+        }
+      }
+      if (rate >= 0) {
+          $('input[name=rating]:checked').attr('checked', false);
+          $('input[name=rating][value=' + rate + ']').attr('checked', 'checked');
+          rating(rate);
+      }
+    }
+  });
+  $('input[type=radio]').on('click', function() {
+    var r = $('input[name=rating]:checked').val();
+    rating(r);
+  });
+  $('#clearsearch').on('click', function() {
+    $('input[name=query]').val('');
+  });
+  $('#retrack').on('click', function() {
+    advance(0, <%= $current %>, 1, 0);
+  });
+  $('#nexttrack').on('click', function() {
+    advance(1);
+  });
+  $('#submitsearch').on('click', function() {
+    advance(1);
+  });
+  $('#submittag').on('click', function() {
+    tag_it();
+    $('#tag').val('');
+  });
+  $('.trackmatch').on('click', function() {
+    current = $(this).attr('data-current');
+    advance(1, current, 1);
+  });
+
+% # Hide the playback warning
+  $('#warning').hide();
+
+% # Disable the rating radios
+$('input[name=rating]').attr('disabled', true);
+
+% # Configure the audio element
+  $('#myAudio').focus();
+  $('#myAudio').attr('src', <%== $track_js %>);
+  $('#myAudio').on('error', function() {
+    if ("<%= $track %>") {
+      console.log('Playback error!');
+      rating(-1);
+      $('#warning').show();
+      advance(0, -1, 0, 0); // useq=0: don't resend a filter the playing track may not belong to
+    }
+  });
+  $('#myAudio').on('loadedmetadata', function() {
+    console.log('Loaded metadata');
+    document.getElementById('myAudio').volume = vol;
+  });
+  $('#myAudio').on('volumechange', function() {
+    var v = document.getElementById('myAudio').volume;
+    localStorage.setItem('playback_volume', v);
+    console.log('Volume: ' + v);
+  });
+  $('#myAudio').on('playing', function() {
+    console.log('Playing: ' + <%= $current %>);
+    $('input[name=rating]').attr('disabled', false);
+  });
+  $('#myAudio').on('ended', function() {
+    console.log('...Ended');
+    if (plh.length >= max) {
+      plh.shift();
+    }
+    plh.push({ <%== $track_js %>: "<%= $current %>" });
+    localStorage.setItem('playlist_history', JSON.stringify(plh));
+    advance(0, -1, 0, 0); // useq=0: don't resend a filter the playing track may not belong to
+  });
+
+//  (function worker() {
+//    $.ajax({
+//      url: "<%= url_for('advance_track') %>?action=fetch", 
+//      success: function(data) {
+//        //console.log('Advance:', data);
+//        if (data == 1) {
+//          advance();
+//        }
+//      },
+//      complete: function() {
+//        // schedule the next request after the current one finishes
+//        setTimeout(worker, 10000);
+//      }
+//    });
+//  })();
+
+});
+</script>
+
+
+@@ stats.html.ep
+% layout 'default';
+% title 'Music stats';
+<p><b>Total:</b> <%= $total %></p>
+<p><b>Rated:</b> <%= $rated %> (<%= sprintf '%.2f', $rated / $total * 100 %>%)</p>
+<hr>
+% for my $i (sort { $a <=> $b } keys %$rate) {
+<p><b><%= $i %> rating:</b> <%= $rate->{$i} %> (<%= sprintf '%.2f', $rate->{$i} / $total * 100 %>%)</p>
+% }
+<hr>
+% for my $i (sort keys %$by_genre) {
+<p><b><%= $i %> rating:</b> <%= $by_genre->{$i} %> (<%= sprintf '%.2f', $by_genre->{$i} / $total * 100 %>%)</p>
+% }
+
+
+@@ now_playing.html.ep
+% layout 'default';
+% title 'Now playing!';
+
+% if ($track_image) {
+<div>
+  <img src="<%= $track_image %>" height="300"/>
+  <p></p>
+</div>
+% }
+<p><%= $track_name %></p>
+
+<button id="nexttrack" class="btn btn-outline-dark" title="Advance to the next track (n)">Next <i class="fa fa-step-forward" aria-hidden="true"></i></button>
+
+<script>
+$(document).ready( function () {
+  $('#nexttrack').on('click', function() {
+    $.ajax({
+      url: "<%= url_for('advance_track') %>?action=set",
+      type: 'GET',
+      success: function(data) {
+        console.log('Advance...')
+      },
+      error: function(e) {
+        console.log('Error:', e)
+      }
+    });
+  });
+
+% # Replace classes when in dark mode
+  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    $('p').attr('class', 'text-medium');
+    $('a').attr('style', 'color: white');
+    $('[class="text-secondary"]').attr('class', 'text-medium');
+    $('#nexttrack').attr('class', 'btn btn-outline-light');
+  }
+});
+</script>
+
+@@ genre.html.ep
+% layout 'default';
+% title 'Artist Genres';
+Hello
+
+@@ layouts/default.html.ep
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+      <script>/* <![CDATA[ */
+        !window.jQuery && document.write('<script src="/jquery.min.js"><\/script>')
+      /* ]]> */</script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/style.css">
+    <title><%= title %></title>
+    <style>
+      body {
+        color: #414A4C;
+      }
+      a:link, a:visited, a:hover, a:active, a:focus {
+        color: #414A4C;
+      }
+      .dark {
+        background-color: #414A4C;
+        color: #DDD;
+      }
+      .dark a {
+        color: #DDD;
+      }
+      @media screen and (max-width: 800px) and (orientation: landscape) {
+        html {
+          transform: rotate(-90deg);
+          transform-origin: left top;
+          width: 100vh;
+          height: 100vw;
+          overflow-x: hidden;
+          position: absolute;
+          top: 100%;
+          left: 0;
+        }
+      }
+      @media screen and (max-width: 800px) {
+        body {
+          display: block;
+          width: 100%;
+          margin-left: auto;
+          margin-right: auto;
+          text-align: center;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <%= content %>
+    <p></p>
+    <div id="footer" class="text-secondary">
+      <hr>
+      <a href="https://github.com/ology/audio-player">audio-player</a>
+      built by <a href="http://gene.ology.net/">Gene</a>
+      with <a href="https://www.perl.org/">Perl</a>,
+      <a href="https://mojolicious.org/">Mojolicious</a>
+      & <a href="https://jquery.com/">jQuery</a>
+      | <a href="/help" target="_blank">Help</a>
+    </div>
+  </body>
+</html>
