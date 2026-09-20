@@ -24,7 +24,7 @@ For windows, as the Administrator do this:
 
 Then to run the app:
 
-    audio-player $ morbo audio-player6
+    audio-player $ MOJO_MODE=production morbo audio-player6
 
 And first browse to http://127.0.0.1:3000/refresh to index your audio. Thereafter, http://127.0.0.1:3000/
 
