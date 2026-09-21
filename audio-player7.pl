@@ -280,7 +280,7 @@ get '/' => sub ($c) {
     #warn __PACKAGE__,' L',__LINE__,' ',,"P: $peak, D: $density\n";
     }
     catch {
-        warn "Can't read mp3 with R: $_\n";
+        warn "Can't read audio with R: $_\n";
     };
 
     $freq_image = '/' . FREQ if -e $freq_file;
