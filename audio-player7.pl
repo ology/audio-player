@@ -276,8 +276,8 @@ get '/' => sub ($c) {
         $summary = $R->get('summary(tune)'); # R returns a space separated arrayref!
         $peak = $R->get('max(tune@left, tune@right, abs(min(tune@left, tune@right)))');
         $R->stop;
-    #warn __PACKAGE__,' L',__LINE__,' ',,"Peak: $peak\n";
-    #warn __PACKAGE__,' L',__LINE__,' ',,"P: $peak, D: $density\n";
+        #warn __PACKAGE__,' L',__LINE__,' ',,"Peak: $peak\n";
+        #warn __PACKAGE__,' L',__LINE__,' ',,"P: $peak, D: $density\n";
     }
     catch {
         warn "Can't read audio with R: $_\n";
