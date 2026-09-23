@@ -656,11 +656,7 @@ get '/advance_track' => sub ($c) {
 plugin 'RemoteAddr';
 
 app->log(app->log->with_roles('+Color'));
-
-# app->config(hypnotoad => { inactivity_timeout => 120 });
-
 app->secrets($config->{secrets});
-
 app->start;
 
 
@@ -908,7 +904,6 @@ if ('mediaSession' in navigator) {
 % # Advance track function
   function advance (force = 0, current = -1, noinc = 0, useq = 1) {
     var audio = document.getElementById('myAudio');
-    var wasPlaying = !audio.paused; // capture real playback state before pausing
     audio.pause();
     var showrate = $('select[name=showrate] option').filter(':selected').val();
     var query = '';
@@ -923,9 +918,8 @@ if ('mediaSession' in navigator) {
       shuffle = 1;
     }
     var autoplay = 0;
-    if ($('#autoplay').is(':checked') || wasPlaying) {
+    if ($('#autoplay').is(':checked')) {
       autoplay = 1;
-      $('#autoplay').prop('checked', true);
     }
     autoadvance = 0;
     if ($('#autoadvance').is(':checked')) {
