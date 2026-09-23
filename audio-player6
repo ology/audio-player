@@ -603,7 +603,7 @@ get '/stats' => sub ($c) {
 
   $c->render(
     template => 'stats',
-    total    => $total || 1,
+    total    => $total,
     rated    => $rated,
     rate     => $rate,
     by_genre => $by_genre,
@@ -655,7 +655,7 @@ get '/advance_track' => sub ($c) {
 
 plugin 'RemoteAddr';
 
-app->log(app->log->with_roles('+Color'));
+app->log->with_roles('+Color');
 app->secrets($config->{secrets});
 app->start;
 
@@ -741,7 +741,7 @@ __DATA__
 % # Audio widget
 <p>
   <div>
-    <audio controls id="myAudio" <%= $autoplay ? "autoplay='autoplay'" : '' %> preload="auto" crossorigin="anonymous" src="<%= $track %>" title="Audio controls (c) - Pause/play (y)">
+    <audio controls id="myAudio" <%= $autoplay ? "autoplay='autoplay'" : '' %> preload="auto" crossorigin="anonymous" src="<%== $track %>" title="Audio controls (c) - Pause/play (y)">
       Your browser does not support the <code>audio</code> element.
     </audio>
     <div id="warning"><b>Could not load audio!</b></div>
