@@ -1209,7 +1209,7 @@ $('input[name=rating]').attr('disabled', true);
       console.log('Playback error!');
       rating(-1);
       $('#warning').show();
-      advance(0, -1, 0, 0); // useq=0: don't resend a filter the playing track may not belong to
+      advance(0, -1, 0, 1);
     }
   });
   $('#myAudio').on('loadedmetadata', function() {
@@ -1232,7 +1232,7 @@ $('input[name=rating]').attr('disabled', true);
     }
     plh.push({ <%== $track_js %>: "<%= $current %>" });
     localStorage.setItem('playlist_history', JSON.stringify(plh));
-    advance(0, -1, 0, 0); // useq=0: don't resend a filter the playing track may not belong to
+    advance(0, -1, 0, 1);
   });
 
 //  (function worker() {
