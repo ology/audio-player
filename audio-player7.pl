@@ -1203,7 +1203,6 @@ $('input[name=rating]').attr('disabled', true);
 
 % # Configure the audio element
   $('#myAudio').focus();
-  $('#myAudio').attr('src', <%== $track_js %>);
   $('#myAudio').on('error', function() {
     if ("<%= $track %>") {
       console.log('Playback error!');
