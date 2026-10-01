@@ -1128,44 +1128,20 @@ if ('mediaSession' in navigator) {
         rate = e.which - 48;
       }
       else if (e.key === 'a' || e.key === 'A') {
-        // Advance = a
-        if ($('#autoadvance').is(':checked')) {
-          $('input[name=autoadvance]').attr('checked', false);
-        }
-        else {
-          $('input[name=autoadvance]').attr('checked', true);
-        }
+        $('#autoadvance').prop('checked', (i, v) => !v);
       }
       else if (e.key === 'p' || e.key === 'P') {
-        // Play = p
-        if ($('#autoplay').is(':checked')) {
-          $('input[name=autoplay]').attr('checked', false);
-        }
-        else {
-          $('input[name=autoplay]').attr('checked', true);
-        }
+        $('#autoplay').prop('checked', (i, v) => !v);
       }
       else if (e.key === 'e' || e.key === 'E') {
-        // Shuffle = e
-        if ($('#shuffle').is(':checked')) {
-          $('input[name=shuffle]').attr('checked', false);
-        }
-        else {
-          $('input[name=shuffle]').attr('checked', true);
-        }
+        $('#shuffle').prop('checked', (i, v) => !v);
       }
       else if (e.key === 'd' || e.key === 'D') {
-        // Dark mode = d
-        if ($('#darkmode').is(':checked')) {
-          $('input[name=darkmode]').attr('checked', false);
-        }
-        else {
-          $('input[name=darkmode]').attr('checked', true);
-        }
+        $('#darkmode').prop('checked', (i, v) => !v);
       }
       if (rate >= 0) {
           $('input[name=rating]:checked').attr('checked', false);
-          $('input[name=rating][value=' + rate + ']').attr('checked', 'checked');
+          $('input[name=rating][value=' + rate + ']').prop('checked', true);
           rating(rate);
       }
     }
