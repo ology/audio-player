@@ -801,7 +801,7 @@ __DATA__
   <b><a href="<%= url_for('stats') %>" id="statslink" title="Inspect rating stats">Rating</a>:</b>
 % for my $rate (0 .. $#$ratings) {
   &nbsp;
-  <input type="radio" name="rating" value="<%= $rate %>" <%= $rate == $rating ? 'checked' : '' %> title="<%= $ratings->[$rate] %>" />
+  <input type="radio" name="rating" value="<%= $rate %>" <%= $rate == $rating ? 'checked' : '' %> <%= $track ? '' : 'disabled' %> title="<%= $ratings->[$rate] %>" />
 % }
   &nbsp;
   <select id="showrate" name="showrate" class="btn btn-mini" title="Filter by rating (r)">
@@ -1198,8 +1198,8 @@ if ('mediaSession' in navigator) {
 % # Hide the playback warning
   $('#warning').hide();
 
-% # Disable the rating radios
-$('input[name=rating]').attr('disabled', true);
+% # Disable the rating radios // delete me
+$('input[name=rating]').attr('disabled', true); // delete me
 
 % # Configure the audio element
   $('#myAudio').focus();
@@ -1222,7 +1222,7 @@ $('input[name=rating]').attr('disabled', true);
   });
   $('#myAudio').on('playing', function() {
     console.log('Playing: ' + <%= $current %>);
-    $('input[name=rating]').attr('disabled', false);
+    $('input[name=rating]').attr('disabled', false); // delete me
   });
   $('#myAudio').on('ended', function() {
     console.log('...Ended');
